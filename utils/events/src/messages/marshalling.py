@@ -3,6 +3,7 @@ from .message_type import MessageType
 from fastavro import parse_schema, schemaless_reader, schemaless_writer
 from io import BytesIO
 import os.path as path
+import json
 
 
 RESOURCES_DIR = '../../resources'
@@ -11,8 +12,10 @@ RESOURCES_DIR = '../../resources'
 class Marshaller:
 
     def __init__(self, message_type):
-        with open(path.join(RESOURCES_DIR, message_type.id + '.json'), 'r') as file:
-            self.schema = parse_schema(file.read())
+        filepath = path.join(path.dirname(__file__), RESOURCES_DIR, message_type.id + '.json')
+
+        with open(filepath, 'r') as file:
+            self.schema = parse_schema(json.load(file))
 
         self.message_class = message_type.message_class
 
@@ -23,16 +26,16 @@ class Marshaller:
         return buffer
 
     def decode(self, record):
-        return schemaless_reader(record, self.schema)
+        return self.message_class(**schemaless_reader(record, self.schema))
 
 
 schemas = {}
 
 for mtype in MessageType:
-    schemas[mtype.id] = Marshaller(mtype)
+    schemas[mtype] = Marshaller(mtype)
 
-def encode(message_type, record):
-    return schemas[message_type].encode(record)
+def encode(message_type, message):
+    return schemas[message_type].encode(message.to_json())
 
 
 def decode(message_type, record):
