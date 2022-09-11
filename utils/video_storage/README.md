@@ -18,7 +18,7 @@ def split_video(filepath):
 configuration = {
     'host': 'localhost',
     'port': 9500,
-    'access_key': 'fiubrother',
+    'access_key': 'argus',
     'secret_key': '1234'
 }
 
