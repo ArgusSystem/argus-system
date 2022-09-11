@@ -1,8 +1,8 @@
 # Events module
 
-*Events* module centralizes all the necessary components for an event-driven ecosystem to support the actor model.
-It offers a client to connect to a message broker and produce/consume events in RabbitMQ and 
-messages are encoded/decoded using the _avro_ marshaller.
+The *events* module centralizes all the necessary components for an event-driven ecosystem, in particular to support the 
+actor model, which is used in the distributed system. It features a client to connect to a message broker and 
+produce/consume events in RabbitMQ and all messages are encoded/decoded using the _avro_ marshaller.
 
 
 ## Usage

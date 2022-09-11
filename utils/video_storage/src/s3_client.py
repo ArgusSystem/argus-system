@@ -1,13 +1,9 @@
 import logging
-from .tracing import timer
 from minio import Minio
-from minio.error import ResponseError
+from minio.error import S3Error
 
 
 class S3Client:
-
-    FETCH = "FETCH"
-    UPLOAD = "UPLOAD"
 
     def __init__(self, configuration):
         self._host = configuration['host']
@@ -22,34 +18,29 @@ class S3Client:
             secure=False)
 
     def store(self, id, data, size):
-        with timer(id, self.UPLOAD):
-            try:
-                self.client.put_object(self.bucket, str(id), data=data, length=size)
-            except ResponseError as err:
-                logging.exception("Store failed for {}".format(id))
-                raise
+        try:
+            self.client.put_object(self.bucket, str(id), data=data, length=size)
+        except S3Error as err:
+            logging.exception("Store failed for {}".format(id))
+            raise
 
     def store_file(self, id, filepath):
-        with timer(id, self.UPLOAD):
-            try:
-                self.client.fput_object(self.bucket, str(id), filepath)
-            except ResponseError as err:
-                logging.exception("Store file failed for {} -> {}".format(id, filepath))
-                raise
+        try:
+            self.client.fput_object(self.bucket, str(id), filepath)
+        except S3Error as err:
+            logging.exception("Store file failed for {} -> {}".format(id, filepath))
+            raise
 
     def retrieve(self, id):
-        with timer(id, self.UPLOAD):
-            try:
-                return self.client.get_object(self.bucket, str(id)).data
-            except ResponseError as err:
-                logging.exception("Retrieve failed for {}".format(id))
-                raise
+        try:
+            return self.client.get_object(self.bucket, str(id)).data
+        except S3Error as err:
+            logging.exception("Retrieve failed for {}".format(id))
+            raise
 
     def retrieve_file(self, id, filepath):
-        with timer(id, self.UPLOAD):
-            try:
-                self.client.fget_object(self.bucket, str(id), filepath)
-            except ResponseError as err:
-                logging.exception("Retrieve file failed for {} -> {}".format(id, filepath))
-                raise
-
+        try:
+            self.client.fget_object(self.bucket, str(id), filepath)
+        except S3Error as err:
+            logging.exception("Retrieve file failed for {} -> {}".format(id, filepath))
+            raise
