@@ -4,6 +4,6 @@ from ..src.messages.video_chunk_message import VideoChunkMessage
 
 def test_video_chunk():
     message = VideoChunkMessage('camera', 0)
-    record = encode(MessageType.VIDEO_CHUNK, message)
+    record = encode(message)
     assert message == decode(MessageType.VIDEO_CHUNK, record)
 
