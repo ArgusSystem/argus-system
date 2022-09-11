@@ -3,8 +3,7 @@ from io import BytesIO
 import os.path as path
 import json
 
-
-RESOURCES_DIR = path.join(path.dirname(__file__), '../../resources')
+RESOURCES_DIR = path.join(path.dirname(__file__), '..', '..', 'resources')
 
 
 class Marshaller:
@@ -14,7 +13,6 @@ class Marshaller:
             self.schema = parse_schema(json.load(file))
 
         self.message_class = message_class
-
 
     def encode(self, record):
         buffer = BytesIO()
