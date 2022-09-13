@@ -18,6 +18,21 @@ services:
             - postgres-data:/var/lib/postgresql/data
         ports:
             - 5432:5432
+    rabbitmq:
+        image: rabbitmq:3-management
+        env_file:
+            - configuration/rabbitmq/rabbitmq.env
+        volumes:
+            - rabbitmq-config:/etc/rabbitmq/
+            - rabbitmq-data:/var/lib/rabbitmq/
+            - rabbitmq-log:/var/log/rabbitmq/
+        ports:
+            - 1883:1883
+            - 5672:5672
+            - 15672:15672
 volumes:
     postgres-data:
     minio-data:
+    rabbitmq-config:
+    rabbitmq-data:
+    rabbitmq-log:
