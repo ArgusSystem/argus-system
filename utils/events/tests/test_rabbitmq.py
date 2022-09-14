@@ -55,6 +55,7 @@ def client(host, username, password, queue, exchange, routing_key):
     queue_unbind(channel, queue, exchange, routing_key)
     delete_exchange(channel, exchange)
     delete_queue(channel, queue)
+    client.close()
 
 
 @fixture
@@ -72,7 +73,7 @@ def consume(record):
 
 
 @fixture
-def consumer(client, exchange, routing_key):
+def consumer(client, queue):
     return Consumer(
         client=client,
         queue=queue,
@@ -80,8 +81,7 @@ def consumer(client, exchange, routing_key):
     )
 
 
+# Will process only the message published
 def test_publish_and_consume(publisher, consumer):
     publisher.publish(encode(MESSAGE))
-    # Will only process one message
     consumer.start()
-    consumer.close()

@@ -18,7 +18,7 @@ class Marshaller:
         buffer = BytesIO()
         schemaless_writer(buffer, self.schema, record)
         buffer.seek(0)
-        return buffer
+        return buffer.read()
 
     def decode(self, record):
-        return self.message_class(**schemaless_reader(record, self.schema))
+        return self.message_class(**schemaless_reader(BytesIO(record), self.schema))

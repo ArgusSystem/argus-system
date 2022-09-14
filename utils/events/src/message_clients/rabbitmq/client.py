@@ -20,5 +20,5 @@ class Client:
         yield self._channel
 
     def close(self):
-        self.channel.close()
+        self._channel.close()
         self._connection.close()

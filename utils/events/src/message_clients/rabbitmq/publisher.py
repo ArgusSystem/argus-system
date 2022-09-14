@@ -6,8 +6,5 @@ class Publisher:
         self.routing_key = routing_key
 
     def publish(self, message):
-        with self.client.channel as channel:
+        with self.client.channel() as channel:
             channel.basic_publish(self.exchange, self.routing_key, message)
-
-    def close(self):
-        self.client.close()
