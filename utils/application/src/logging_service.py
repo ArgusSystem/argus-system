@@ -25,9 +25,6 @@ class LoggingService:
                 create_distributed_logging_service(self.log_queue, application_name, configuration[DISTRIBUTED_KEY])
 
     def _initialize_logging(self):
-        # logging.getLogger('pika').setLevel(logging.WARNING)
-        # logging.getLogger('kazoo.client').setLevel(logging.INFO)
-
         self.log_queue = Queue()
         queue_handler = QueueHandler(self.log_queue)
 

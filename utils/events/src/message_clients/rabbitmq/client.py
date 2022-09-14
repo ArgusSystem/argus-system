@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
 
 

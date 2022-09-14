@@ -12,6 +12,8 @@ class SignalHandler:
     def subscribe(self, callback):
         self.callbacks.append(callback)
 
-    def __stop_signal_received(self, signum, frame):
+    def __stop_signal_received(self, _signum, _frame):
+        print('Stop signal received!')
+
         for callback in self.callbacks:
             callback()
