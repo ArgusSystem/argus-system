@@ -1,6 +1,10 @@
+from .message_type import MessageType
+
+
 class VideoChunkMessage:
 
     def __init__(self, camera_id, timestamp):
+        self.mtype = MessageType.VIDEO_CHUNK
         self.camera_id = camera_id
         self.timestamp = timestamp
 

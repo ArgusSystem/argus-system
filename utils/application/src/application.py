@@ -1,12 +1,11 @@
 from contextlib import contextmanager
 from threading import Event
+
 from setproctitle import setproctitle
 
-from .application_arguments import parse_arguments
+from .arguments import parse_arguments
 from .configuration import load_configuration
-from .environment import load_environment
 from .logging_service import LoggingService
-from .runtime_context import RuntimeContext
 from .signal_handler import SignalHandler
 
 
@@ -15,9 +14,8 @@ def run(name):
     # Parse arguments of the application
     arguments = parse_arguments(name)
 
-    # Load environment and configuration
-    environment = load_environment(arguments)
-    configuration = load_configuration(environment)
+    # Load configuration
+    configuration = load_configuration(arguments.config_file)
 
     # Set application name
     setproctitle(name)
@@ -29,7 +27,7 @@ def run(name):
     logging_service = LoggingService(name, configuration['logging'])
     logging_service.start()
 
-    application = Application(name, environment, configuration)
+    application = Application(name, configuration)
     signal_handler.subscribe(application.stop)
 
     yield application
@@ -40,9 +38,9 @@ def run(name):
 
 class Application:
 
-    def __init__(self, name, environment, configuration):
+    def __init__(self, name, configuration):
         self.name = name
-        self.runtime_context = RuntimeContext(environment, configuration)
+        self.configuration = configuration
         self._stop_event = Event()
 
     def is_stopped(self):
