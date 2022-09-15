@@ -1,18 +1,30 @@
+from .client import Client
+from threading import Event
+
+
 class Consumer:
+
+    CONSUME_TIMEOUT_S = 1
 
     def __init__(self, client, queue, on_message_callback):
         self.client = client
         self.queue = queue
-        self.on_message_callback = on_message_callback
+        self._on_message_callback = on_message_callback
+        self._stop_signal = Event()
+
+    @classmethod
+    def new(cls, host, username, password, queue, on_message_callback):
+        return cls(Client(host, username, password), queue, on_message_callback)
 
     def start(self):
         with self.client.channel() as channel:
-            channel.basic_consume(queue=self.queue, on_message_callback=self._process_message)
-            channel.start_consuming()
+            for method, _props, body in channel.consume(self.queue, inactivity_timeout=self.CONSUME_TIMEOUT_S):
+                if method is not None:
+                    self._on_message_callback(body)
+                    channel.basic_ack(delivery_tag=method.delivery_tag)
 
-    def _process_message(self, channel, method, _props, body):
-        next_message = self.on_message_callback(body)
-        channel.basic_ack(delivery_tag=method.delivery_tag)
+                if self._stop_signal.is_set():
+                    channel.cancel()
 
-        if not next_message:
-            channel.stop_consuming()
+    def stop(self):
+        self._stop_signal.set()

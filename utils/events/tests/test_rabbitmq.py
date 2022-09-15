@@ -7,8 +7,12 @@ from ..src.message_clients.rabbitmq.publisher import Publisher
 from ..src.message_clients.rabbitmq.management import *
 
 from pytest import fixture
+from threading import Thread, Event
 
-MESSAGE = VideoChunkMessage('camera', 0)
+
+@fixture
+def video_chunk_message():
+    return VideoChunkMessage('camera', 0)
 
 
 @fixture
@@ -67,21 +71,38 @@ def publisher(client, exchange, routing_key):
     )
 
 
-def consume(record):
-    assert MESSAGE == decode(MessageType.VIDEO_CHUNK, record)
-    return False
+@fixture
+def stop_event():
+    return Event()
+
+
+def consume(record, expected_record, stop_event):
+    assert expected_record == decode(MessageType.VIDEO_CHUNK, record)
+    stop_event.set()
+
+
+def stop_task(consumer, stop_event):
+    stop_event.wait()
+    consumer.stop()
 
 
 @fixture
-def consumer(client, queue):
-    return Consumer(
+def consumer(client, queue, video_chunk_message, stop_event):
+    consumer = Consumer(
         client=client,
         queue=queue,
-        on_message_callback=consume
+        on_message_callback=lambda message: consume(message, video_chunk_message, stop_event)
     )
+
+    stopping_thread = Thread(target=lambda: stop_task(consumer, stop_event))
+    stopping_thread.start()
+
+    yield consumer
+
+    stopping_thread.join()
 
 
 # Will process only the message published
-def test_publish_and_consume(publisher, consumer):
-    publisher.publish(encode(MESSAGE))
+def test_publish_and_consume(publisher, consumer, video_chunk_message):
+    publisher.publish(encode(video_chunk_message))
     consumer.start()
