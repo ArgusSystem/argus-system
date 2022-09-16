@@ -9,7 +9,7 @@ video_recorder:
     resolution: 1024x768
     recording_time: 5
     framerate: 30
-video_storage:
+storage:
   host: localhost
   port: 9500
   access_key: argus

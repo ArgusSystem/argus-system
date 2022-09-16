@@ -54,7 +54,7 @@ def test_file_storage(client, bucket_name, object_name, old_filepath, new_filepa
     client.store_file(bucket_name, object_name, old_filepath)
     client.fetch_file(bucket_name, object_name, new_filepath)
 
-    assert cmp(old_filepath, new_filepath)
+    assert cmp(old_filepath, new_filepath, shallow=False)
 
 
 def test_storage(client, bucket_name, object_name, binary_data):

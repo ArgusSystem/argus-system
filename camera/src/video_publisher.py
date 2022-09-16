@@ -1,8 +1,8 @@
 from .local_video import delete_video
-from ...utils.events.src.message_clients.rabbitmq import Publisher
-from ...utils.events.src.messages.marshalling import encode
-from ...utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from ...utils.video_storage.src.storage import get_video_chunks_storage
+from utils.events.src.message_clients.rabbitmq import Publisher
+from utils.events.src.messages.marshalling import encode
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.video_storage.src.storage import get_video_chunks_storage
 
 ID_KEY = 'id'
 PUBLISHER_KEY = 'publisher'

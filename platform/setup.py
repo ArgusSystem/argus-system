@@ -1,9 +1,11 @@
-from ..utils.events.src.message_clients.rabbitmq.client import Client
-from ..utils.events.src.message_clients.rabbitmq.management import setup_queue, setup_exchange, queue_bind
+from utils.events.src.message_clients.rabbitmq.client import Client as RabbitMQClient
+from utils.events.src.message_clients.rabbitmq.management import setup_queue, setup_exchange, queue_bind
+from utils.video_storage.src.client import Client as StorageClient
+from utils.video_storage.src.storage_type import StorageType
 
 # Create RabbitMQ exchanges, queues and binds
 
-rabbitmq_client = Client('localhost', 'argus', 'panoptes')
+rabbitmq_client = RabbitMQClient('localhost', 'argus', 'panoptes')
 
 queues_by_exchange = {
     'argus': ['video-chunks']
@@ -15,6 +17,14 @@ with rabbitmq_client.channel() as channel:
 
         for queue in queues:
             setup_queue(channel, queue)
-            queue_bind(channel, exchange, queue, '')
+            queue_bind(channel, queue, exchange, '')
 
-# TODO: Create bucket
+# Create Minio buckets
+
+storage_client = StorageClient('localhost', 9500, 'argus', 'panoptes')
+
+for storage_type in StorageType:
+    bucket = storage_type.value
+
+    if not storage_client.exists_bucket(bucket):
+        storage_client.make_bucket(bucket)

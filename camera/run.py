@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ..utils.application import run
+from utils.application import run
 from src.video_recorder import VideoRecorder
 from src.video_publisher import VideoPublisher
 from src.async_task import AsyncTask

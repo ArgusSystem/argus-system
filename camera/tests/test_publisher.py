@@ -7,10 +7,10 @@ from ..src.video_publisher import VideoPublisher
 from ..src.video_metadata import VideoMetadata
 from ..src.inter_threading_queue import InterThreadingQueue
 from ..src.async_task import AsyncTask
-from ...utils.events.src.message_clients.rabbitmq import Consumer
-from ...utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from ...utils.events.src.messages.marshalling import decode
-from ...utils.events.src.messages.message_type import MessageType
+from utils.events.src.message_clients.rabbitmq import Consumer
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.events.src.messages.marshalling import decode
+from utils.events.src.messages.message_type import MessageType
 
 
 @fixture
@@ -22,9 +22,9 @@ def configuration():
             'username': 'argus',
             'password': 'panoptes',
             'exchange': 'argus',
-            'routing_key': 'video-chunks'
+            'routing_key': ''
         },
-        'video_storage': {
+        'storage': {
             'host': 'localhost',
             'port': 9500,
             'access_key': 'argus',
@@ -39,11 +39,16 @@ def queue():
 
 
 @fixture
-def video_metadata(tmp_path):
+def video_bytes():
+    return b'video'
+
+
+@fixture
+def video_metadata(tmp_path, video_bytes):
     metadata = VideoMetadata(lambda timestamp, encoding: path.join(tmp_path, f'{timestamp}.{encoding}'))
 
     with open(metadata.filename, 'wb') as file:
-        file.write(b'video')
+        file.write(video_bytes)
 
     return metadata
 
@@ -64,7 +69,8 @@ def stop_event():
 
 
 def consume(record, expected_record, stop_event):
-    assert expected_record == decode(MessageType.VIDEO_CHUNK, record)
+    actual_record = decode(MessageType.VIDEO_CHUNK, record)
+    assert expected_record == actual_record
     stop_event.set()
 
 
@@ -74,12 +80,12 @@ def stop_task(consumer, stop_event):
 
 
 @fixture
-def consumer(configuration, queue, video_chunk_message, stop_event):
+def consumer(configuration, video_chunk_message, stop_event):
     consumer = Consumer.new(
         host=configuration['publisher']['host'],
         username=configuration['publisher']['username'],
         password=configuration['publisher']['password'],
-        queue=queue,
+        queue='video-chunks',
         on_message_callback=lambda message: consume(message, video_chunk_message, stop_event)
     )
 
@@ -102,14 +108,21 @@ def video_publisher_task(video_publisher, video_metadata):
     task.wait()
 
 
-def test_publish(video_publisher_task, video_publisher, queue, consumer, video_metadata, video_chunk_message, tmp_path):
+def test_publish(video_publisher_task, video_publisher, queue, consumer, video_chunk_message, tmp_path, video_metadata,
+                 video_bytes):
     queue.put(video_metadata)
 
     # Validate that consumer reads the message published
     consumer.start()
 
+    # Validate the file was stored contains the same information
     video_chunk_storage_id = str(video_chunk_message)
-    video_chunk_filepath = path.join(tmp_path, '')
-    video_publisher.storage.fetch(video_chunk_storage_id, video_chunk_filepath)
-    assert filecmp.cmp(video_chunk_filepath, video_metadata.filename)
+    video_chunk_filepath = path.join(tmp_path, 'stored_file.txt')
+    video_publisher.storage.fetch(str(video_chunk_message), video_chunk_filepath)
+
+    with open(video_chunk_filepath, 'rb') as file:
+        actual_bytes = file.read()
+
+    assert actual_bytes == video_bytes
+
     video_publisher.storage.remove(video_chunk_storage_id)
