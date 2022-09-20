@@ -20,7 +20,8 @@ Default parameters for development are stored in *config/development.yml*.
 ### Run
 
 ```bash
-./run.py
+export PYTHONPATH=$PYTHONPATH:$HOME/argus-system
+./run.py -c configuration_file.yml
 ```
 
 ### Development
@@ -34,6 +35,6 @@ The camera consists of two tasks that are running concurrently in separate threa
                      +--------------------------------+
 ```
 
-1) First task records a short video into a local file.
-2) Second task uploads the video chunk into a file storage (e.g. S3/Minio).
-3) Third task publish an event to start the video processing pipeline.
+1) The first thread records a short video into a local file.
+2) Second thread uploads the video chunk into a file storage (e.g. S3/Minio) and publish an event to start 
+the video processing pipeline.
