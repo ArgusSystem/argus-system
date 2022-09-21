@@ -9,6 +9,7 @@ Although it isn't necessary, it is recommended to run the application in a virtu
 To install all the dependencies, execute the following script: 
 
 ```bash
+export PYTHONPATH=$PYTHONPATH:/home/argus/argus-system
 python3 -m pip install -r requirements.txt
 ```
 
