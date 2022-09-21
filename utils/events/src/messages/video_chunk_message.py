@@ -14,6 +14,9 @@ class VideoChunkMessage:
             'timestamp': self.timestamp
         }
 
+    def __str__(self):
+        return f'{self.camera_id}-{self.timestamp}'
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.camera_id == other.camera_id and self.timestamp == other.timestamp

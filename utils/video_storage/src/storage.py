@@ -8,11 +8,14 @@ class Storage:
         self.client = Client(**client_configuration)
         self.bucket = bucket
 
-    def store_file(self, name, filepath):
+    def store(self, name, filepath):
         self.client.store_file(self.bucket, name, filepath)
 
-    def retrieve_file(self, name, filepath):
+    def fetch(self, name, filepath):
         self.client.fetch_file(self.bucket, name, filepath)
+
+    def remove(self, name):
+        self.client.remove(self.bucket, name)
 
 
 def get_video_chunks_storage(client_configuration):

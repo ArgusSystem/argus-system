@@ -1,0 +1,16 @@
+id: 'camera-1'
+publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: video_chunks
+video_recorder:
+    resolution: 1024x768
+    recording_time: 5
+    framerate: 30
+storage:
+  host: localhost
+  port: 9500
+  access_key: argus
+  secret_key: panoptes
