@@ -1,0 +1,15 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "video_frame",
+  "fields": [
+    {
+      "name": "video_chunk",
+      "type": "string"
+    },
+    {
+      "name": "offset",
+      "type": "int"
+    }
+  ]
+}

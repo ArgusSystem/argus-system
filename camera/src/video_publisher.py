@@ -2,7 +2,7 @@ from .local_video import delete_video
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from utils.video_storage.src.storage import get_video_chunks_storage
+from utils.video_storage import StorageFactory, StorageType
 
 ID_KEY = 'id'
 PUBLISHER_KEY = 'publisher'
@@ -15,7 +15,7 @@ class VideoPublisher:
         self.input_queue = input_queue
         self.camera_id = configuration[ID_KEY]
         self.publisher = Publisher.new(**configuration[PUBLISHER_KEY])
-        self.storage = get_video_chunks_storage(configuration[STORAGE_KEY])
+        self.storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_CHUNKS)
 
     def publish(self, is_running):
         while is_running():
@@ -25,7 +25,8 @@ class VideoPublisher:
         message = VideoChunkMessage(self.camera_id, video_metadata.timestamp)
 
         # Store video chunk in the cloud
-        self.storage.store(str(message), video_metadata.filename)
+        self.storage.store(name=str(message),
+                           filepath=video_metadata.filename)
 
         # Send event of new video chunk
         self.publisher.publish(encode(message))

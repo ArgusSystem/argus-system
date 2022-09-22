@@ -41,13 +41,13 @@ class Application:
     def __init__(self, name, configuration):
         self.name = name
         self.configuration = configuration
-        self._stop_event = Event()
+        self.stop_event = Event()
 
     def is_stopped(self):
-        return self._stop_event.is_set()
+        return self.stop_event.is_set()
 
     def stop(self):
-        self._stop_event.set()
+        self.stop_event.set()
 
     def wait(self):
-        self._stop_event.wait()
+        self.stop_event.wait()
