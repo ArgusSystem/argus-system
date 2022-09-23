@@ -8,7 +8,7 @@ from utils.video_storage.src.storage_type import StorageType
 rabbitmq_client = RabbitMQClient('localhost', 'argus', 'panoptes')
 
 queues_by_exchange = {
-    'argus': ['video-chunks']
+    'argus': ['video-chunks', 'frames', 'faces']
 }
 
 with rabbitmq_client.channel() as channel:
@@ -17,7 +17,7 @@ with rabbitmq_client.channel() as channel:
 
         for queue in queues:
             setup_queue(channel, queue)
-            queue_bind(channel, queue, exchange, '')
+            queue_bind(channel, queue, exchange, queue)
 
 # Create Minio buckets
 

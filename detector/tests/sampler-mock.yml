@@ -1,0 +1,11 @@
+publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: frames
+db:
+  host: localhost
+  database: big_fiubrother
+  username: postgres
+  password: password

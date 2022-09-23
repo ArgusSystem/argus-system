@@ -1,0 +1,22 @@
+consumer:
+  host: localhost
+  username: argus
+  password: panoptes
+  queue: frames
+
+face_detector:
+  configuration:
+    type: tensorflow_mtcnn
+
+debug: False
+
+publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: faces
+
+logging:
+  host: localhost
+  port: 12201
