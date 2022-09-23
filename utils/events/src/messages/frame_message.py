@@ -1,10 +1,6 @@
-from .message_type import MessageType
-
-
 class FrameMessage:
 
     def __init__(self, video_chunk, offset):
-        self.mtype = MessageType.VIDEO_FRAME
         self.video_chunk = video_chunk
         self.offset = offset
 

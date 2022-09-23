@@ -1,5 +1,4 @@
 from ..src.messages.marshalling import encode, decode
-from ..src.messages.message_type import MessageType
 from ..src.messages.video_chunk_message import VideoChunkMessage
 from ..src.message_clients.rabbitmq.client import Client
 from ..src.message_clients.rabbitmq.consumer import Consumer

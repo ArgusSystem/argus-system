@@ -1,5 +1,4 @@
 from ..src.messages.marshalling import encode, decode
-from ..src.messages.message_type import MessageType
 from ..src.messages.video_chunk_message import VideoChunkMessage
 
 from pytest import fixture
@@ -12,4 +11,4 @@ def message():
 
 def test_video_chunk(message):
     record = encode(message)
-    assert message == decode(MessageType.VIDEO_CHUNK, record)
+    assert message == decode(VideoChunkMessage, record)

@@ -1,0 +1,19 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "face",
+  "fields": [
+    {
+      "name": "video_chunk_id",
+      "type": "string"
+    },
+    {
+      "name": "face_id",
+      "type": "string"
+    },
+    {
+      "name": "cropped_face_bytestring",
+      "type": "bytes"
+    }
+  ]
+}

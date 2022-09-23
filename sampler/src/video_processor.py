@@ -1,5 +1,5 @@
 from utils.events.src.message_clients.rabbitmq.publisher import Publisher
-from utils.events.src.messages.message_type import MessageType
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.frame_message import FrameMessage
 from utils.video_storage import StorageFactory
@@ -20,7 +20,7 @@ class VideoProcessor:
         self.sampling_rate = sampling_rate
 
     def process(self, message):
-        video_chunk_message = decode(message, MessageType.VIDEO_CHUNK)
+        video_chunk_message = decode(VideoChunkMessage, message)
         video_chunk_id = str(video_chunk_message)
         video_filepath = self.video_chunks_storage.fetch(video_chunk_id, video_chunk_message.encoding)
 

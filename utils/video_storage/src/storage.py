@@ -14,8 +14,11 @@ class Storage:
         if filepath is not None:
             self.client.store_file(self.bucket, name, filepath)
 
-    def fetch(self, name, filepath):
-        self.client.fetch_file(self.bucket, name, filepath)
+    def fetch(self, name, filepath=None):
+        if filepath is not None:
+            self.client.fetch_file(self.bucket, name, filepath)
+        else:
+            return self.client.fetch(self.bucket, name)
 
     def remove(self, name):
         self.client.remove(self.bucket, name)

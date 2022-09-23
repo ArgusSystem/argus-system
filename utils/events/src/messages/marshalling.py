@@ -1,21 +1,24 @@
-from .message_type import MessageType
-from .video_chunk_message import VideoChunkMessage
-from .marshaller import Marshaller
+from fastavro import parse_schema, schemaless_reader, schemaless_writer
+from io import BytesIO
+import os.path as path
+import json
 
-schemas = {
-    MessageType.VIDEO_CHUNK: Marshaller(MessageType.VIDEO_CHUNK, VideoChunkMessage)
-}
+RESOURCES_DIR = path.join(path.dirname(__file__), '..', '..', 'resources')
 
 
 def encode(message):
-    if message.mtype in schemas:
-        return schemas[message.mtype].encode(message.to_json())
+    schema = _get_message_schema(type(message))
+    buffer = BytesIO()
+    schemaless_writer(buffer, schema, message.to_json())
+    buffer.seek(0)
+    return buffer.read()
 
-    raise f'No encoder found for {message.mtype}'
+
+def decode(message_class, record):
+    schema = _get_message_schema(message_class)
+    return message_class(**schemaless_reader(BytesIO(record), schema))
 
 
-def decode(message_type, record):
-    if message_type in schemas:
-        return schemas[message_type].decode(record)
-
-    raise f'No decoder found for {message_type}'
+def _get_message_schema(message_class):
+    with open(path.join(RESOURCES_DIR, message_class.__name__ + '.json'), 'r') as file:
+        return parse_schema(json.load(file))
