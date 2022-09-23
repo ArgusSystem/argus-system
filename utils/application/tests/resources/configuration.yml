@@ -1,1 +1,2 @@
-test:
+logging:
+  level: DEBUG

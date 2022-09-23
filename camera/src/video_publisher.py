@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger
 
 from .local_video import delete_video
 from utils.events.src.message_clients.rabbitmq import Publisher
@@ -18,6 +18,7 @@ class VideoPublisher:
         self.camera_id = configuration[ID_KEY]
         self.publisher = Publisher.new(**configuration[PUBLISHER_KEY])
         self.storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_CHUNKS)
+        self.logger = getLogger(__name__)
 
     def publish(self, is_running):
         while is_running():
@@ -35,11 +36,11 @@ class VideoPublisher:
         self.storage.store(name=str(message),
                            filepath=video_metadata.filename)
 
-        logging.debug(f'New video stored: {video_metadata.filename}')
+        self.logger.debug('New video stored: %s', video_metadata.filename)
 
         # Send event of new video chunk
         self.publisher.publish(encode(message))
-        logging.debug(f'New video event: {video_metadata.timestamp}')
+        self.logger.debug(f'New video event: %d', video_metadata.timestamp)
 
         # Delete local video chunk
         delete_video(video_metadata.filename)

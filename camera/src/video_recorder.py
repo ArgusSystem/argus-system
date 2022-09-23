@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger
 
 from picamera import PiCamera
 from .local_video import create_local_storage
@@ -15,6 +15,8 @@ class VideoRecorder:
         self.resolution = resolution
         self.recording_time = recording_time
         self.output_queue = output_queue
+
+        self.logger = getLogger(__name__)
         create_local_storage()
 
     def record(self, is_running):
@@ -28,7 +30,7 @@ class VideoRecorder:
             self.camera.split_recording(new_video_metadata.filename, format=ENCODING, quality=QUALITY)
 
             self.output_queue.put(video_metadata)
-            logging.debug(f'New video recorded: {video_metadata.filename}')
+            self.logger.debug('New video recorded: %s', {video_metadata.filename})
             video_metadata = new_video_metadata
 
         self.camera.stop_recording()

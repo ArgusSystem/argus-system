@@ -5,6 +5,8 @@ import json
 
 RESOURCES_DIR = path.join(path.dirname(__file__), '..', '..', 'resources')
 
+schema_cache = {}
+
 
 def encode(message):
     schema = _get_message_schema(type(message))
@@ -20,5 +22,8 @@ def decode(message_class, record):
 
 
 def _get_message_schema(message_class):
-    with open(path.join(RESOURCES_DIR, message_class.__name__ + '.json'), 'r') as file:
-        return parse_schema(json.load(file))
+    if message_class not in schema_cache:
+        with open(path.join(RESOURCES_DIR, message_class.__name__ + '.json'), 'r') as file:
+            schema_cache[message_class] = parse_schema(json.load(file))
+
+    return schema_cache[message_class]

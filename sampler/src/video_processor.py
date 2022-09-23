@@ -43,6 +43,8 @@ class VideoProcessor:
 
         # Upload video with new encoding
         self.video_chunks_storage.store(video_chunk_id, video_writer.filename)
+        # TODO: publish for webserver
+        self.publisher.publish()
 
         # Delete local videos
         os.remove(video_filepath)
