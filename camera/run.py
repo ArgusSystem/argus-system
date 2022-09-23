@@ -39,5 +39,3 @@ if __name__ == "__main__":
         publishing_task.wait()
 
     print(f'[*] {application.name} stopped successfully!')
-
-

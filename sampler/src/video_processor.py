@@ -9,19 +9,15 @@ from .frame_storage import FrameStorage
 from .video_writer import VideoWriter
 import os
 
-PUBLISHER_KEY = 'publisher'
-SAMPLING_KEY = 'sampling_rate'
-STORAGE_KEY = 'storage'
-
 
 class VideoProcessor:
 
-    def __init__(self, configuration):
-        storage_factory = StorageFactory(**configuration[STORAGE_KEY])
+    def __init__(self, sampling_rate,storage_configuration, publisher_configuration):
+        storage_factory = StorageFactory(**storage_configuration)
         self.video_chunks_storage = VideoStorage(storage_factory)
         self.frames_storage = FrameStorage(storage_factory)
-        self.publisher = Publisher.new(**configuration[PUBLISHER_KEY])
-        self.sampling_rate = configuration[SAMPLING_KEY]
+        self.publisher = Publisher.new(**publisher_configuration)
+        self.sampling_rate = sampling_rate
 
     def process(self, message):
         video_chunk_message = decode(message, MessageType.VIDEO_CHUNK)
