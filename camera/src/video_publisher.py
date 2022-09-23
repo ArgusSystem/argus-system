@@ -1,3 +1,5 @@
+import logging
+
 from .local_video import delete_video
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
@@ -33,8 +35,11 @@ class VideoPublisher:
         self.storage.store(name=str(message),
                            filepath=video_metadata.filename)
 
+        logging.debug(f'New video stored: {video_metadata.filename}')
+
         # Send event of new video chunk
         self.publisher.publish(encode(message))
+        logging.debug(f'New video event: {video_metadata.timestamp}')
 
         # Delete local video chunk
         delete_video(video_metadata.filename)
