@@ -10,7 +10,6 @@ from ..src.async_task import AsyncTask
 from utils.events.src.message_clients.rabbitmq import Consumer
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode
-from utils.events.src.messages.message_type import MessageType
 
 
 @fixture
@@ -69,7 +68,7 @@ def stop_event():
 
 
 def consume(record, expected_record, stop_event):
-    actual_record = decode(MessageType.VIDEO_CHUNK, record)
+    actual_record = decode(VideoChunkMessage, record)
     assert expected_record == actual_record
     stop_event.set()
 

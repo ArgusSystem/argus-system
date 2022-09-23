@@ -1,0 +1,15 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "video_chunk",
+  "fields": [
+    {
+      "name": "camera_id",
+      "type": "string"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    }
+  ]
+}

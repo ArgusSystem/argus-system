@@ -38,8 +38,8 @@ publisher.publish(encoded_message)
 
 ```python
 from utils.events.src.message_clients.rabbitmq.consumer import Consumer
-from utils.events.src.messages.message_type import MessageType
 from utils.events.src.messages.marshalling import decode
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 
 # Configuration for consumer
 configuration = {
@@ -51,7 +51,7 @@ configuration = {
 
 # Print every messaged received
 def process_message(message):
-    print(decode(MessageType.VIDEO_CHUNK, message))
+    print(decode(VideoChunkMessage, message))
     return
 
 # Create a consumer with a callback to handle messages
