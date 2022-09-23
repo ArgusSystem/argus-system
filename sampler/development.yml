@@ -3,12 +3,18 @@ consumer:
   username: argus
   password: panoptes
   queue: video-chunks
-publisher:
+frame_publisher:
   host: localhost
   username: argus
   password: panoptes
   exchange: argus
   routing_key: frames
+video_chunk_publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: sampled-video-chunks
 storage:
   host: localhost
   port: 9500

@@ -1,35 +1,20 @@
 #!/usr/bin/python3
 
-from big_fiubrother_core.messages import VideoChunkMessage
-from big_fiubrother_core.message_clients.rabbitmq import Publisher
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.events.src.messages.marshalling import encode
+from utils.events.src.message_clients.rabbitmq import Publisher
 
+publisher = Publisher.new(host='localhost',
+                          username='argus',
+                          password='panoptes',
+                          exchange='argus',
+                          routing_key='video-chunks')
 
-class VideoChunkPublisher:
+message = VideoChunkMessage(camera_id='test',
+                            timestamp=0,
+                            encoding='h264',
+                            framerate=30,
+                            width=640,
+                            height=480)
 
-    def __init__(self, configuration):
-        self.publisher = Publisher(configuration)
-
-    def publish(self, video_chunk_path):
-        with open(video_chunk_path, 'rb') as file:
-            buffer = file.read()
-
-        message = VideoChunkMessage(camera_id='TEST_CAMERA',
-                                    timestamp=0.0,
-                                    payload=buffer)
-
-        self.publisher.publish(message)
-
-        return message
-
-configuration = {
-  # 'host': '192.168.1.28',
-  'host': 'localhost',
-  'username': 'fiubrother',
-  'password': 'alwayswatching',
-  'exchange': 'fiubrother',
-  'routing_key': 'video_chunks'
-}
-
-publisher = VideoChunkPublisher(configuration)
-
-publisher.publish('../tmp/CAMERA_1_05-10-2019||22:32:47.794347.h264')
+publisher.publish(encode(message))

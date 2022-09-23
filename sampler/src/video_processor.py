@@ -12,15 +12,18 @@ import os
 
 class VideoProcessor:
 
-    def __init__(self, sampling_rate,storage_configuration, publisher_configuration):
+    def __init__(self, sampling_rate, storage_configuration,
+                 frame_publisher_configuration,
+                 video_chunk_publisher_configuration):
         storage_factory = StorageFactory(**storage_configuration)
         self.video_chunks_storage = VideoStorage(storage_factory)
         self.frames_storage = FrameStorage(storage_factory)
-        self.publisher = Publisher.new(**publisher_configuration)
+        self.frame_publisher = Publisher.new(**frame_publisher_configuration)
+        self.video_chunk_publisher = Publisher.new(**video_chunk_publisher_configuration)
         self.sampling_rate = sampling_rate
 
     def process(self, message):
-        video_chunk_message = decode(VideoChunkMessage, message)
+        video_chunk_message: VideoChunkMessage = decode(VideoChunkMessage, message)
         video_chunk_id = str(video_chunk_message)
         video_filepath = self.video_chunks_storage.fetch(video_chunk_id, video_chunk_message.encoding)
 
@@ -43,8 +46,9 @@ class VideoProcessor:
 
         # Upload video with new encoding
         self.video_chunks_storage.store(video_chunk_id, video_writer.filename)
-        # TODO: publish for webserver
-        self.publisher.publish()
+
+        video_chunk_message.sampling_rate = self.sampling_rate
+        self.publisher.publish(video_chunk_message)
 
         # Delete local videos
         os.remove(video_filepath)

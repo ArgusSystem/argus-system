@@ -6,7 +6,7 @@ publisher:
   exchange: argus
   routing_key: video_chunks
 video_recorder:
-    resolution: 1024x768
+    resolution: 1920x1080
     recording_time: 5
     framerate: 30
 storage:

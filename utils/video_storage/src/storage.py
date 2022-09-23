@@ -5,8 +5,8 @@ class Storage:
         self.bucket = bucket
 
     def store(self, name, data=None, filepath=None):
-        if (data is None) ^ (filepath is None):
-            raise 'Must specify only the data or filepath parameter!'
+        if (data or filepath) != (filepath or data):
+            raise AttributeError('Must specify only the data or filepath parameter!')
 
         if data is not None:
             self.client.store(self.bucket, name, data, len(data))

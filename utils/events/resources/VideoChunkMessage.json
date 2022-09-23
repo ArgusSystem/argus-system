@@ -26,6 +26,10 @@
     {
       "name": "height",
       "type": "int"
+    },
+    {
+      "name": "sampling_rate",
+      "type": "int"
     }
   ]
 }

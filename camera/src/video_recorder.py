@@ -12,7 +12,7 @@ class VideoRecorder:
     def __init__(self, resolution, framerate, recording_time, output_queue):
         self.camera = PiCamera(resolution=resolution, framerate=framerate)
         self.framerate = framerate
-        self.resolution = resolution
+        self.resolution = tuple([int(x) for x in resolution.split('x')])
         self.recording_time = recording_time
         self.output_queue = output_queue
 
