@@ -8,8 +8,8 @@ def create_local_storage():
         os.mkdir(TMP)
 
 
-def get_filepath(timestamp, video_format):
-    return os.path.join(TMP, f'{timestamp}.{video_format}')
+def get_filepath(timestamp, encoding):
+    return os.path.join(TMP, f'{timestamp}.{encoding}')
 
 
 def delete_video(filepath):

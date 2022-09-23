@@ -22,7 +22,12 @@ class VideoPublisher:
             self.input_queue.compute(self._publish)
 
     def _publish(self, video_metadata):
-        message = VideoChunkMessage(self.camera_id, video_metadata.timestamp)
+        message = VideoChunkMessage(camera_id=self.camera_id,
+                                    timestamp=video_metadata.timestamp,
+                                    encoding=video_metadata.encoding,
+                                    framerate=video_metadata.framerate,
+                                    width=video_metadata.resolution[0],
+                                    height=video_metadata.resolution[1])
 
         # Store video chunk in the cloud
         self.storage.store(name=str(message),

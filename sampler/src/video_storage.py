@@ -15,7 +15,10 @@ class VideoStorage:
         _create_local_storage()
         self._remote_storage = storage_factory.new(StorageType.VIDEO_CHUNKS)
 
-    def fetch_video(self, key):
-        filepath = os.path.join(TMP, key)
-        self._remote_storage.fetch(key, filepath)
+    def fetch(self, name, encoding):
+        filepath = os.path.join(TMP, f'{name}.{encoding}')
+        self._remote_storage.fetch(name=name, filepath=filepath)
         return filepath
+
+    def store(self, name, filepath):
+        self._remote_storage.store(name=name, filepath=filepath)

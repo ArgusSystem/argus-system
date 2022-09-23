@@ -9,17 +9,9 @@ publisher:
   password: panoptes
   exchange: argus
   routing_key: frames
-db:
-  host: localhost
-  database: argus
-  username: argus
-  password: panoptes
-synchronization:
-  host: localhost
-  port: 2181
 storage:
   host: localhost
   port: 9500
   access_key: argus
   secret_key: panoptes
-sampling_rate: 4
+sampling_rate: 6
