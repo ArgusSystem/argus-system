@@ -21,7 +21,7 @@ def configuration():
             'username': 'argus',
             'password': 'panoptes',
             'exchange': 'argus',
-            'routing_key': ''
+            'routing_key': 'new_video_chunks'
         },
         'storage': {
             'host': 'localhost',
@@ -54,7 +54,7 @@ def video_metadata(tmp_path, video_bytes):
 
 @fixture
 def video_chunk_message(configuration, video_metadata):
-    return VideoChunkMessage(configuration['id'], video_metadata.timestamp)
+    return VideoChunkMessage(configuration['id'], video_metadata.timestamp, 'h264', 30, 640, 480)
 
 
 @fixture
@@ -80,20 +80,14 @@ def stop_task(consumer, stop_event):
 
 @fixture
 def consumer(configuration, video_chunk_message, stop_event):
-    consumer = Consumer.new(
+    return Consumer.new(
         host=configuration['publisher']['host'],
         username=configuration['publisher']['username'],
         password=configuration['publisher']['password'],
         queue='video-chunks',
-        on_message_callback=lambda message: consume(message, video_chunk_message, stop_event)
+        on_message_callback=lambda message: consume(message, video_chunk_message, stop_event),
+        stop_event=stop_event
     )
-
-    stopping_thread = Thread(target=lambda: stop_task(consumer, stop_event))
-    stopping_thread.start()
-
-    yield consumer
-
-    stopping_thread.join()
 
 
 @fixture

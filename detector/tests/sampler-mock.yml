@@ -4,8 +4,8 @@ publisher:
   password: panoptes
   exchange: argus
   routing_key: frames
-db:
+storage:
   host: localhost
-  database: big_fiubrother
-  username: postgres
-  password: password
+  port: 9500
+  access_key: argus
+  secret_key: panoptes

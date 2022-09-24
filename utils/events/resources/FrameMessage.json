@@ -1,19 +1,15 @@
 {
   "namespace": "argus",
   "type": "record",
-  "name": "frame",
+  "name": "video_frame",
   "fields": [
     {
-      "name": "video_chunk_id",
+      "name": "video_chunk",
       "type": "string"
     },
     {
-      "name": "frame_id",
-      "type": "string"
-    },
-    {
-      "name": "payload_bytestring",
-      "type": "bytes"
+      "name": "offset",
+      "type": "int"
     }
   ]
 }

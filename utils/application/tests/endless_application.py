@@ -1,6 +1,8 @@
-from ..src.application import run
+import logging
+
+from utils.application import run
 
 
 with run('endless_application') as application:
-    print('Waiting for shutdown signal!')
+    logging.debug('Waiting for shutdown signal!')
     application.wait()

@@ -6,7 +6,7 @@ from pytest import fixture
 
 @fixture
 def message():
-    return VideoChunkMessage('camera', 0)
+    return VideoChunkMessage('camera', 0, 'h264', 60, 640, 480)
 
 
 def test_video_chunk(message):

@@ -1,42 +1,52 @@
+import sys
 import graypy
 import logging
+from logging import StreamHandler
 from logging.handlers import QueueListener, QueueHandler
 from queue import Queue
 
-DISTRIBUTED_KEY = 'distributed'
+REMOTE_KEY = 'remote'
+LEVEL_KEY = 'level'
+
+LOGGING_LEVEL = logging.INFO
+LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 
-def create_distributed_logging_service(log_queue, application_name, configuration):
+def remote_logging(application_name, configuration):
+    log_queue = Queue()
+
     graylog_handler = graypy.GELFUDPHandler(
         host=configuration['host'],
         port=configuration['port'],
         facility=application_name)
 
-    return QueueListener(log_queue, graylog_handler)
+    return QueueHandler(log_queue), QueueListener(log_queue, graylog_handler)
+
+
+def _level(configuration):
+    return configuration[LEVEL_KEY] if LEVEL_KEY in configuration else LOGGING_LEVEL
 
 
 class LoggingService:
 
     def __init__(self, application_name, configuration):
-        self._initialize_logging()
+        self.services = []
 
-        if DISTRIBUTED_KEY in configuration:
-            self.distributed_logging_service = \
-                create_distributed_logging_service(self.log_queue, application_name, configuration[DISTRIBUTED_KEY])
+        handlers = [StreamHandler(sys.stdout)]
 
-    def _initialize_logging(self):
-        self.log_queue = Queue()
-        queue_handler = QueueHandler(self.log_queue)
+        if REMOTE_KEY in configuration:
+            handler, service = remote_logging(application_name, configuration[REMOTE_KEY])
+            handlers.append(handler)
+            self.services.append(service)
 
-        logging.basicConfig(level=logging.INFO,
-                            handlers=[queue_handler])
-
-        self.distributed_logging_service = None
+        logging.basicConfig(level=_level(configuration),
+                            format=LOGGING_FORMAT,
+                            handlers=handlers)
 
     def start(self):
-        if self.distributed_logging_service:
-            self.distributed_logging_service.start()
+        for service in self.services:
+            service.start()
 
     def stop(self):
-        if self.distributed_logging_service:
-            self.distributed_logging_service.stop()
+        for service in self.services:
+            service.stop()

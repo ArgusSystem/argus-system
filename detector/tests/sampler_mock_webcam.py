@@ -2,6 +2,7 @@ import sys
 import yaml
 import cv2
 import os
+from utils.video_storage import StorageFactory, StorageType
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.frame_message import FrameMessage
 from utils.events.src.messages.marshalling import encode
@@ -29,8 +30,8 @@ if __name__ == "__main__":
             configuration = yaml.safe_load(config_file)
         # print(configuration)
 
-        # Create database connection
-        # db = Database(configuration['db'])
+        # Create Storage
+        storage = StorageFactory(**configuration['storage']).new(StorageType.VIDEO_FRAMES)
 
         # Create publiser
         publisher = Publisher.new(**configuration['publisher'])
@@ -62,9 +63,11 @@ if __name__ == "__main__":
                 #               video_chunk_id=video_chunk.id)
                 # db.add(frame)
 
-                frame_message = FrameMessage(video_chunk_id="video_chunk_" + str(id_count),
-                                             frame_id="frame_" + str(id_count),
-                                             payload_bytestring=image_to_bytestring(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)))
+                frame_message = FrameMessage(video_chunk="video_chunk_" + str(id_count),
+                                             offset="frame_" + str(id_count))
+
+                image_to_bytestring(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
                 id_count += 1
 
                 publisher.publish(encode(frame_message))

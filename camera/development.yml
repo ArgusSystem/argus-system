@@ -4,9 +4,9 @@ publisher:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: video_chunks
+  routing_key: new_video_chunks
 video_recorder:
-    resolution: 1024x768
+    resolution: 1920x1080
     recording_time: 5
     framerate: 30
 storage:
@@ -14,3 +14,5 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
+logging:
+  level: INFO

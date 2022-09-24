@@ -1,8 +1,10 @@
-from ..src.application import run
+import logging
 from time import sleep
+
+from utils.application import run
 
 
 with run('counting_application') as application:
     for i in range(10):
-        print(i)
+        logging.debug(i)
         sleep(1)

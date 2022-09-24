@@ -10,6 +10,26 @@
     {
       "name": "timestamp",
       "type": "long"
+    },
+    {
+      "name": "encoding",
+      "type": "string"
+    },
+    {
+      "name": "framerate",
+      "type": "int"
+    },
+    {
+      "name": "width",
+      "type": "int"
+    },
+    {
+      "name": "height",
+      "type": "int"
+    },
+    {
+      "name": "sampling_rate",
+      "type": "int"
     }
   ]
 }

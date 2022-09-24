@@ -3,15 +3,16 @@ from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.frame_message import FrameMessage
 from utils.events.src.messages.face_message import FaceMessage
 from utils.events.src.messages.marshalling import encode, decode
+from utils.video_storage import StorageFactory, StorageType
 from utils.image_processing.src.image_serialization import image_debug, draw_boxes, image_to_bytestring
 from .face_detector_factory import FaceDetectorFactory
 import cv2
-import numpy as np
 import logging
 
 PUBLISHER_KEY = 'publisher'
 DETECTOR_KEY = 'face_detector'
 DEBUG_KEY = 'debug'
+STORAGE_KEY = 'storage'
 
 
 class FaceDetectionTask:
@@ -19,19 +20,19 @@ class FaceDetectionTask:
         self.face_detector = FaceDetectorFactory.build(**configuration[DETECTOR_KEY])
         self.publisher_to_classifier = Publisher.new(**configuration[PUBLISHER_KEY])
         self.debug = configuration[DEBUG_KEY]
-        # self.db = Database(self.configuration['db'])
+        self.frame_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_FRAMES)
 
     def close(self):
         self.face_detector.close()
         # self.db.close()
 
     def execute_with(self, message):
-        face_detection_message: FrameMessage = decode(FrameMessage, message)
+        frame_message: FrameMessage = decode(FrameMessage, message)
 
         # Get message
-        video_chunk_id = face_detection_message.video_chunk_id
-        frame_id = face_detection_message.frame_id
-        frame = face_detection_message.payload
+        video_chunk_id = frame_message.video_chunk
+        frame_offset = frame_message.offset
+        frame = self.frame_storage.fetch(str(frame_message))
 
         # Convert to cv2 img
         #frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
@@ -42,8 +43,8 @@ class FaceDetectionTask:
             image_debug("frame", frame, 1, cv2.COLOR_RGB2BGR)
 
         # Detect faces
-        print("- Performing detection - frame_id: " + str(frame_id) + " - video chunk id: " + str(video_chunk_id))
-        logging.debug("- Performing detection - frame_id: " + str(frame_id) + " - video chunk id: " + str(video_chunk_id))
+        print("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
+        logging.debug("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
 
         rects = self.face_detector.detect_face_image(frame)
         if len(rects) > 0:
