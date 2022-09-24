@@ -4,7 +4,7 @@ publisher:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: video_chunks
+  routing_key: new_video_chunks
 video_recorder:
     resolution: 1920x1080
     recording_time: 5

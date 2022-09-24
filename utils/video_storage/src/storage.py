@@ -1,3 +1,6 @@
+from io import BytesIO
+
+
 class Storage:
 
     def __init__(self, client, bucket):
@@ -9,7 +12,7 @@ class Storage:
             raise AttributeError('Must specify only the data or filepath parameter!')
 
         if data is not None:
-            self.client.store(self.bucket, name, data, len(data))
+            self.client.store(self.bucket, name, BytesIO(data), len(data))
 
         if filepath is not None:
             self.client.store_file(self.bucket, name, filepath)

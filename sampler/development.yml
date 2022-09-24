@@ -2,7 +2,7 @@ consumer:
   host: localhost
   username: argus
   password: panoptes
-  queue: video-chunks
+  queue: new_video_chunks
 frame_publisher:
   host: localhost
   username: argus
@@ -14,10 +14,12 @@ video_chunk_publisher:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: sampled-video-chunks
+  routing_key: published_video_chunks
 storage:
   host: localhost
   port: 9500
   access_key: argus
   secret_key: panoptes
 sampling_rate: 6
+logging:
+  level: DEBUG

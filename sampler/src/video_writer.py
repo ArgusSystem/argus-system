@@ -1,4 +1,7 @@
+import os.path as path
+
 from vidgear.gears import WriteGear
+from .video_storage import TMP
 
 CONTAINER = 'mp4'
 
@@ -6,7 +9,7 @@ CONTAINER = 'mp4'
 class VideoWriter:
 
     def __init__(self, camera, timestamp, framerate, width, height):
-        self.filename = f'{camera}-{timestamp}.{CONTAINER}'
+        self.filename = path.join(TMP, f'{camera}-{timestamp}.{CONTAINER}')
 
         output_parameters = {
             "-vcodec": "libx264",

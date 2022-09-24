@@ -1,3 +1,6 @@
+import os
+from logging import getLogger
+
 from utils.events.src.message_clients.rabbitmq.publisher import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode, encode
@@ -7,7 +10,6 @@ from .video_storage import VideoStorage
 from .video_iterator import VideoIterator
 from .frame_storage import FrameStorage
 from .video_writer import VideoWriter
-import os
 
 
 class VideoProcessor:
@@ -21,10 +23,12 @@ class VideoProcessor:
         self.frame_publisher = Publisher.new(**frame_publisher_configuration)
         self.video_chunk_publisher = Publisher.new(**video_chunk_publisher_configuration)
         self.sampling_rate = sampling_rate
+        self.logger = getLogger(__name__)
 
     def process(self, message):
         video_chunk_message: VideoChunkMessage = decode(VideoChunkMessage, message)
         video_chunk_id = str(video_chunk_message)
+        self.logger.debug('Starting processing: %s', video_chunk_id)
         video_filepath = self.video_chunks_storage.fetch(video_chunk_id, video_chunk_message.encoding)
 
         # Rewrite video with new encoding
@@ -48,14 +52,16 @@ class VideoProcessor:
         self.video_chunks_storage.store(video_chunk_id, video_writer.filename)
 
         video_chunk_message.sampling_rate = self.sampling_rate
-        self.publisher.publish(video_chunk_message)
+        self.video_chunk_publisher.publish(encode(video_chunk_message))
 
         # Delete local videos
         os.remove(video_filepath)
         os.remove(video_writer.filename)
 
+        self.logger.debug('Finished processing: %s', video_chunk_id)
+
     def _sample_frame(self, frame, offset, video_chunk):
         frame_message = FrameMessage(video_chunk, offset)
 
         self.frames_storage.store(name=str(frame_message), frame=frame)
-        self.publisher.publish(encode(frame_message))
+        self.frame_publisher.publish(encode(frame_message))

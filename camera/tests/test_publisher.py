@@ -21,7 +21,7 @@ def configuration():
             'username': 'argus',
             'password': 'panoptes',
             'exchange': 'argus',
-            'routing_key': 'video-chunks'
+            'routing_key': 'new_video_chunks'
         },
         'storage': {
             'host': 'localhost',
