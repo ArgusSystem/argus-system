@@ -1,10 +1,12 @@
 storage:
-  endPoint: 'localhost'
-  port: 9500
-  accessKey: 'fiubrother'
-  secretKey: 'alwayswatching'
+  client:
+    endPoint: 'localhost'
+    port: 9500
+    accessKey: 'fiubrother'
+    secretKey: 'alwayswatching'
+  bucket: 'video-chunks'
 server:
   port: 8080
 consumer:
-  url: 'amqp://localhost'
-  queue: 'published_video_chunks'
+  url: 'amqp://argus:panoptes@localhost:5672'
+  video_queue: 'published_video_chunks'

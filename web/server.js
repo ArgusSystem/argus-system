@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const server = require('./app');
 const configuration = require('./app/configuration');
 

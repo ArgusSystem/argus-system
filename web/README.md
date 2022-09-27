@@ -13,6 +13,7 @@ yarn install
 To run the web server:
 
 ```
+export ARGUS_HOME=$HOME/argus-system
 yarn watch
 ```
 

@@ -1,5 +1,5 @@
 const logger = require('./logger');
-import { Server } from "socket.io";
+const { Server } = require("socket.io");
 
 class SocketServer {
   constructor (httpServer) {

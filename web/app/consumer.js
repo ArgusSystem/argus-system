@@ -6,14 +6,19 @@ const VideoChunk = require('./video_chunk')
 
 const consumerConfiguration = configuration['consumer'];
 
-function onChannel(err, channel, socketServer) {
+function processVideoChunk(channel, msg, socketServer) {
+    const metadata = schemas.VIDEO_CHUNK_MESSAGE.fromBuffer(msg.content);
+    logger.info(`New message from ${metadata.camera_id}`)
+    socketServer.sendVideoChunk(new VideoChunk(metadata));
+    channel.ack(msg);
+}
+
+function onChannel(err, channel, queue, callback, socketServer) {
     if (err) {
         logger.error(err);
     } else {
-        channel.consume(consumerConfiguration['video_queue'], function(msg) {
-            const metadata = schemas.VIDEO_CHUNK_MESSAGE.fromBuffer(msg.content);
-            socketServer.sendVideoChunk(new VideoChunk(metadata));
-            channel.ack(msg);
+        channel.consume(queue, function(msg) {
+            callback(channel, msg, socketServer);
         });
     }
 }
@@ -23,7 +28,7 @@ function onConnection(err, connection, socketServer) {
         logger.error(err);
     } else {
         connection.createChannel(function (err, channel) {
-            onChannel(err, channel, socketServer);
+            onChannel(err, channel, consumerConfiguration['video_queue'], processVideoChunk, socketServer);
         });
     }
 }
@@ -34,8 +39,9 @@ class Consumer {
     }
 
     start() {
+        const socketServer = this.socketServer;
         amqp.connect(`${consumerConfiguration['url']}`, function (err, connection) {
-            onConnection(err, connection, this.socketServer);
+            onConnection(err, connection, socketServer);
         });
     }
 }

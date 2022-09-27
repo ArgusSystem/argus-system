@@ -2,7 +2,7 @@ const logger = require('./logger');
 const configuration = require('./configuration');
 
 const Minio = require('minio');
-const minioClient = new Minio.Client(configuration['storage']['client']);
+const minioClient = new Minio.Client({...configuration['storage']['client'], useSSL: false});
 const bucket = configuration['storage']['bucket'];
 
 function fetchVideoChunk (objectName) {

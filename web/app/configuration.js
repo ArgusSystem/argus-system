@@ -1,13 +1,16 @@
-const args = require('args-parser')(process.argv)
-const fs = require('fs')
-const yaml = require('js-yaml')
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
+const argv = yargs(hideBin(process.argv)).argv;
 let configuration = {};
 
 try {
-  const filename = args['c'] ?? args['configuration_file'];
+  const filename = argv.c;
   const file = fs.readFileSync(filename, {encoding: 'utf8'});
   configuration = yaml.load(file);
+  configuration['schemas'] = argv.s;
 } catch (e) {
   console.log(e);
 }
