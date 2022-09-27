@@ -19,7 +19,7 @@ class FaceDetectionTask:
     def __init__(self, configuration):
         self.face_detector = FaceDetectorFactory.build(**configuration[DETECTOR_KEY])
         self.publisher_to_classifier = Publisher.new(**configuration[PUBLISHER_KEY])
-        self.debug = configuration[DEBUG_KEY]
+        self.info = configuration[DEBUG_KEY]
         self.frame_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_FRAMES)
 
     def close(self):
@@ -39,12 +39,12 @@ class FaceDetectionTask:
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Print frame
-        if self.debug:
+        if self.info:
             image_debug("frame", frame, 1, cv2.COLOR_RGB2BGR)
 
         # Detect faces
         print("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
-        logging.debug("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
+        logging.info("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
 
         rects = self.face_detector.detect_face_image(frame)
         if len(rects) > 0:
@@ -58,7 +58,7 @@ class FaceDetectionTask:
             #     self.db.add(face)
             #     faces.append(face)
 
-            if self.debug:
+            if self.info:
                 image_debug("detected faces", draw_boxes(frame, rects), 1, cv2.COLOR_RGB2BGR)
 
             # for rect, face in zip(rects, faces):
@@ -68,7 +68,7 @@ class FaceDetectionTask:
                 x1, y1, x2, y2 = rect
                 cropped_face = frame[y1:y2, x1:x2]
 
-                logging.debug("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
+                logging.info("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
                 print("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
 
                 # Queue face embedding job

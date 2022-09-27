@@ -1,0 +1,10 @@
+storage:
+  endPoint: 'localhost'
+  port: 9500
+  accessKey: 'fiubrother'
+  secretKey: 'alwayswatching'
+server:
+  port: 8080
+consumer:
+  url: 'amqp://localhost'
+  queue: 'published_video_chunks'
