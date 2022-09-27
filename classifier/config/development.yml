@@ -1,0 +1,30 @@
+consumer:
+  host: localhost
+  username: argus
+  password: panoptes
+  queue: faces
+
+face_embedder:
+  configuration:
+    type: 'tensorflow_facenet'
+
+face_classifier:
+  model: '/home/gabriel/Desktop/tp-prof/argus-system/classifier/model/svclassifier_edu_gabo.pkl'
+  threshold: 0.7
+
+publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: web
+
+logging:
+  host: localhost
+  port: 12201
+
+storage:
+  host: localhost
+  port: 9500
+  access_key: argus
+  secret_key: panoptes
