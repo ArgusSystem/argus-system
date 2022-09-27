@@ -3,10 +3,12 @@
 
 import cv2
 from mtcnn import MTCNN
+import tensorflow as tf
+
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
 class FaceDetectorTensorflowMTCNN:
-
     def __init__(self):
         self.detector = MTCNN()
 

@@ -20,3 +20,9 @@ publisher:
 logging:
   host: localhost
   port: 12201
+
+storage:
+  host: localhost
+  port: 9500
+  access_key: argus
+  secret_key: panoptes

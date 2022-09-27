@@ -11,7 +11,7 @@ if __name__ == "__main__":
         face_detection_task = FaceDetectionTask(application.configuration)
         consumer_from_sampler = Consumer.new(**application.configuration[CONSUMER_KEY],
                                              on_message_callback=face_detection_task.execute_with,
-                                             stop_signal=application.stop_event)
+                                             stop_event=application.stop_event)
 
         # keep consuming messages
         consumer_from_sampler.start()
