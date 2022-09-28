@@ -6,8 +6,8 @@ def delete_exchange(channel, name):
     channel.exchange_delete(name)
 
 
-def setup_queue(channel, name):
-    channel.queue_declare(name)
+def setup_queue(channel, name, durable=True):
+    channel.queue_declare(name, durable=durable)
 
 
 def delete_queue(channel, name):

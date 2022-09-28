@@ -10,7 +10,6 @@ try {
   const filename = argv.c;
   const file = fs.readFileSync(filename, {encoding: 'utf8'});
   configuration = yaml.load(file);
-  configuration['schemas'] = argv.s;
 } catch (e) {
   console.log(e);
 }
