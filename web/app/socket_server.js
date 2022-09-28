@@ -11,12 +11,8 @@ class SocketServer {
   }
 
   sendVideoChunk (videoChunk) {
-    const io = this.io;
-
-    videoChunk.payloadPromise.then(function (payload) {
-      io.of('/video').emit('chunk', { ...videoChunk.metadata, payload: payload });
-      logger.info(`Sent chunk ${videoChunk.id()} to clients!`);
-    });
+    this.io.of('/video').emit('chunk', videoChunk);
+    logger.info(`Sent chunk ${videoChunk.camera_id}-${videoChunk.timestamp} to clients!`);
   }
 }
 
