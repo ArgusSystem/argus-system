@@ -5,24 +5,26 @@ const Minio = require('minio');
 const minioClient = new Minio.Client({...configuration['storage']['client'], useSSL: false});
 const bucket = configuration['storage']['bucket'];
 
-function fetchVideoChunk (objectName) {
-  const chunks = [];
+async function fetchVideoChunk (objectName) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
 
-  minioClient.getObject(bucket, objectName, function (err, stream) {
-    stream.on('error', function (err) {
-      logger.error(err);
-    })
+    minioClient.getObject(bucket, objectName).then(function(dataStream) {
+      dataStream.on('error', function (err) {
+        logger.error(err);
+        reject(err);
+      });
 
-    stream.on('data', function (chunk) {
-      chunks.push(chunk);
-    })
+      dataStream.on('data', async function (chunk) {
+        chunks.push(chunk);
+      });
 
-    stream.on('end', function () {
-      logger.info(`${objectName} fetched!`);
-    })
-  })
-
-  return Buffer.concat(chunks);
+      dataStream.on('end', function () {
+        logger.info(`${objectName} fetched!`);
+        resolve(Buffer.concat(chunks));
+      });
+    }).catch(reject);
+  });
 }
 
 module.exports = fetchVideoChunk;

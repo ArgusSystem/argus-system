@@ -6,6 +6,7 @@
   "repository": "https://github.com/ArgusSystem/argus-system",
   "author": "Eduardo Neira <aneira@fi.uba.ar>",
   "scripts": {
+    "start-dev": "node server.js -c development.yml",
     "watch": "nodemon ./server.js"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "socket.io-client": "^4.5.2"
   }
 }

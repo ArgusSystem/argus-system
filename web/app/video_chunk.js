@@ -3,11 +3,11 @@ const fetchVideo = require('./fetch_video_chunk');
 class Chunk {
   constructor (metadata) {
     this.metadata = metadata;
-    this.payload = fetchVideo(this.id());
+    this.payloadPromise = fetchVideo(this.id());
   }
 
   id() {
-    return `${this.metadata['camera']}-${this.metadata['timestamp']}`;
+    return `${this.metadata['camera_id']}-${this.metadata['timestamp']}`;
   }
 }
 

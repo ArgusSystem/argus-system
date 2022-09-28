@@ -2,8 +2,8 @@ storage:
   client:
     endPoint: 'localhost'
     port: 9500
-    accessKey: 'fiubrother'
-    secretKey: 'alwayswatching'
+    accessKey: 'argus'
+    secretKey: 'panoptes'
   bucket: 'video-chunks'
 server:
   port: 8080

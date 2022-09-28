@@ -4,7 +4,7 @@ const avro = require('avsc');
 const configuration = require('./configuration')
 
 function readSchema(fileName) {
-  const data = fs.readFileSync(path.join(configuration.schemas, fileName), {encoding: 'utf8'});
+  const data = fs.readFileSync(path.join(configuration['schemas'], fileName), {encoding: 'utf8'});
   return avro.Type.forSchema(JSON.parse(data));
 }
 
