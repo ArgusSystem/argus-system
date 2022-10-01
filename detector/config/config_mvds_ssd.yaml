@@ -1,4 +1,0 @@
-face_detector:
-  type: 'movidius_ssd'
-  movidius_id: 0
-  longrange: 0

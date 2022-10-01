@@ -1,9 +1,13 @@
 import sys
 import cv2
 import time
-from face_detector_thread import FaceDetectorThread
 from detector import FaceDetectorFactory
 from utils.image_processing.src.image_serialization import draw_boxes
+from multiprocessing.pool import ThreadPool
+
+
+def detect_faces(detector, image):
+    return detector.detect_face_image(image)
 
 
 if __name__ == "__main__":
@@ -24,9 +28,6 @@ if __name__ == "__main__":
         face_detector_type = sys.argv[1]
         faceDetectorObject = FaceDetectorFactory.build_by_type(face_detector_type)
 
-        faceDetectorThread = FaceDetectorThread(faceDetectorObject)
-        faceDetectorThread.start()
-
         # Start webcam
         camera = cv2.VideoCapture(0)
         ret, image = camera.read()
@@ -36,24 +37,26 @@ if __name__ == "__main__":
         start_time = time.time()
         processed_frames = 0
 
+        pool = ThreadPool(processes=1)
+        async_result = None
         rects = []
+        first_frame = True
+
         while True:
 
             # Read frame from Webcam
             ret, image = camera.read()
 
-            # Detect faces
-            faceDetectorThread.set_image(image)
-
-            if faceDetectorThread.rects_ready():
-
-                # Get bounding boxes
-                rects = faceDetectorThread.get_rects()
-
-                # print("Found " + str(len(rects)) + " faces")
-
-                # FPS calc
+            if async_result is None:
+                async_result = pool.apply_async(detect_faces, (faceDetectorObject, image))
+            elif async_result.ready():
                 processed_frames += 1
+                if first_frame:
+                    start_time = time.time()
+                    processed_frames = 0
+                    first_frame = False
+                rects = async_result.get()
+                async_result = pool.apply_async(detect_faces, (faceDetectorObject, image))
 
             # Draw bounding boxes
             if len(rects) > 0:
@@ -67,8 +70,8 @@ if __name__ == "__main__":
             if ch == ord("q"):
                 break
 
-        faceDetectorThread.stop()
-        faceDetectorThread.join()
+        pool.close()
+        pool.terminate()
 
         # FPS calc
         total_time = time.time() - start_time
