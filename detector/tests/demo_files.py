@@ -41,11 +41,11 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
 
         print("--------------------------------")
-        print("This script receives a face detector type and a list of images and detects faces in every image according to config.")
+        print("This script receives a face detector type and a directory with images and detects faces in every image in it and its subdirectories.")
         print("Bounding box info is saved to 'output/[face detector type]' folder.")
         print("")
         print("Usage: ")
-        print("python demo_files.py ['tensorflow_mtcnn' | 'mvds_ssd' | 'mvds_ssd_longrange' | 'mvds_mtcnn' | 'caffe_mtcnn'] 'image_path1' 'image_path2' ... ")
+        print("python demo_files.py ['tensorflow_mtcnn' | 'mvds_ssd' | 'mvds_ssd_longrange' | 'mvds_mtcnn' | 'caffe_mtcnn'] 'images_dir'")
         print("--------------------------------")
 
     else:
@@ -63,7 +63,11 @@ if __name__ == "__main__":
             os.mkdir(output_folder)
 
         # Load Images
-        image_paths = sys.argv[2:]
+        image_paths_dir = sys.argv[2]
+        image_paths = []
+        for path, subdirs, files in os.walk(image_paths_dir):
+            for name in files:
+                image_paths.append(os.path.join(path, name))
         images = {}
         for i in range(len(image_paths)):
             image_path = image_paths[i]
@@ -75,8 +79,6 @@ if __name__ == "__main__":
         start_time = time.time()
         total_boxes = []
         for image_path in images:
-            if i % 100 == 0:
-                print(i)
             # Detect face bounding boxes
             boundingboxes = faceDetectorObject.detect_face_image(images[image_path])
             total_boxes.append(boundingboxes)

@@ -6,7 +6,7 @@ consumer:
 
 face_detector:
   configuration:
-    type: tensorflow_mtcnn
+    type: 'tensorflow_faceboxes'
 
 debug: False
 
