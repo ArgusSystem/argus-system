@@ -71,7 +71,7 @@ if __name__ == "__main__":
         print("Press 'q' to quit.")
         print("")
         print("Usage: ")
-        print("python demo_webcam.py ['tensorflow_facenet' | 'mvds_facenet'] classifier.pkl")
+        print("python demo_webcam.py 'face_detector_type' 'face_embedder_type' 'face_classifier.pkl'")
         print("--------------------------------")
 
     else:
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         face_embedder = FaceEmbedderFactory.build_by_type(face_embedder_type)
 
         # Create Face Classifier
-        face_classifier = SVClassifier.load(base_dir + "/../model/svclassifier_edu_gabo.pkl")
+        face_classifier = SVClassifier.load(sys.argv[3])
 
         # Start webcam
         camera = cv2.VideoCapture(0)
