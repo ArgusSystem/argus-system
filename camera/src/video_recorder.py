@@ -30,7 +30,7 @@ class VideoRecorder:
             self.camera.split_recording(new_video_metadata.filename, format=ENCODING, quality=QUALITY)
 
             self.output_queue.put(video_metadata)
-            self.logger.debug('New video recorded: %s', {video_metadata.filename})
+            self.logger.info('New video recorded: %s', {video_metadata.filename})
             video_metadata = new_video_metadata
 
         self.camera.stop_recording()

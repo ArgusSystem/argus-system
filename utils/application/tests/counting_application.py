@@ -6,5 +6,5 @@ from utils.application import run
 
 with run('counting_application') as application:
     for i in range(10):
-        logging.debug(i)
+        logging.info(i)
         sleep(1)

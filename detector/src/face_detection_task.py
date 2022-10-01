@@ -6,7 +6,6 @@ from utils.events.src.messages.marshalling import encode, decode
 from utils.video_storage import StorageFactory, StorageType
 from utils.image_processing.src.image_serialization import image_debug, draw_boxes, bytestring_to_image, image_to_bytestring
 from .face_detector_factory import FaceDetectorFactory
-import cv2
 import logging
 
 PUBLISHER_KEY = 'publisher'
@@ -19,7 +18,7 @@ class FaceDetectionTask:
     def __init__(self, configuration):
         self.face_detector = FaceDetectorFactory.build(**configuration[DETECTOR_KEY])
         self.publisher_to_classifier = Publisher.new(**configuration[PUBLISHER_KEY])
-        self.debug = configuration[DEBUG_KEY]
+        self.info = configuration[DEBUG_KEY]
         self.frame_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_FRAMES)
         self.face_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.FRAME_FACES)
 
@@ -46,7 +45,7 @@ class FaceDetectionTask:
         # Detect faces
         print("")
         print("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
-        logging.debug("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
+        logging.info("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
 
         rects = self.face_detector.detect_face_image(frame)
         if len(rects) > 0:
@@ -70,7 +69,7 @@ class FaceDetectionTask:
                 x1, y1, x2, y2 = rect
                 cropped_face = frame[y1:y2, x1:x2]
 
-                logging.debug("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
+                logging.info("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
                 print("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
 
                 # Queue face embedding job

@@ -1,0 +1,26 @@
+{
+  "name": "argus-web",
+  "version": "0.0.1",
+  "description": "Argus web server and client",
+  "main": "server.js",
+  "repository": "https://github.com/ArgusSystem/argus-system",
+  "author": "Eduardo Neira <aneira@fi.uba.ar>",
+  "scripts": {
+    "start-dev": "node server.js -c development.yml",
+    "watch": "nodemon ./server.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "avsc": "^5.7.5",
+    "express": "^4.18.1",
+    "js-yaml": "^4.1.0",
+    "minio": "^7.0.32",
+    "socket.io": "^4.5.2",
+    "winston": "^3.8.2",
+    "yargs": "^17.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "socket.io-client": "^4.5.2"
+  }
+}

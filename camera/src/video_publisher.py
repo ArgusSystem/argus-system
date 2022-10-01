@@ -36,11 +36,11 @@ class VideoPublisher:
         self.storage.store(name=str(message),
                            filepath=video_metadata.filename)
 
-        self.logger.debug('New video stored: %s', video_metadata.filename)
+        self.logger.info('New video stored: %s', video_metadata.filename)
 
         # Send event of new video chunk
         self.publisher.publish(encode(message))
-        self.logger.debug(f'New video event: %d', video_metadata.timestamp)
+        self.logger.info(f'New video event: %d', video_metadata.timestamp)
 
         # Delete local video chunk
         delete_video(video_metadata.filename)

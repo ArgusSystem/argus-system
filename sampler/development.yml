@@ -22,4 +22,4 @@ storage:
   secret_key: panoptes
 sampling_rate: 6
 logging:
-  level: DEBUG
+  level: INFO

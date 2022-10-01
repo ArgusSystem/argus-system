@@ -28,7 +28,7 @@ class VideoProcessor:
     def process(self, message):
         video_chunk_message: VideoChunkMessage = decode(VideoChunkMessage, message)
         video_chunk_id = str(video_chunk_message)
-        self.logger.debug('Starting processing: %s', video_chunk_id)
+        self.logger.info('Starting processing: %s', video_chunk_id)
         video_filepath = self.video_chunks_storage.fetch(video_chunk_id, video_chunk_message.encoding)
 
         # Rewrite video with new encoding
@@ -58,7 +58,7 @@ class VideoProcessor:
         os.remove(video_filepath)
         os.remove(video_writer.filename)
 
-        self.logger.debug('Finished processing: %s', video_chunk_id)
+        self.logger.info('Finished processing: %s', video_chunk_id)
 
     def _sample_frame(self, frame, offset, video_chunk):
         frame_message = FrameMessage(video_chunk, offset)

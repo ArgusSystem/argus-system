@@ -8,7 +8,7 @@ with run('endless_application') as application:
     time_alive = 0
 
     while not application.is_stopped():
-        logging.debug("I've been alive for %d seconds!", time_alive)
+        logging.info("I've been alive for %d seconds!", time_alive)
         sleep(1)
         time_alive += 1
 

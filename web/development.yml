@@ -1,0 +1,13 @@
+storage:
+  client:
+    endPoint: 'localhost'
+    port: 9500
+    accessKey: 'argus'
+    secretKey: 'panoptes'
+  bucket: 'video-chunks'
+server:
+  port: 8080
+consumer:
+  url: 'amqp://argus:panoptes@localhost:5672'
+  video_queue: 'published_video_chunks'
+schemas: '../utils/events/resources'
