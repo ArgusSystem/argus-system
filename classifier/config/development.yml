@@ -2,20 +2,22 @@ consumer:
   host: localhost
   username: argus
   password: panoptes
-  queue: frames
+  queue: faces
 
-face_detector:
+face_embedder:
   configuration:
-    type: tensorflow_mtcnn
+    type: 'tensorflow_facenet'
 
-debug: False
+face_classifier:
+  model: '/home/gabriel/Desktop/tp-prof/argus-system/classifier/model/svclassifier_edu_gabo.pkl'
+  threshold: 0.7
 
 publisher:
   host: localhost
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: faces
+  routing_key: web
 
 logging:
   host: localhost

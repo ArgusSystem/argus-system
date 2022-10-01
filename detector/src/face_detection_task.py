@@ -4,9 +4,8 @@ from utils.events.src.messages.frame_message import FrameMessage
 from utils.events.src.messages.face_message import FaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from utils.video_storage import StorageFactory, StorageType
-from utils.image_processing.src.image_serialization import image_debug, draw_boxes, image_to_bytestring
+from utils.image_processing.src.image_serialization import image_debug, draw_boxes, bytestring_to_image, image_to_bytestring
 from .face_detector_factory import FaceDetectorFactory
-import cv2
 import logging
 
 PUBLISHER_KEY = 'publisher'
@@ -21,6 +20,7 @@ class FaceDetectionTask:
         self.publisher_to_classifier = Publisher.new(**configuration[PUBLISHER_KEY])
         self.info = configuration[DEBUG_KEY]
         self.frame_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.VIDEO_FRAMES)
+        self.face_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.FRAME_FACES)
 
     def close(self):
         self.face_detector.close()
@@ -32,17 +32,18 @@ class FaceDetectionTask:
         # Get message
         video_chunk_id = frame_message.video_chunk
         frame_offset = frame_message.offset
-        frame = self.frame_storage.fetch(str(frame_message))
+        frame = bytestring_to_image(self.frame_storage.fetch(str(frame_message)))
 
         # Convert to cv2 img
-        #frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
-        #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # frame = cv2.imdecode(np.frombuffer(frame_bytes, np.uint8), cv2.IMREAD_COLOR)
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # Print frame
-        if self.info:
-            image_debug("frame", frame, 1, cv2.COLOR_RGB2BGR)
+        if self.debug:
+            image_debug("frame", frame, 1)
 
         # Detect faces
+        print("")
         print("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
         logging.info("- Performing detection - frame_id: " + str(frame_offset) + " - video chunk id: " + str(video_chunk_id))
 
@@ -58,8 +59,8 @@ class FaceDetectionTask:
             #     self.db.add(face)
             #     faces.append(face)
 
-            if self.info:
-                image_debug("detected faces", draw_boxes(frame, rects), 1, cv2.COLOR_RGB2BGR)
+            if self.debug:
+                image_debug("detected faces", draw_boxes(frame, rects), 1)
 
             # for rect, face in zip(rects, faces):
             for rect in rects:
@@ -72,5 +73,6 @@ class FaceDetectionTask:
                 print("- Found face, assigned id: " + str('face.id') + " - video chunk id: " + str(video_chunk_id))
 
                 # Queue face embedding job
-                face_embedding_message = FaceMessage(video_chunk_id, 'face.id', image_to_bytestring(cropped_face))
-                self.publisher_to_classifier.publish(encode(face_embedding_message))
+                face_message = FaceMessage(video_chunk_id, 'face.id')
+                self.face_storage.store(name=str(face_message), data=image_to_bytestring(cropped_face))
+                self.publisher_to_classifier.publish(encode(face_message))

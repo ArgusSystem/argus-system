@@ -50,7 +50,7 @@ if __name__ == "__main__":
         camera = cv2.VideoCapture(0)
         id_count = 1
         start_time = time.time()
-        time_interval = int(sys.argv[1])
+        time_interval = float(sys.argv[1])
         while True:
 
             # Read frame from Webcam
@@ -64,9 +64,12 @@ if __name__ == "__main__":
                 # db.add(frame)
 
                 frame_message = FrameMessage(video_chunk="video_chunk_" + str(id_count),
-                                             offset="frame_" + str(id_count))
+                                             offset=id_count)
 
-                image_to_bytestring(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+                storage.store(name=str(frame_message), data=image_to_bytestring(image))
+                # image_to_bytestring(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+                print("Sent frame: " + str(id_count))
 
                 id_count += 1
 
