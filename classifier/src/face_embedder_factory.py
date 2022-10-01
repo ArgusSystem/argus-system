@@ -12,6 +12,10 @@ class FaceEmbedderFactory:
             from .face_embedder_tensorflow_facenet import FaceEmbedderTensorflowFacenet
             return FaceEmbedderTensorflowFacenet()
 
+        elif face_embedder_type == "pytorch_facenet":
+            from .face_embedder_pytorch_facenet import FaceEmbedderPytorchFacenet
+            return FaceEmbedderPytorchFacenet()
+
         elif face_embedder_type == "movidius_facenet":
             from .face_embedder_mvds_facenet import FaceEmbedderMovidiusFacenet
             return FaceEmbedderMovidiusFacenet(configuration['movidius_id'])
