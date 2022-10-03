@@ -1,4 +1,7 @@
 import os
+from logging import getLogger
+
+from utils.misc import timer
 
 LOCAL_DIR = '/tmp'
 
@@ -15,6 +18,7 @@ def create_frame(file, frames_dir, sampling_rate):
                  filepath=os.path.join(frames_dir, file))
 
 
+@timer(getLogger(__name__), 'Sample video')
 def sample(video_chunk, sampling_rate):
     frames_dir = os.path.join(LOCAL_DIR, f'{video_chunk.camera_id}-{video_chunk.timestamp}')
     os.mkdir(frames_dir)
