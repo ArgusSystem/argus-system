@@ -1,15 +1,16 @@
 import os
+import shutil
 from logging import getLogger
 
 from utils.events.src.message_clients.rabbitmq.publisher import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.frame_message import FrameMessage
-from utils.video_storage import StorageFactory
-from .video_storage import VideoStorage
-from .video_iterator import VideoIterator
-from .frame_storage import FrameStorage
-from .video_writer import VideoWriter
+from utils.video_storage import StorageFactory, StorageType
+
+from .sample_video import sample
+from .fetch_video_chunk import fetch
+from .convert_to_video_stream import convert
 
 
 class VideoProcessor:
@@ -17,51 +18,48 @@ class VideoProcessor:
     def __init__(self, sampling_rate, storage_configuration,
                  frame_publisher_configuration,
                  video_chunk_publisher_configuration):
+        self.logger = getLogger(__name__)
+        self.sampling_rate = sampling_rate
+
         storage_factory = StorageFactory(**storage_configuration)
-        self.video_chunks_storage = VideoStorage(storage_factory)
-        self.frames_storage = FrameStorage(storage_factory)
+        self.video_chunk_storage = storage_factory.new(StorageType.VIDEO_CHUNKS)
+        self.frame_storage = storage_factory.new(StorageType.VIDEO_FRAMES)
+
         self.frame_publisher = Publisher.new(**frame_publisher_configuration)
         self.video_chunk_publisher = Publisher.new(**video_chunk_publisher_configuration)
-        self.sampling_rate = sampling_rate
-        self.logger = getLogger(__name__)
 
     def process(self, message):
         video_chunk_message: VideoChunkMessage = decode(VideoChunkMessage, message)
         video_chunk_id = str(video_chunk_message)
+
         self.logger.info('Starting processing: %s', video_chunk_id)
-        video_filepath = self.video_chunks_storage.fetch(video_chunk_id, video_chunk_message.encoding)
 
-        # Rewrite video with new encoding
-        video_writer = VideoWriter(camera=video_chunk_message.camera_id,
-                                   timestamp=video_chunk_message.timestamp,
-                                   framerate=video_chunk_message.framerate,
-                                   width=video_chunk_message.width,
-                                   height=video_chunk_message.height)
+        original_video_chunk = fetch(video_chunk_message, self.video_chunk_storage)
+        frames_dir, frames = sample(original_video_chunk, self.sampling_rate)
 
-        # Iterate through frames
-        for offset, frame in VideoIterator(video_filepath):
-            # Send frame event for processing
-            if offset % self.sampling_rate == 0:
-                self._sample_frame(frame, offset, video_chunk_id)
+        for frame in frames:
+            frame_message = FrameMessage(video_chunk_id, frame.offset)
+            self.frame_storage.store(name=str(frame_message), filepath=frame.filepath)
+            self.frame_publisher.publish(encode(frame_message))
 
-            video_writer.write(frame)
-
-        video_writer.close()
+        converted_video_chunk = convert(original_video_chunk)
 
         # Upload video with new encoding
-        self.video_chunks_storage.store(video_chunk_id, video_writer.filename)
-
-        video_chunk_message.sampling_rate = self.sampling_rate
-        self.video_chunk_publisher.publish(encode(video_chunk_message))
+        self.video_chunk_storage.store(name=video_chunk_id, filepath=converted_video_chunk.filepath)
+        # Publish video for stream
+        self.video_chunk_publisher.publish(encode(VideoChunkMessage(
+            camera_id=converted_video_chunk.camera_id,
+            timestamp=converted_video_chunk.timestamp,
+            encoding=converted_video_chunk.encoding,
+            framerate=converted_video_chunk.framerate,
+            width=converted_video_chunk.width,
+            height=converted_video_chunk.height,
+            sampling_rate=self.sampling_rate
+        )))
 
         # Delete local videos
-        os.remove(video_filepath)
-        os.remove(video_writer.filename)
+        os.remove(original_video_chunk.filepath)
+        os.remove(converted_video_chunk.filepath)
+        shutil.rmtree(frames_dir)
 
         self.logger.info('Finished processing: %s', video_chunk_id)
-
-    def _sample_frame(self, frame, offset, video_chunk):
-        frame_message = FrameMessage(video_chunk, offset)
-
-        self.frames_storage.store(name=str(frame_message), frame=frame)
-        self.frame_publisher.publish(encode(frame_message))

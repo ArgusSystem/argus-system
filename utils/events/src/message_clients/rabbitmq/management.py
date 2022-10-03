@@ -1,5 +1,5 @@
-def setup_exchange(channel, name):
-    channel.exchange_declare(name)
+def setup_exchange(channel, name, durable=True):
+    channel.exchange_declare(name, durable=durable)
 
 
 def delete_exchange(channel, name):
