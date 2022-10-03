@@ -1,6 +1,6 @@
 from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
 from logging import getLogger
-from utils.misc import timer
+from utils.tracing import timer
 import os
 
 ENCODING = 'mp4'

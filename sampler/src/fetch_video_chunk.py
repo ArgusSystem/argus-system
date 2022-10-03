@@ -1,7 +1,7 @@
 from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
 import os.path as path
 from logging import getLogger
-from utils.misc import timer
+from utils.tracing import timer
 
 
 @timer(getLogger(__name__), 'Fetch video chunk')

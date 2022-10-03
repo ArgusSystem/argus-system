@@ -6,7 +6,7 @@ from utils.events.src.message_clients.rabbitmq.publisher import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.frame_message import FrameMessage
-from utils.misc import timer
+from utils.tracing import timer
 from utils.video_storage import StorageFactory, StorageType
 
 from .sample_video import sample

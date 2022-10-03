@@ -20,7 +20,7 @@ async function fetchVideoChunk (objectName) {
       });
 
       dataStream.on('end', function () {
-        logger.info(`${objectName} fetched!`);
+        logger.debug(`${objectName} fetched!`);
         resolve(Buffer.concat(chunks));
       });
     }).catch(reject);

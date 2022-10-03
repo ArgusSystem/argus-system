@@ -1,7 +1,7 @@
 import os
 from logging import getLogger
 
-from utils.misc import timer
+from utils.tracing import timer
 
 LOCAL_DIR = '/tmp'
 

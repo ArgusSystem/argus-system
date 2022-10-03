@@ -8,7 +8,7 @@ const consumerConfiguration = configuration['consumer'];
 
 async function processVideoChunk(channel, msg, socketServer) {
     const metadata = schemas.VIDEO_CHUNK_MESSAGE.fromBuffer(msg.content);
-    logger.info(`New message from ${metadata['camera_id']}`);
+    logger.info(`New message from ${metadata['camera_id']} with timestamp ${metadata['timestamp']}`);
     const videoChunkMessage = await buildVideoChunkMessage(metadata);
     socketServer.sendVideoChunk(videoChunkMessage);
     channel.ack(msg);
