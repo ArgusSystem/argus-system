@@ -12,7 +12,7 @@ STORAGE_KEY = 'storage'
 
 
 if __name__ == "__main__":
-    with run('argus-camera') as application:
+    with run('argus-sampler') as application:
         configuration = application.configuration
 
         video_processor = VideoProcessor(sampling_rate=configuration[SAMPLING_KEY],

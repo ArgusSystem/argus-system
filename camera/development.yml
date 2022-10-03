@@ -15,4 +15,4 @@ storage:
   access_key: argus
   secret_key: panoptes
 logging:
-  level: INFO
+  level: DEBUG
