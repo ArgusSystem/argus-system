@@ -16,7 +16,7 @@ class FaceDetectorTensorflowFaceboxes:
 
     def detect_face_image(self, image):
         img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        return self.detector(img_rgb)
+        return [[int(p) for p in bbox[:4]] for bbox in self.detector(img_rgb)]
 
     def detect_face(self, imgpath):
         img = cv2.imread(imgpath)

@@ -8,7 +8,7 @@ from utils.video_storage.src.storage_type import StorageType
 rabbitmq_client = RabbitMQClient('localhost', 'argus', 'panoptes')
 
 queues_by_exchange = {
-    'argus': ['new_video_chunks', 'published_video_chunks', 'frames', 'faces']
+    'argus': ['new_video_chunks', 'published_video_chunks', 'frames', 'faces', 'published_detected_faces']
 }
 
 with rabbitmq_client.channel() as channel:

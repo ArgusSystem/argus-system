@@ -1,6 +1,7 @@
 import sys
 import pickle
 import numpy as np
+import os
 from sklearn.svm import SVC
 
 
@@ -31,7 +32,7 @@ class SVClassifier:
 
     @staticmethod
     def load(save_file):
-        with open(save_file, "rb") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) + "/" + save_file, "rb") as f:
             return pickle.load(f)
 
 
