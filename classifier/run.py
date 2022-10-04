@@ -2,7 +2,7 @@ from classifier import FaceClassificationTask
 from utils.application import run
 from utils.events.src.message_clients.rabbitmq import Consumer
 
-# esto hace falta porque el .pkl actualmente se crea en el modulo __main__
+# este import hace falta porque el .pkl de SVClassifier actualmente se crea en el modulo __main__
 # asi que tiene que existir SVClassifier en __main__
 from classifier import SVClassifier
 

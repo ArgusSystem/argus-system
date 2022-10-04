@@ -18,8 +18,7 @@ publisher:
   routing_key: faces
 
 logging:
-  host: localhost
-  port: 12201
+  level: DEBUG
 
 storage:
   host: localhost

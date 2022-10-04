@@ -6,10 +6,10 @@ consumer:
 
 face_embedder:
   configuration:
-    type: 'tensorflow_facenet'
+    type: 'pytorch_facenet'
 
 face_classifier:
-  model: '/home/gabriel/Desktop/tp-prof/argus-system/classifier/model/svclassifier_edu_gabo.pkl'
+  model: '../model/svclassifier_edu_gabo_pytorch_facenet.pkl'
   threshold: 0.7
 
 publisher:
@@ -17,11 +17,10 @@ publisher:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: web
+  routing_key: published_detected_faces
 
 logging:
-  host: localhost
-  port: 12201
+  level: DEBUG
 
 storage:
   host: localhost

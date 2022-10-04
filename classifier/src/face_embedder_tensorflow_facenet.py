@@ -1,10 +1,7 @@
 import cv2
-import tensorflow as tf
 import numpy as np
-import sys
 import os
-import re
-from .inception_resnet_v2 import InceptionResNetV2
+from classifier.src.facenet_tensorflow.inception_resnet_v2 import InceptionResNetV2
 
 
 class FaceEmbedderTensorflowFacenet:

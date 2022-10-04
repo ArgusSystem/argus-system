@@ -1,3 +1,0 @@
-face_embedder:
-  type: 'movidius_facenet'
-  movidius_id: 0

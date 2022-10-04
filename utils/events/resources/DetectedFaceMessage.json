@@ -1,7 +1,7 @@
 {
   "namespace": "argus",
   "type": "record",
-  "name": "face",
+  "name": "detected_face",
   "fields": [
     {
       "name": "video_chunk_id",
@@ -16,11 +16,19 @@
       "type": "int"
     },
     {
+      "name": "name",
+      "type": "string"
+    },
+    {
       "name": "bounding_box",
       "type": {
         "type": "array",
         "items": "int"
       }
+    },
+    {
+      "name": "probability",
+      "type": "float"
     }
   ]
 }
