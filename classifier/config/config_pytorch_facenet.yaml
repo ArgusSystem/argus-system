@@ -1,0 +1,2 @@
+face_embedder:
+  type: 'pytorch_facenet'

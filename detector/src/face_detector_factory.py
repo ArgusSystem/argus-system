@@ -4,25 +4,19 @@ import yaml
 
 class FaceDetectorFactory:
 
+    TENSORFLOW_MTCNN = 'tensorflow_mtcnn'
+    TENSORFLOW_FACEBOXES = 'tensorflow_faceboxes'
+
     @staticmethod
     def build(configuration):
         face_detector_type = configuration['type']
 
-        if face_detector_type == "tensorflow_mtcnn":
+        if face_detector_type == FaceDetectorFactory.TENSORFLOW_MTCNN:
             from .face_detector_tensorflow_mtcnn import FaceDetectorTensorflowMTCNN
             return FaceDetectorTensorflowMTCNN()
-
-        elif face_detector_type == "caffe_mtcnn":
-            from .face_detector_caffe_mtcnn import FaceDetectorCaffeMTCNN
-            return FaceDetectorCaffeMTCNN()
-
-        elif face_detector_type == "movidius_mtcnn":
-            from .face_detector_movidius_mtcnn import FaceDetectorMovidiusMTCNN
-            return FaceDetectorMovidiusMTCNN(configuration['movidius_id_pnet'], configuration['movidius_id_onet'])
-
-        elif face_detector_type == "movidius_ssd":
-            from .face_detector_movidius_ssd import FaceDetectorMovidiusSSD
-            return FaceDetectorMovidiusSSD(configuration['movidius_id'], configuration['longrange'])
+        elif face_detector_type == FaceDetectorFactory.TENSORFLOW_FACEBOXES:
+            from .face_detector_tensorflow_faceboxes import FaceDetectorTensorflowFaceboxes
+            return FaceDetectorTensorflowFaceboxes()
         else:
             raise SystemExit('ERROR: Invalid face detector type: ' + face_detector_type)
 

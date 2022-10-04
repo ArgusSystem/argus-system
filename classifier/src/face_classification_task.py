@@ -1,13 +1,13 @@
 
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.face_message import FaceMessage
+from utils.events.src.messages.detected_face_message import DetectedFaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from .classifier_support_vector import SVClassifier
 from .face_embedder_factory import FaceEmbedderFactory
 from utils.video_storage import StorageFactory, StorageType
 from utils.image_processing.src.image_serialization import bytestring_to_image
-import cv2
-import numpy as np
+from logging import getLogger
 
 PUBLISHER_KEY = 'publisher'
 FACE_EMBEDDER_KEY = 'face_embedder'
@@ -28,6 +28,8 @@ class FaceClassificationTask:
 
         self.face_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.FRAME_FACES)
 
+        self.logger = getLogger(__name__)
+
     def close(self):
         self.face_embedder.close()
         # self.db.close()
@@ -35,14 +37,12 @@ class FaceClassificationTask:
     def execute_with(self, message):
         face_message: FaceMessage = decode(FaceMessage, message)
 
+        self.logger.debug("Processing message - %s", face_message)
+
         # Get face
-        face_id = face_message.face_id
-        video_chunk_id = face_message.video_chunk_id
         face = bytestring_to_image(self.face_storage.fetch(str(face_message)))
 
         # Perform face embedding
-        print("")
-        print("- Performing embedding - face_id: " + str(face_id))
         embedding = self.face_embedder.get_embedding_mem(face)
 
         # Insert result into database
@@ -50,12 +50,12 @@ class FaceClassificationTask:
         # self.db.add(face_embedding)
 
         # Perform face classification
-        print("- Performing classification - face_id: " + str(face_id))
         classification_index, classification_probability = self.face_classifier.predict(embedding)
-        is_match = classification_probability > self.threshold
+        name = 'unknown'
+        if classification_probability > self.threshold:
+            name = self.face_classifier.get_name(classification_index)
 
-        print("- Found: " + self.face_classifier.get_name(classification_index) +
-              " with prob: " + str(classification_probability))
+        self.logger.debug("Found: %s with prob: %.2f", name, classification_probability)
 
         # Update database face row with result
         # face: Face = self.db.get(Face, face_id)
@@ -65,5 +65,9 @@ class FaceClassificationTask:
         # self.db.update()
 
         # Queue face data message for web streaming
-        #self.publisher_to_web.publish(encode())
+        detected_face_message = DetectedFaceMessage(face_message.video_chunk_id, face_message.offset,
+                                                    face_message.face_num, name, face_message.bounding_box,
+                                                    classification_probability)
+        self.publisher_to_web.publish(encode(detected_face_message))
 
+        self.logger.debug("Finished - %s", face_message)

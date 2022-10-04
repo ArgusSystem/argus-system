@@ -5,7 +5,7 @@ from classifier import FaceEmbedderFactory
 from classifier.src.classifier_support_vector import SVClassifier
 from utils.image_processing.src.image_serialization import draw_boxes
 from multiprocessing.pool import ThreadPool
-import mtcnn
+from detector import FaceDetectorFactory
 import os
 # from sklearn.preprocessing import Normalizer
 
@@ -17,20 +17,21 @@ required_size = (160, 160)
 
 
 def get_face(img, box):
-    x1, y1, width, height = box
-    x1, y1 = abs(x1), abs(y1)
-    x2, y2 = x1 + width, y1 + height
+    #print(box)
+    x1, y1, x2, y2 = [int(x) for x in box]
+    #x1, y1 = abs(x1), abs(y1)
+    #x2, y2 = x1 + width, y1 + height
     face = img[y1:y2, x1:x2]
     return face, (x1, y1), (x2, y2)
 
 
 def detect_raw(img, detector, encoder, classifier):
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    results = detector.detect_faces(img_rgb)
-    for res in results:
-        if res['confidence'] < confidence_t:
-            continue
-        face, pt_1, pt_2 = get_face(img_rgb, res['box'])
+    boxes = detector.detect_face_image(img_rgb)
+    results = []
+    for bbox in boxes:
+        res = {}
+        face, pt_1, pt_2 = get_face(img_rgb, bbox[:4])
         encoding = encoder.get_embedding_mem(face)
         #encoding = l2_normalizer.transform(encoding.reshape(1, -1))[0]
         name = 'unknown'
@@ -41,14 +42,12 @@ def detect_raw(img, detector, encoder, classifier):
         res['prob'] = pred_prob
         res['pt_1'] = pt_1
         res['pt_2'] = pt_2
+        results.append(res)
     return results
 
 
 def raw_to_frame(img, results):
     for res in results:
-        if res['confidence'] < confidence_t:
-            continue
-
         name = res['name']
         prob = res['prob']
         pt_1 = res['pt_1']
@@ -72,21 +71,22 @@ if __name__ == "__main__":
         print("Press 'q' to quit.")
         print("")
         print("Usage: ")
-        print("python demo_webcam.py ['tensorflow_facenet' | 'mvds_facenet'] classifier.pkl")
+        print("python demo_webcam.py 'face_detector_type' 'face_embedder_type' 'face_classifier.pkl'")
         print("--------------------------------")
 
     else:
         base_dir = os.path.dirname(os.path.realpath(__file__))
 
         # Create Face Detector
-        face_detector = mtcnn.MTCNN()
+        face_detector_type = sys.argv[1]
+        face_detector = FaceDetectorFactory.build_by_type(face_detector_type)
 
         # Create Face Embedder
-        face_embedder_type = sys.argv[1]
+        face_embedder_type = sys.argv[2]
         face_embedder = FaceEmbedderFactory.build_by_type(face_embedder_type)
 
         # Create Face Classifier
-        face_classifier = SVClassifier.load(base_dir + "/../model/svclassifier_edu_gabo.pkl")
+        face_classifier = SVClassifier.load(sys.argv[3])
 
         # Start webcam
         camera = cv2.VideoCapture(0)
@@ -98,6 +98,7 @@ if __name__ == "__main__":
         pool = ThreadPool(processes=1)
         async_result = None
         results = []
+        first_frame = True
 
         while True:
 
@@ -107,6 +108,11 @@ if __name__ == "__main__":
             if async_result is None:
                 async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
             elif async_result.ready():
+                processed_frames += 1
+                if first_frame:
+                    start_time = time.time()
+                    processed_frames = 0
+                    first_frame = False
                 results = async_result.get()
                 async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
             image = raw_to_frame(image, results)

@@ -8,8 +8,19 @@
       "type": "string"
     },
     {
-      "name": "face_id",
-      "type": "string"
+      "name": "offset",
+      "type": "int"
+    },
+    {
+      "name": "face_num",
+      "type": "int"
+    },
+    {
+      "name": "bounding_box",
+      "type": {
+        "type": "array",
+        "items": "int"
+      }
     }
   ]
 }
