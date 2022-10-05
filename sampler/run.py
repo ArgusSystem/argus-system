@@ -9,6 +9,7 @@ FRAME_PUBLISHER_KEY = 'frame_publisher'
 VIDEO_CHUNK_PUBLISHER_KEY = 'video_chunk_publisher'
 SAMPLING_KEY = 'sampling_rate'
 STORAGE_KEY = 'storage'
+TRACER_KEY = 'tracer'
 
 
 if __name__ == "__main__":
@@ -17,6 +18,7 @@ if __name__ == "__main__":
 
         video_processor = VideoProcessor(sampling_rate=configuration[SAMPLING_KEY],
                                          storage_configuration=configuration[STORAGE_KEY],
+                                         tracer_configuration=configuration[TRACER_KEY],
                                          frame_publisher_configuration=configuration[FRAME_PUBLISHER_KEY],
                                          video_chunk_publisher_configuration=configuration[VIDEO_CHUNK_PUBLISHER_KEY])
 

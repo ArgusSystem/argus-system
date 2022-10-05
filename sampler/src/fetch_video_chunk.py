@@ -1,10 +1,7 @@
 from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
 import os.path as path
-from logging import getLogger
-from utils.tracing import timer
 
 
-@timer(getLogger(__name__), 'Fetch video chunk')
 def fetch(video_chunk_message, remote_storage):
     name = str(video_chunk_message)
     filepath = path.join(LOCAL_DIR, f'{name}.{video_chunk_message.encoding}')

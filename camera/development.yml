@@ -8,11 +8,14 @@ publisher:
 video_recorder:
     resolution: 1920x1080
     recording_time: 5
-    framerate: 30
+    framerate: 25
 storage:
   host: localhost
   port: 9500
   access_key: argus
   secret_key: panoptes
 logging:
-  level: DEBUG
+  level: INFO
+tracer:
+  host: localhost
+  port: 6831
