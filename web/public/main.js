@@ -14,12 +14,14 @@ window.addEventListener('load', () => {
     setUpDisplay();
 
     const videoBuffer = new VideoBuffer(mediaSource);
-
+    let preBuffer = 0;
     socketClient.onVideoChunk((chunk) => {
       videoBuffer.append(chunk);
-
-      if (video.paused) {
-        video.play();
+      preBuffer += 1;
+      if (preBuffer >= 3) {
+        if (video.paused) {
+          video.play();
+        }
       }
     });
   })
