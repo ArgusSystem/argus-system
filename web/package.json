@@ -17,7 +17,8 @@
     "minio": "^7.0.32",
     "socket.io": "^4.5.2",
     "winston": "^3.8.2",
-    "yargs": "^17.5.1"
+    "yargs": "^17.5.1",
+    "long": "^5.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",

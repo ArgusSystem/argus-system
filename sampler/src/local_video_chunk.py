@@ -1,4 +1,6 @@
-LOCAL_DIR = '/tmp'
+import tempfile
+
+LOCAL_DIR = tempfile.gettempdir()
 
 
 class LocalVideoChunk:
