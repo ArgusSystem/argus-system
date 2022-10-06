@@ -13,3 +13,5 @@ consumer:
 schemas: '../utils/events/resources'
 logger:
   level: 'debug'
+tracing:
+    endpoint: 'http://localhost:14268/api/traces'

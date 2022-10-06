@@ -1,4 +1,5 @@
 import os
+from .command import run
 
 LOCAL_DIR = '/tmp'
 
@@ -19,10 +20,10 @@ def sample(video_chunk, sampling_rate):
     frames_dir = os.path.join(LOCAL_DIR, f'{video_chunk.camera_id}-{video_chunk.timestamp}')
     os.mkdir(frames_dir)
 
-    os.system(f'ffmpeg '
-              f'-i {video_chunk.filepath} '
-              f'-vf fps={sampling_rate} '
-              f'{os.path.join(frames_dir, "%d.jpg")} '
-              f'> /dev/null 2>&1')
+    run(f'ffmpeg '
+        f'-i {video_chunk.filepath} '
+        f'-vf fps={sampling_rate} '
+        f'{os.path.join(frames_dir, "%d.jpg")} '
+        f'> /dev/null 2>&1')
 
     return frames_dir, [create_frame(file, frames_dir, sampling_rate) for file in os.listdir(frames_dir)]
