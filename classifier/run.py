@@ -17,6 +17,8 @@ if __name__ == "__main__":
                                              on_message_callback=face_classification_task.execute_with,
                                              stop_event=application.stop_event)
 
+        print(f'[*] {application.name} started successfully!')
+
         # keep consuming messages
         consumer_from_sampler.start()
         # stop signal received
