@@ -1,9 +1,10 @@
 import os
+import tempfile
 from logging import getLogger
 
 from utils.tracing import timer
 
-LOCAL_DIR = '/tmp'
+LOCAL_DIR = tempfile.gettempdir()
 
 
 class Frame:

@@ -2,8 +2,16 @@ from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
 from logging import getLogger
 from utils.tracing import timer
 import os
+import sys
 
 ENCODING = 'mp4'
+
+
+def null_device():
+    if sys.platform == 'win32':
+        return 'nul'
+    else:
+        return '/dev/null'
 
 
 @timer(getLogger(__name__), 'Convert to DASH video')
@@ -18,7 +26,7 @@ def convert(video_chunk):
               f'-r {video_chunk.framerate} '
               f'-preset ultrafast '
               f'{output_filepath} '
-              f'> /dev/null 2>&1')
+              f'> {null_device()} 2>&1')
 
     return LocalVideoChunk(camera_id=video_chunk.camera_id,
                            timestamp=video_chunk.timestamp,
