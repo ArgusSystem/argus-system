@@ -7,7 +7,7 @@ ENCODING = 'h264'
 class VideoMetadata:
 
     def __init__(self, framerate, resolution, filepath=get_filepath):
-        self.timestamp = time_ns() // 1_000_000
+        self.timestamp = time_ns()
         self.filename = filepath(self.timestamp, ENCODING)
         self.encoding = ENCODING
         self.framerate = framerate
