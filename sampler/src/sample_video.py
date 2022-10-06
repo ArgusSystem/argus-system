@@ -22,7 +22,8 @@ def create_frame(file, frames_dir, sampling_rate):
 @timer(getLogger(__name__), 'Sample video')
 def sample(video_chunk, sampling_rate):
     frames_dir = os.path.join(LOCAL_DIR, f'{video_chunk.camera_id}-{video_chunk.timestamp}')
-    os.mkdir(frames_dir)
+    if not os.path.exists(frames_dir):
+        os.mkdir(frames_dir)
 
     os.system(f'ffmpeg '
               f'-i {video_chunk.filepath} '

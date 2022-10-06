@@ -47,6 +47,7 @@ if __name__ == "__main__":
 
     width = configuration['width']
     height = configuration['height']
+    print("output width: " + str(width) + ", output height: " + str(height))
 
     video_chunk_id = 0
 
