@@ -1,11 +1,8 @@
-from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
+from .local_video_chunk import LocalVideoChunk, LOCAL_DIR, NULL_DEVICE
 from .command import run
 import os
-import sys
 
 ENCODING = 'mp4'
-
-NULL_DEVICE = 'nul' if sys.platform == 'win32' else '/dev/null'
 
 
 def convert(video_chunk):
