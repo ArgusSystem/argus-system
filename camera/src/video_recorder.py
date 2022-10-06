@@ -18,8 +18,6 @@ class VideoRecorder:
         self.resolution = tuple([int(x) for x in resolution.split('x')])
         self.recording_time = recording_time
         self.output_queue = output_queue
-
-        self.logger = getLogger(__name__)
         self.tracer = tracer
         create_local_storage()
 
@@ -37,7 +35,6 @@ class VideoRecorder:
                     camera_trace = get_current_trace_parent()
 
                     with self.tracer.start_as_current_span('record'):
-                        self.logger.info('Recording: %s', video_metadata.timestamp)
                         self.camera.wait_recording(self.recording_time)
 
                         new_video_metadata = VideoMetadata(camera_id=self.camera_id,

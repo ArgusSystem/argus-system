@@ -42,3 +42,5 @@ class VideoPublisher:
 
         with self.tracer.start_as_current_span('clean', context=camera_context):
             delete_video(video_metadata.filename)
+
+        logger.info('Recorded: %s', video_metadata.timestamp)
