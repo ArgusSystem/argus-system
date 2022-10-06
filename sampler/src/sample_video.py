@@ -1,7 +1,14 @@
 import os
+<<<<<<< HEAD
 from .command import run
+=======
+import tempfile
+from logging import getLogger
 
-LOCAL_DIR = '/tmp'
+from utils.tracing import timer
+>>>>>>> origin/main
+
+LOCAL_DIR = tempfile.gettempdir()
 
 
 class Frame:
@@ -18,7 +25,8 @@ def create_frame(file, frames_dir, sampling_rate):
 
 def sample(video_chunk, sampling_rate):
     frames_dir = os.path.join(LOCAL_DIR, f'{video_chunk.camera_id}-{video_chunk.timestamp}')
-    os.mkdir(frames_dir)
+    if not os.path.exists(frames_dir):
+        os.mkdir(frames_dir)
 
     run(f'ffmpeg '
         f'-i {video_chunk.filepath} '

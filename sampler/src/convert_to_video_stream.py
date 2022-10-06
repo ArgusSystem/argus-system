@@ -1,8 +1,11 @@
 from .local_video_chunk import LocalVideoChunk, LOCAL_DIR
 from .command import run
 import os
+import sys
 
 ENCODING = 'mp4'
+
+NULL_DEVICE = 'nul' if sys.platform == 'win32' else '/dev/null'
 
 
 def convert(video_chunk):
@@ -15,7 +18,7 @@ def convert(video_chunk):
         f'-movflags +dash '
         f'-preset ultrafast '
         f'{output_filepath} '
-        f'> /dev/null 2>&1')
+        f'> {NULL_DEVICE} 2>&1')
 
     return LocalVideoChunk(camera_id=video_chunk.camera_id,
                            timestamp=video_chunk.timestamp,

@@ -1,0 +1,17 @@
+publisher:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: new_video_chunks
+storage:
+  host: localhost
+  port: 9500
+  access_key: argus
+  secret_key: panoptes
+width: 640
+height: 480
+camera_id: 1
+webcam_feed: True
+video_feed_filepath: ''
+recording_time: 5

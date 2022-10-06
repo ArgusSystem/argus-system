@@ -7,6 +7,8 @@ const { tracer, get_context } = require('./tracer')
 
 const consumerConfiguration = configuration['consumer'];
 
+
+
 async function processVideoChunk(channel, msg, socketServer) {
     const metadata = schemas.VIDEO_CHUNK_MESSAGE.fromBuffer(msg.content);
     const context = get_context(metadata.trace);
