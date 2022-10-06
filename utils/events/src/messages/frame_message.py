@@ -1,13 +1,15 @@
 class FrameMessage:
 
-    def __init__(self, video_chunk, offset):
+    def __init__(self, video_chunk, offset, trace):
         self.video_chunk = video_chunk
         self.offset = offset
+        self.trace = trace
 
     def to_json(self):
         return {
             'video_chunk': self.video_chunk,
-            'offset': self.offset
+            'offset': self.offset,
+            'trace': self.trace
         }
 
     def __str__(self):

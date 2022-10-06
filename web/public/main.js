@@ -14,13 +14,15 @@ window.addEventListener('load', () => {
     setUpDisplay();
 
     const videoBuffer = new VideoBuffer(mediaSource);
-
+    let hasPreBuffer = false;
     socketClient.onVideoChunk((chunk) => {
       videoBuffer.append(chunk);
-
-      if (video.paused) {
+      console.log(`Total processing time: ${Date.now() - chunk.timestamp} ms`)
+      if (hasPreBuffer && video.paused) {
         video.play();
       }
+
+      hasPreBuffer = true
     });
   })
 })

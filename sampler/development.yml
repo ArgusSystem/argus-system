@@ -20,6 +20,9 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
-sampling_rate: 6
+tracer:
+  host: localhost
+  port: 6831
+sampling_rate: 5
 logging:
-  level: DEBUG
+  level: INFO

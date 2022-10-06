@@ -1,6 +1,8 @@
 import tempfile
+import sys
 
 LOCAL_DIR = tempfile.gettempdir()
+NULL_DEVICE = 'nul' if sys.platform == 'win32' else '/dev/null'
 
 
 class LocalVideoChunk:

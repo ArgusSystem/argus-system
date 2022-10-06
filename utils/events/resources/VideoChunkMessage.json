@@ -12,6 +12,10 @@
       "type": "long"
     },
     {
+      "name": "trace",
+      "type": "string"
+    },
+    {
       "name": "encoding",
       "type": "string"
     },
