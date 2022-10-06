@@ -14,6 +14,11 @@ class SocketServer {
     this.io.of('/video').emit('chunk', videoChunk);
     logger.debug(`Sent chunk ${videoChunk.camera_id}-${videoChunk.timestamp} to clients!`);
   }
+
+  sendDetectedFace (face) {
+    this.io.of('/video').emit('face', face);
+    logger.debug(`Sent detected face to clients!`);
+  }
 }
 
 module.exports = SocketServer;

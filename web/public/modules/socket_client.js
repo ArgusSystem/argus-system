@@ -7,4 +7,8 @@ export class SocketClient {
   onVideoChunk (callback) {
     this.client.on('chunk', callback);
   }
+
+  onFace (callback) {
+    this.client.on('face', callback);
+  }
 }

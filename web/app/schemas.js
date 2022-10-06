@@ -26,5 +26,6 @@ function readSchema(fileName) {
 }
 
 module.exports = {
-  VIDEO_CHUNK_MESSAGE: readSchema('VideoChunkMessage.json')
+  VIDEO_CHUNK_MESSAGE: readSchema('VideoChunkMessage.json'),
+  DETECTED_FACE_MESSAGE: readSchema('DetectedFaceMessage.json')
 };

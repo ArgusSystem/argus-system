@@ -10,6 +10,7 @@ server:
 consumer:
   url: 'amqp://argus:panoptes@localhost:5672'
   video_queue: 'published_video_chunks'
+  faces_queue: 'published_detected_faces'
 schemas: '../utils/events/resources'
 logger:
   level: 'debug'
