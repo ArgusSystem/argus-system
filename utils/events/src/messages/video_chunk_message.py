@@ -1,8 +1,9 @@
 class VideoChunkMessage:
 
-    def __init__(self, camera_id, timestamp, encoding, framerate, width, height, sampling_rate=1):
+    def __init__(self, camera_id, timestamp, trace, encoding, framerate, width, height, sampling_rate=1):
         self.camera_id = camera_id
         self.timestamp = timestamp
+        self.trace = trace
         self.encoding = encoding
         self.framerate = framerate
         self.width = width
@@ -13,6 +14,7 @@ class VideoChunkMessage:
         return {
             'camera_id': self.camera_id,
             'timestamp': self.timestamp,
+            'trace': self.trace,
             'encoding': self.encoding,
             'framerate': self.framerate,
             'width': self.width,
