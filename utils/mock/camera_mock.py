@@ -62,6 +62,7 @@ if __name__ == "__main__":
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
+            frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
             out.write(frame)
             frames_written += 1
 
