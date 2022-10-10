@@ -13,8 +13,6 @@ window.addEventListener('load', () => {
     video.src = URL.createObjectURL(mediaSource);
 
     mediaSource.addEventListener('sourceopen', (e) => {
-        setUpDisplay(faceData);
-
         const videoBuffer = new VideoBuffer(mediaSource);
         let hasPreBuffer = false;
         socketClient.onVideoChunk((chunk) => {
@@ -30,6 +28,8 @@ window.addEventListener('load', () => {
         socketClient.onFace((face) => {
             faceData.update(face)
         });
+
+        setUpDisplay(videoBuffer, faceData);
     })
 });
 

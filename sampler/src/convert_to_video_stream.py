@@ -6,7 +6,6 @@ from .null_device import null_device
 ENCODING = 'mp4'
 
 
-@timer(getLogger(__name__), 'Convert to DASH video')
 def convert(video_chunk):
     filename = f'{video_chunk.camera_id}-{video_chunk.timestamp}.{ENCODING}'
     output_filepath = f'{os.path.join(LOCAL_DIR, filename)}'

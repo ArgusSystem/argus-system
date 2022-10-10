@@ -8,6 +8,8 @@ export function setUpDisplay(videoBuffer, facesData) {
     let frame_counter = 0;
 
     const updateCanvas = (now, metadata) => {
+        // clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // draw video feed
         ctx.drawImage(video, 0, 0);

@@ -9,6 +9,7 @@ from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.video_storage import StorageFactory, StorageType
 from utils.application.src.signal_handler import SignalHandler
+from utils.tracing.src.tracer import get_current_trace_parent, get_tracer
 
 
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would
@@ -22,6 +23,9 @@ if __name__ == "__main__":
     # input
     with open(os.path.dirname(os.path.realpath(__file__)) + "/camera_mock.yml") as config_file:
         configuration = yaml.safe_load(config_file)
+
+    # Create tracer
+    tracer = get_tracer(**configuration['tracer'], service_name='camera-mock')
 
     # Create Storage
     storage = StorageFactory(**configuration['storage']).new(StorageType.VIDEO_CHUNKS)
@@ -72,45 +76,47 @@ if __name__ == "__main__":
     signal_handler.subscribe(stop_callback)
 
     frames_written = 0
-    while cap.isOpened() and not stop_signal_sent:
-        ret, frame = cap.read()
-        if ret:
-            frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
-            out.write(frame)
-            frames_written += 1
+    with tracer.start_as_current_span('camera-mock'):
+        while cap.isOpened() and not stop_signal_sent:
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
+                out.write(frame)
+                frames_written += 1
 
-            # cv2.imshow('frame', frame)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-        else:
-            break
+                # cv2.imshow('frame', frame)
+                # if cv2.waitKey(1) & 0xFF == ord('q'):
+                #     break
+            else:
+                break
 
-        if frames_written == fps * recording_time:
-            # Finish recording
-            out.release()
+            if frames_written == fps * recording_time:
+                # Finish recording
+                out.release()
 
-            # Create new video chunk message
-            message = VideoChunkMessage(camera_id=str(camera_id),
-                                        timestamp=time_ns(),
-                                        encoding=encoding,
-                                        framerate=fps,
-                                        width=width,
-                                        height=height,
-                                        duration=recording_time)
+                # Create new video chunk message
+                message = VideoChunkMessage(camera_id=str(camera_id),
+                                            timestamp=time_ns(),
+                                            encoding=encoding,
+                                            framerate=fps,
+                                            width=width,
+                                            height=height,
+                                            duration=recording_time,
+                                            trace=get_current_trace_parent())
 
-            # Publish video chunk to file storage
-            storage.store(name=str(message), filepath=filename)
+                # Publish video chunk to file storage
+                storage.store(name=str(message), filepath=filename)
 
-            # Send event of new video chunk
-            publisher.publish(encode(message))
+                # Send event of new video chunk
+                publisher.publish(encode(message))
 
-            # Setup new video recording
-            video_chunk_id += 1
-            frames_written = 0
-            filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
-            out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
+                # Setup new video recording
+                video_chunk_id += 1
+                frames_written = 0
+                filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
+                out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
-            print("Sent a video chunk")
+                print("Sent a video chunk")
 
     # Release everything if job is finished
     cap.release()
