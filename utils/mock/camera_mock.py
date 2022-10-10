@@ -7,6 +7,7 @@ from utils.events.src.messages.marshalling import encode
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.video_storage import StorageFactory, StorageType
+from utils.application.src.signal_handler import SignalHandler
 
 
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     use_webcam_feed = configuration['webcam_feed']
     if use_webcam_feed:
         # first available webcam id
-        input_video = -1
+        input_video = 0
     else:
         input_video = configuration['video_feed_filepath']
     cap = cv2.VideoCapture(input_video)
@@ -59,8 +60,16 @@ if __name__ == "__main__":
         os.mkdir('output')
     out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
+    # Register signal handler
+    stop_signal_sent = False
+    def stop_callback():
+        global stop_signal_sent
+        stop_signal_sent = True
+    signal_handler = SignalHandler()
+    signal_handler.subscribe(stop_callback)
+
     frames_written = 0
-    while cap.isOpened():
+    while cap.isOpened() and not stop_signal_sent:
         ret, frame = cap.read()
         if ret:
             frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
@@ -83,7 +92,8 @@ if __name__ == "__main__":
                                         encoding=encoding,
                                         framerate=fps,
                                         width=width,
-                                        height=height)
+                                        height=height,
+                                        duration=recording_time)
 
             # Publish video chunk to file storage
             storage.store(name=str(message), filepath=filename)
@@ -96,6 +106,8 @@ if __name__ == "__main__":
             frames_written = 0
             filename = "output/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
             out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
+
+            print("Sent a video chunk")
 
     # Release everything if job is finished
     cap.release()

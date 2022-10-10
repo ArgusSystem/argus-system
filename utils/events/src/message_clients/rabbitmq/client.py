@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 from pika import BlockingConnection, ConnectionParameters, PlainCredentials
+from pika.exceptions import StreamLostError
 
 
 class Client:
@@ -18,6 +19,11 @@ class Client:
 
     @contextmanager
     def channel(self):
+        try:
+            self._connection.sleep(0.01)
+        except StreamLostError:
+            # print("client: connection is dead, reconnecting")
+            self._connect()
         yield self._channel
 
     def close(self):
