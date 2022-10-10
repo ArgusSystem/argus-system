@@ -34,6 +34,10 @@
     {
       "name": "sampling_rate",
       "type": "int"
+    },
+    {
+      "name": "duration",
+      "type": "int"
     }
   ]
 }
