@@ -13,6 +13,7 @@ def fetch(video_chunk_message, remote_storage):
                                         framerate=video_chunk_message.framerate,
                                         width=video_chunk_message.width,
                                         height=video_chunk_message.height,
-                                        filepath=filepath)
+                                        filepath=filepath,
+                                        duration=video_chunk_message.duration)
 
     return local_video_chunk

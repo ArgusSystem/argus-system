@@ -1,6 +1,6 @@
 class VideoChunkMessage:
 
-    def __init__(self, camera_id, timestamp, trace, encoding, framerate, width, height, sampling_rate=1):
+    def __init__(self, camera_id, timestamp, trace, encoding, framerate, width, height, duration, sampling_rate=1):
         self.camera_id = camera_id
         self.timestamp = timestamp
         self.trace = trace
@@ -9,6 +9,7 @@ class VideoChunkMessage:
         self.width = width
         self.height = height
         self.sampling_rate = sampling_rate
+        self.duration = duration
 
     def to_json(self):
         return {
@@ -19,7 +20,8 @@ class VideoChunkMessage:
             'framerate': self.framerate,
             'width': self.width,
             'height': self.height,
-            'sampling_rate': self.sampling_rate
+            'sampling_rate': self.sampling_rate,
+            'duration': self.duration
         }
 
     def __str__(self):
@@ -33,6 +35,7 @@ class VideoChunkMessage:
                    self.framerate == other.framerate and \
                    self.width == other.width and \
                    self.height == other.height and \
-                   self.sampling_rate == other.sampling_rate
+                   self.sampling_rate == other.sampling_rate and \
+                   self.duration == other.duration
 
         return False

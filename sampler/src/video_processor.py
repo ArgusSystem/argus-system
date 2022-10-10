@@ -81,5 +81,6 @@ class VideoProcessor:
             framerate=video_chunk.framerate,
             width=video_chunk.width,
             height=video_chunk.height,
-            sampling_rate=self.sampling_rate
+            sampling_rate=self.sampling_rate,
+            duration=video_chunk.duration
         )))
