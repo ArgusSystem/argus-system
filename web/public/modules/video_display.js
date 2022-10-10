@@ -17,7 +17,7 @@ export function setUpDisplay(videoBuffer, facesData) {
         let frame_faces = facesData.currentFaceData(chunk_id, offset);
 
         if (frame_faces == null) {
-            console.log("didn't found face data for chunk: " + chunk_id.toString() + ", offset: " + offset.toString());
+            console.log("didn't find face data for chunk: " + chunk_id.toString() + ", offset: " + offset.toString());
         }
         else {
             for (const face_data of frame_faces) {

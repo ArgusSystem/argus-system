@@ -2,6 +2,7 @@ import cv2
 import sys
 import yaml
 import os
+import shutil
 from time import time_ns
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.message_clients.rabbitmq import Publisher
@@ -53,11 +54,13 @@ if __name__ == "__main__":
     video_chunk_id = 0
 
     # Define the codec and create VideoWriter object
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    output_dir = base_dir + "/output"
     encoding = 'mp4v'
     fourcc = cv2.VideoWriter_fourcc(*encoding)
-    filename = "output/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
-    if not os.path.exists('output'):
-        os.mkdir('output')
+    filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
     out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
     # Register signal handler
@@ -104,7 +107,7 @@ if __name__ == "__main__":
             # Setup new video recording
             video_chunk_id += 1
             frames_written = 0
-            filename = "output/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
+            filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
             out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
             print("Sent a video chunk")
@@ -113,3 +116,4 @@ if __name__ == "__main__":
     cap.release()
     out.release()
     cv2.destroyAllWindows()
+    shutil.rmtree(output_dir)
