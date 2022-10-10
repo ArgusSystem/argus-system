@@ -5,7 +5,7 @@ function buildDetectedFaceMessage(metadata) {
     const name = metadata['name'];
     const bounding_box = metadata['bounding_box'];
     const probability = metadata['probability'];
-  return {...video_chunk_id, offset, face_num, name, bounding_box, probability};
+  return {video_chunk_id, offset, face_num, name, bounding_box, probability};
 }
 
 module.exports = buildDetectedFaceMessage;

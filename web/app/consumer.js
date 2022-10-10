@@ -12,6 +12,7 @@ const consumerConfiguration = configuration['consumer'];
 
 async function processVideoChunk(channel, msg, socketServer) {
     const metadata = schemas.VIDEO_CHUNK_MESSAGE.fromBuffer(msg.content);
+
     const context = get_context(metadata.trace);
 
     await tracer.startActiveSpan('web', undefined, context, async parent => {
