@@ -24,7 +24,8 @@ class VideoRecorder:
     def record(self, is_running):
         video_metadata = VideoMetadata(camera_id=self.camera_id,
                                        framerate=self.framerate,
-                                       resolution=self.resolution)
+                                       resolution=self.resolution,
+                                       duration=self.recording_time)
         self.camera.start_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
 
         while is_running():
@@ -39,7 +40,8 @@ class VideoRecorder:
 
                         new_video_metadata = VideoMetadata(camera_id=self.camera_id,
                                                            framerate=self.framerate,
-                                                           resolution=self.resolution)
+                                                           resolution=self.resolution,
+                                                           duration=self.recording_time)
                         self.camera.split_recording(new_video_metadata.filename, format=ENCODING, quality=QUALITY)
 
                         self.output_queue.put((chunk_trace, camera_trace, video_metadata))

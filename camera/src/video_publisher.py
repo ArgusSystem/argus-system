@@ -32,7 +32,8 @@ class VideoPublisher:
                                     encoding=video_metadata.encoding,
                                     framerate=video_metadata.framerate,
                                     width=video_metadata.resolution[0],
-                                    height=video_metadata.resolution[1])
+                                    height=video_metadata.resolution[1],
+                                    duration=video_metadata.duration)
 
         with self.tracer.start_as_current_span('store', context=camera_context):
             self.storage.store(name=str(message), filepath=video_metadata.filename)
