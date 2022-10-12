@@ -2,3 +2,4 @@ mtcnn
 tensorflow
 opencv-python
 numpy
+easydict

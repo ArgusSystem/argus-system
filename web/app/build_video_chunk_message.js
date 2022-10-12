@@ -1,9 +1,14 @@
 const fetchVideo = require('./fetch_video_chunk');
 
 async function buildVideoChunkMessage(metadata) {
-  const video_chunk_id = `${metadata['camera_id']}-${metadata['timestamp']}`;
-  const payload = await fetchVideo(video_chunk_id);
-  return {video_chunk_id, ...metadata, payload};
+  return {
+    cameraId: metadata['camera_id'],
+    timestamp: metadata['timestamp'],
+    samplingRate: metadata['sampling_rate'],
+    framerate: metadata['framerate'],
+    duration: metadata['duration'],
+    payload: await fetchVideo(`${metadata['camera_id']}-${metadata['timestamp']}`)
+  };
 }
 
 module.exports = buildVideoChunkMessage;

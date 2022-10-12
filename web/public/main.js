@@ -15,9 +15,10 @@ window.addEventListener('load', () => {
     mediaSource.addEventListener('sourceopen', (e) => {
         const videoBuffer = new VideoBuffer(mediaSource);
         let hasPreBuffer = false;
+
         socketClient.onVideoChunk((chunk) => {
             videoBuffer.append(chunk);
-            console.log(`Total processing time: ${Date.now() - chunk.timestamp} ms`);
+
             if (hasPreBuffer && video.paused) {
                 video.play();
             }
@@ -26,7 +27,7 @@ window.addEventListener('load', () => {
         });
 
         socketClient.onFace((face) => {
-            faceData.update(face)
+            faceData.update(face);
         });
 
         setUpDisplay(videoBuffer, faceData);
