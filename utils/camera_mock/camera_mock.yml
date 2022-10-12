@@ -9,3 +9,12 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
+tracer:
+  host: localhost
+  port: 6831
+width: 640
+height: 480
+camera_id: camera-mock-1
+webcam_feed: True
+video_feed_filepath: ''
+recording_time: 1
