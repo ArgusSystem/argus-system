@@ -29,6 +29,10 @@
     {
       "name": "probability",
       "type": "float"
+    },
+    {
+      "name": "trace",
+      "type": "string"
     }
   ]
 }
