@@ -21,6 +21,10 @@
         "type": "array",
         "items": "int"
       }
+    },
+    {
+      "name": "trace",
+      "type": "string"
     }
   ]
 }

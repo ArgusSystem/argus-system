@@ -1,0 +1,5 @@
+-r ../application/requirements.txt
+-r ../events/requirements.txt
+-r ../video_storage/requirements.txt
+-r ../tracing/requirements.txt
+opencv_python

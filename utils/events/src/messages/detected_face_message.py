@@ -1,13 +1,14 @@
 
 class DetectedFaceMessage:
 
-    def __init__(self, video_chunk_id, offset, face_num, name, bounding_box, probability):
+    def __init__(self, video_chunk_id, offset, face_num, name, bounding_box, probability, trace):
         self.video_chunk_id = video_chunk_id
         self.offset = offset
         self.face_num = face_num
         self.name = name
         self.bounding_box = bounding_box
         self.probability = probability
+        self.trace = trace
 
     def to_json(self):
         return {
@@ -16,7 +17,8 @@ class DetectedFaceMessage:
             'face_num': self.face_num,
             'name': self.name,
             'bounding_box': self.bounding_box,
-            'probability': self.probability
+            'probability': self.probability,
+            'trace': self.trace
         }
 
     def __str__(self):

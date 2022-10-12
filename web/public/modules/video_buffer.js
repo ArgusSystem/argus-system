@@ -35,6 +35,7 @@ export class VideoBuffer {
         let hold_0_offset = -1;
         let next_offset = -1;
 
+
         // we iterate the sampled frame offsets for this video chunk
         for (let sample_index = 0; sample_index < samples_per_chunk; ++sample_index) {
             // IMPORTANTE: la logica que calcula los sample frame offsets tiene que ser la misma que en python
@@ -44,7 +45,7 @@ export class VideoBuffer {
                 if (hold_0_offset === -1) {
                     // the current frame is earlier than the first sampled frame from this chunk
                     // so we use the last sampled frame from the previous chunk
-                    if (chunkIndex - 1 > 0) {
+                    if (chunkIndex - 1 >= 0) {
                         chunkId = this.chunksMetadata[chunkIndex - 1].id;
                         hold_0_offset = Math.round(frames_between_samples / 2) + (samples_per_chunk - 1) * frames_between_samples;
                     }

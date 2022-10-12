@@ -1,5 +1,8 @@
-mtcnn
-tensorflow
-opencv-python
+-r ../utils/application/requirements.txt
+-r ../utils/events/requirements.txt
+-r ../utils/video_storage/requirements.txt
+-r ../utils/tracing/requirements.txt
 numpy
+opencv-python
+tensorflow-cpu
 easydict
