@@ -15,11 +15,11 @@ export function setUpDisplay(videoBuffer, facesData) {
         ctx.drawImage(video, 0, 0);
 
         // get current chunk id and face data
-        let [chunk_id, offset] = videoBuffer.currentChunk(metadata.mediaTime);
-        let frame_faces = facesData.currentFaceData(chunk_id, offset);
+        let [chunkId, offset] = videoBuffer.currentChunk(metadata.mediaTime);
+        let frame_faces = facesData.currentFaceData(chunkId, offset);
 
         if (frame_faces == null) {
-            console.log("didn't find face data for chunk: " + chunk_id.toString() + ", offset: " + offset.toString());
+            console.log("didn't find face data for chunk: " + chunkId.toString() + ", offset: " + offset.toString());
         }
         else {
             for (const face_data of frame_faces) {

@@ -14,23 +14,24 @@ export class VideoBuffer {
 
     append(chunk) {
         this.sourceBuffer.appendBuffer(chunk.payload);
-        this.chunksMetadata.push(chunk);
+        this.chunksMetadata.push({id: `${chunk.cameraId}-${chunk.timestamp}`, ...chunk});
+        console.log(`Total processing time: ${Date.now() - chunk.timestamp} ms`);
     }
 
     currentChunk(time) {
-        let chunk_duration = this.chunksMetadata[0].duration;
+        let chunkDuration = this.chunksMetadata[0].duration;
         // OJO esto funciona solo si todos los chunks tienen la misma duracion
-        let chunk_index = Math.floor(time / chunk_duration);
-        let chunk_id = this.chunksMetadata[chunk_index].video_chunk_id;
+        let chunkIndex = Math.floor(time / chunkDuration);
+        let chunkId = this.chunksMetadata[chunkIndex].id;
 
-        let sampling_rate = this.chunksMetadata[chunk_index].sampling_rate;
-        let frame_rate = this.chunksMetadata[chunk_index].framerate;
+        let samplingRate = this.chunksMetadata[chunkIndex].samplingRate;
+        let framerate = this.chunksMetadata[chunkIndex].framerate;
 
-        let time_in_current_chunk = (time - Math.floor(time / chunk_duration) * chunk_duration);
-        let current_frame = Math.floor(time_in_current_chunk * frame_rate);
+        let time_in_current_chunk = (time - Math.floor(time / chunkDuration) * chunkDuration);
+        let current_frame = Math.floor(time_in_current_chunk * framerate);
 
-        let samples_per_chunk = Math.floor(chunk_duration * sampling_rate);
-        let frames_between_samples = Math.round(frame_rate / sampling_rate);
+        let samples_per_chunk = Math.floor(chunkDuration * samplingRate);
+        let frames_between_samples = Math.round(framerate / samplingRate);
         let hold_0_offset = -1;
         let next_offset = -1;
 
@@ -44,8 +45,8 @@ export class VideoBuffer {
                 if (hold_0_offset === -1) {
                     // the current frame is earlier than the first sampled frame from this chunk
                     // so we use the last sampled frame from the previous chunk
-                    if (chunk_index - 1 >= 0) {
-                        chunk_id = this.chunksMetadata[chunk_index - 1].video_chunk_id;
+                    if (chunkIndex - 1 >= 0) {
+                        chunkId = this.chunksMetadata[chunkIndex - 1].id;
                         hold_0_offset = Math.round(frames_between_samples / 2) + (samples_per_chunk - 1) * frames_between_samples;
                     }
                 }
@@ -53,6 +54,6 @@ export class VideoBuffer {
             }
             hold_0_offset = sampled_frame_offset;
         }
-        return [chunk_id, hold_0_offset];
+        return [chunkId, hold_0_offset];
     }
 }

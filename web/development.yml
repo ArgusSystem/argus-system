@@ -1,3 +1,14 @@
+server:
+  port: 8080
+logger:
+  level: 'debug'
+tracing:
+    endpoint: 'http://localhost:14268/api/traces'
+consumer:
+  url: 'amqp://argus:panoptes@localhost:5672'
+  video_queue: 'published_video_chunks'
+  faces_queue: 'published_detected_faces'
+schemas: '../utils/events/resources'
 storage:
   client:
     endPoint: 'localhost'
@@ -5,14 +16,3 @@ storage:
     accessKey: 'argus'
     secretKey: 'panoptes'
   bucket: 'video-chunks'
-server:
-  port: 8080
-consumer:
-  url: 'amqp://argus:panoptes@localhost:5672'
-  video_queue: 'published_video_chunks'
-  faces_queue: 'published_detected_faces'
-schemas: '../utils/events/resources'
-logger:
-  level: 'debug'
-tracing:
-    endpoint: 'http://localhost:14268/api/traces'

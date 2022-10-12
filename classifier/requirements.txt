@@ -3,7 +3,7 @@
 -r ../utils/video_storage/requirements.txt
 -r ../utils/tracing/requirements.txt
 numpy
-sklearn
+scikit-learn
 opencv-python
 requests
 torch
