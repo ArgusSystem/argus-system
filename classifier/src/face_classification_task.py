@@ -6,29 +6,31 @@ from utils.events.src.messages.marshalling import encode, decode
 from .classifier_support_vector import SVClassifier
 from .face_embedder_factory import FaceEmbedderFactory
 from utils.video_storage import StorageFactory, StorageType
+from utils.tracing.src.tracer import get_context, get_tracer
 from utils.image_processing.src.image_serialization import bytestring_to_image
 from logging import getLogger
 
-PUBLISHER_KEY = 'publisher'
-FACE_EMBEDDER_KEY = 'face_embedder'
-FACE_CLASSIFIER_KEY = 'face_classifier'
-STORAGE_KEY = 'storage'
+FACE_CLASSIFIER_MODEL_KEY = 'model'
+FACE_CLASSIFIER_THRESHOLD_KEY = 'threshold'
+
+logger = getLogger(__name__)
 
 
 class FaceClassificationTask:
-    def __init__(self, configuration):
-        self.face_classifier = SVClassifier.load(configuration[FACE_CLASSIFIER_KEY]['model'])
-        self.threshold = configuration[FACE_CLASSIFIER_KEY]['threshold']
+    def __init__(self, face_classifier_configuration,
+                 face_embedder_configuration,
+                 publisher_to_web_configuration,
+                 storage_configuration,
+                 tracer_configuration):
 
-        self.face_embedder = FaceEmbedderFactory.build(**configuration[FACE_EMBEDDER_KEY])
+        self.threshold = face_classifier_configuration[FACE_CLASSIFIER_THRESHOLD_KEY]
 
-        # self.db = Database(self.configuration['db'])
+        self.face_classifier = SVClassifier.load(face_classifier_configuration[FACE_CLASSIFIER_MODEL_KEY])
+        self.face_embedder = FaceEmbedderFactory.build(**face_embedder_configuration)
 
-        self.publisher_to_web = Publisher.new(**configuration[PUBLISHER_KEY])
-
-        self.face_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.FRAME_FACES)
-
-        self.logger = getLogger(__name__)
+        self.publisher_to_web = Publisher.new(**publisher_to_web_configuration)
+        self.face_storage = StorageFactory(**storage_configuration).new(StorageType.FRAME_FACES)
+        self.tracer = get_tracer(**tracer_configuration, service_name='argus-classifier')
 
     def close(self):
         self.face_embedder.close()
@@ -37,37 +39,43 @@ class FaceClassificationTask:
     def execute_with(self, message):
         face_message: FaceMessage = decode(FaceMessage, message)
 
-        self.logger.debug("Processing message - %s", face_message)
+        with self.tracer.start_as_current_span('classifier', context=get_context(face_message.trace)):
 
-        # Get face
-        face = bytestring_to_image(self.face_storage.fetch(str(face_message)))
+            # Get face image
+            with self.tracer.start_as_current_span('fetch-face'):
+                face = bytestring_to_image(self.face_storage.fetch(str(face_message)))
 
-        # Perform face embedding
-        embedding = self.face_embedder.get_embedding_mem(face)
+            # Perform face embedding
+            with self.tracer.start_as_current_span('face-embedding'):
+                embedding = self.face_embedder.get_embedding_mem(face)
 
-        # Insert result into database
-        # face_embedding = FaceEmbedding(face_id=face_id, embedding=list(embedding.astype(float)))
-        # self.db.add(face_embedding)
+            # Insert result into database
+            # face_embedding = FaceEmbedding(face_id=face_id, embedding=list(embedding.astype(float)))
+            # self.db.add(face_embedding)
 
-        # Perform face classification
-        classification_index, classification_probability = self.face_classifier.predict(embedding)
-        name = 'unknown'
-        if classification_probability > self.threshold:
-            name = self.face_classifier.get_name(classification_index)
+            # Perform face classification
+            with self.tracer.start_as_current_span('face-classification'):
+                classification_index, classification_probability = self.face_classifier.predict(embedding)
+                name = 'unknown'
+                if classification_probability > self.threshold:
+                    name = self.face_classifier.get_name(classification_index)
 
-        self.logger.debug("Found: %s with prob: %.2f", name, classification_probability)
+            # Update database face row with result
+            # face: Face = self.db.get(Face, face_id)
+            # face.classification_id = int(classification_index)
+            # face.probability_classification = float(classification_probability)
+            # face.is_match = is_match
+            # self.db.update()
 
-        # Update database face row with result
-        # face: Face = self.db.get(Face, face_id)
-        # face.classification_id = int(classification_index)
-        # face.probability_classification = float(classification_probability)
-        # face.is_match = is_match
-        # self.db.update()
+            with self.tracer.start_as_current_span('publish-detected-face'):
+                # Queue face data message for web streaming
+                detected_face_message = DetectedFaceMessage(video_chunk_id=face_message.video_chunk_id,
+                                                            offset=face_message.offset,
+                                                            face_num=face_message.face_num,
+                                                            name=name,
+                                                            bounding_box=face_message.bounding_box,
+                                                            probability=classification_probability,
+                                                            trace=face_message.trace)
+                self.publisher_to_web.publish(encode(detected_face_message))
 
-        # Queue face data message for web streaming
-        detected_face_message = DetectedFaceMessage(face_message.video_chunk_id, face_message.offset,
-                                                    face_message.face_num, name, face_message.bounding_box,
-                                                    classification_probability)
-        self.publisher_to_web.publish(encode(detected_face_message))
-
-        self.logger.debug("Finished - %s", face_message)
+        logger.info("Finished - %s, found: %s with prob: %.2f", face_message, name, classification_probability)

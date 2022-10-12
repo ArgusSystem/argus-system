@@ -27,3 +27,7 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
+
+tracer:
+  host: localhost
+  port: 6831
