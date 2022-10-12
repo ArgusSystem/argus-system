@@ -7,7 +7,7 @@ NULL_DEVICE = 'nul' if sys.platform == 'win32' else '/dev/null'
 
 class LocalVideoChunk:
 
-    def __init__(self, camera_id, timestamp, encoding, framerate, width, height, filepath, duration):
+    def __init__(self, camera_id, timestamp, encoding, framerate, width, height, filepath):
         self.camera_id = camera_id
         self.timestamp = timestamp
         self.encoding = encoding
@@ -15,4 +15,3 @@ class LocalVideoChunk:
         self.width = width
         self.height = height
         self.filepath = filepath
-        self.duration = duration

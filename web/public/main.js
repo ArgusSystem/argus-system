@@ -4,6 +4,8 @@ import {VideoBuffer} from './modules/video_buffer.js'
 import {FaceData} from "./modules/face_data.js";
 
 
+const PRE_BUFFERED_THRESHOLD = 10;
+
 window.addEventListener('load', () => {
     const socketClient = new SocketClient();
     const mediaSource = new MediaSource;
@@ -14,16 +16,16 @@ window.addEventListener('load', () => {
 
     mediaSource.addEventListener('sourceopen', (e) => {
         const videoBuffer = new VideoBuffer(mediaSource);
-        let hasPreBuffer = false;
+        let preBuffered = 0;
 
         socketClient.onVideoChunk((chunk) => {
             videoBuffer.append(chunk);
 
-            if (hasPreBuffer && video.paused) {
+            if (preBuffered >= PRE_BUFFERED_THRESHOLD && video.paused) {
                 video.play();
             }
 
-            hasPreBuffer = true
+            preBuffered += chunk.duration;
         });
 
         socketClient.onFace((face) => {

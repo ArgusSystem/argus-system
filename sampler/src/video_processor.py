@@ -12,6 +12,7 @@ from utils.video_storage import StorageFactory, StorageType
 from .sample_video import sample
 from .fetch_video_chunk import fetch
 from .convert_to_video_stream import convert
+from .video_metadata import get_video_metadata
 
 logger = getLogger(__name__)
 
@@ -44,8 +45,11 @@ class VideoProcessor:
             with self.tracer.start_as_current_span('re-encode'):
                 converted_video_chunk = convert(original_video_chunk)
 
+            with self.tracer.start_as_current_span('metadata'):
+                duration, frame_count = get_video_metadata(converted_video_chunk)
+
             with self.tracer.start_as_current_span('sample'):
-                frames_dir, frames = sample(converted_video_chunk, self.sampling_rate)
+                frames_dir, frames = sample(converted_video_chunk, self.sampling_rate, frame_count)
 
             with self.tracer.start_as_current_span('store-and-publish-frames'):
                 self._store_and_publish_frames(video_chunk_id=video_chunk_id,
@@ -55,7 +59,8 @@ class VideoProcessor:
             with self.tracer.start_as_current_span('store-and-publish-chunk'):
                 self._store_and_publish_video_chunk(video_chunk_id=video_chunk_id,
                                                     video_chunk=converted_video_chunk,
-                                                    trace=video_chunk_message.trace)
+                                                    trace=video_chunk_message.trace,
+                                                    duration=duration)
 
             with self.tracer.start_as_current_span('clean'):
                 os.remove(original_video_chunk.filepath)
@@ -70,7 +75,7 @@ class VideoProcessor:
             self.frame_storage.store(name=str(frame_message), filepath=frame.filepath)
             self.frame_publisher.publish(encode(frame_message))
 
-    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, trace):
+    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, trace, duration):
         self.video_chunk_storage.store(name=video_chunk_id, filepath=video_chunk.filepath)
 
         self.video_chunk_publisher.publish(encode(VideoChunkMessage(
@@ -82,5 +87,5 @@ class VideoProcessor:
             width=video_chunk.width,
             height=video_chunk.height,
             sampling_rate=self.sampling_rate,
-            duration=video_chunk.duration
+            duration=duration
         )))
