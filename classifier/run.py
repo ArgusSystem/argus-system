@@ -6,14 +6,27 @@ from utils.events.src.message_clients.rabbitmq import Consumer
 # asi que tiene que existir SVClassifier en __main__
 from classifier import SVClassifier
 
+FACE_CLASSIFIER_KEY = 'face_classifier'
+FACE_EMBEDDER_KEY = 'face_embedder'
+PUBLISHER_KEY = 'publisher'
+STORAGE_KEY = 'storage'
+TRACER_KEY = 'tracer'
 CONSUMER_KEY = 'consumer'
+
 
 if __name__ == "__main__":
     with run('argus-classifier') as application:
+        configuration = application.configuration
 
         # init
-        face_classification_task = FaceClassificationTask(application.configuration)
-        consumer_from_sampler = Consumer.new(**application.configuration[CONSUMER_KEY],
+        face_classification_task = FaceClassificationTask(
+            face_classifier_configuration=configuration[FACE_CLASSIFIER_KEY],
+            face_embedder_configuration=configuration[FACE_EMBEDDER_KEY],
+            publisher_to_web_configuration=configuration[PUBLISHER_KEY],
+            storage_configuration=configuration[STORAGE_KEY],
+            tracer_configuration=configuration[TRACER_KEY])
+
+        consumer_from_sampler = Consumer.new(**configuration[CONSUMER_KEY],
                                              on_message_callback=face_classification_task.execute_with,
                                              stop_event=application.stop_event)
 
