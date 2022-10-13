@@ -12,7 +12,7 @@ from utils.video_storage import StorageFactory, StorageType
 from .sample_video import sample
 from .fetch_video_chunk import fetch
 from .convert_to_video_stream import convert
-from .video_metadata import get_video_metadata
+from .video_metadata import get_duration
 
 logger = getLogger(__name__)
 
@@ -46,10 +46,10 @@ class VideoProcessor:
                 converted_video_chunk = convert(original_video_chunk)
 
             with self.tracer.start_as_current_span('metadata'):
-                duration, frame_count = get_video_metadata(converted_video_chunk)
+                duration = get_duration(converted_video_chunk)
 
             with self.tracer.start_as_current_span('sample'):
-                frames_dir, frames = sample(converted_video_chunk, self.sampling_rate, frame_count)
+                frames_dir, frames = sample(converted_video_chunk, self.sampling_rate)
 
             with self.tracer.start_as_current_span('store-and-publish-frames'):
                 self._store_and_publish_frames(video_chunk_id=video_chunk_id,

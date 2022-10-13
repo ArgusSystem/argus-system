@@ -11,24 +11,25 @@ class Frame:
         self.filepath = filepath
 
 
-def get_frames(frames_dir, framerate, sampling_rate, frames_count):
+def get_frames(frames_dir, framerate, sampling_rate):
     files = os.listdir(frames_dir)
     files.sort(key=lambda f: int(f.split('.')[0]))
 
-    samples_count = sampling_rate * framerate
-    in_between_frames = frames_count / samples_count
+    in_between_frames = framerate / sampling_rate
     offset = in_between_frames / 2
 
     frames = []
 
     for file in files:
-        frames.append(Frame(offset=ceil(offset), filepath=os.path.join(frames_dir, file)))
+        frame = Frame(offset=ceil(offset),
+                      filepath=os.path.join(frames_dir, file))
+        frames.append(frame)
         offset += in_between_frames
 
     return frames
 
 
-def sample(video_chunk, sampling_rate, frames_count):
+def sample(video_chunk, sampling_rate):
     frames_dir = os.path.join(LOCAL_DIR, f'{video_chunk.camera_id}-{video_chunk.timestamp}')
 
     if not os.path.exists(frames_dir):
@@ -39,4 +40,4 @@ def sample(video_chunk, sampling_rate, frames_count):
         f'{os.path.join(frames_dir, "%d.jpg")} '
         f'> {NULL_DEVICE} 2>&1')
 
-    return frames_dir, get_frames(frames_dir, video_chunk.framerate, sampling_rate, frames_count)
+    return frames_dir, get_frames(frames_dir, video_chunk.framerate, sampling_rate)
