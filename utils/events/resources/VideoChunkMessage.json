@@ -32,8 +32,9 @@
       "type": "int"
     },
     {
-      "name": "sampling_rate",
-      "type": "int"
+      "name": "samples",
+      "type": "array",
+      "items": "int"
     },
     {
       "name": "duration",

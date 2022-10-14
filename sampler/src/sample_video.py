@@ -21,7 +21,8 @@ def get_frames(frames_dir, framerate, sampling_rate):
     frames = []
 
     for file in files:
-        frame = Frame(offset=ceil(offset),
+        # Count offsets from 0 to N-1
+        frame = Frame(offset=ceil(offset) - 1,
                       filepath=os.path.join(frames_dir, file))
         frames.append(frame)
         offset += in_between_frames
