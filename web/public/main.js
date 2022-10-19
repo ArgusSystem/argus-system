@@ -1,8 +1,9 @@
 import {SocketClient} from './modules/socket_client.js'
 import {setUpDisplay} from './modules/video_display.js'
 import {VideoBuffer} from './modules/video_buffer.js'
-import {FacesIndex} from './modules/faces_index';
+import {FacesIndex} from './modules/faces_index.js';
 import {VideoIndex} from "./modules/video_index.js";
+import { VideoInterpolator } from './modules/video_interpolator.js'
 
 
 const PRE_BUFFERED_THRESHOLD = 10;
@@ -18,12 +19,13 @@ window.addEventListener('load', () => {
     mediaSource.addEventListener('sourceopen', (e) => {
         const videoBuffer = new VideoBuffer(mediaSource);
         const facesIndex = new FacesIndex();
-        const videoIndex = new VideoIndex(facesIndex);
+        const videoIndex = new VideoIndex();
+        const videoInterpolator = new VideoInterpolator(videoIndex, facesIndex);
         let preBuffered = 0;
 
         socketClient.onChunk(chunk => {
             videoBuffer.append(chunk);
-            videoIndex.addChunk(chunk);
+            videoIndex.add(chunk);
 
             console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
 
@@ -36,7 +38,7 @@ window.addEventListener('load', () => {
 
         socketClient.onFace(face => facesIndex.add(face));
 
-        setUpDisplay(videoIndex);
+        setUpDisplay(videoInterpolator);
     })
 });
 

@@ -6,6 +6,7 @@ async function buildVideoChunkMessage(metadata) {
     timestamp: metadata['timestamp'],
     samples: metadata['samples'],
     duration: metadata['duration'],
+    framerate: metadata['framerate'],
     payload: await fetchVideo(`${metadata['camera_id']}-${metadata['timestamp']}`)
   };
 }

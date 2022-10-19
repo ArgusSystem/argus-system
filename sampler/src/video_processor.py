@@ -56,11 +56,13 @@ class VideoProcessor:
                                                frames=frames,
                                                trace=video_chunk_message.trace)
 
+            sampler_trace = get_trace_parent()
             with self.tracer.start_as_current_span('store-and-publish-chunk'):
                 self._store_and_publish_video_chunk(video_chunk_id=video_chunk_id,
                                                     video_chunk=converted_video_chunk,
                                                     duration=duration,
-                                                    samples=[frame.offset for frame in frames])
+                                                    samples=[frame.offset for frame in frames],
+                                                    trace=sampler_trace)
 
             with self.tracer.start_as_current_span('clean'):
                 os.remove(original_video_chunk.filepath)
@@ -75,13 +77,13 @@ class VideoProcessor:
             self.frame_storage.store(name=str(frame_message), filepath=frame.filepath)
             self.frame_publisher.publish(encode(frame_message))
 
-    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, duration, samples):
+    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, duration, trace, samples):
         self.video_chunk_storage.store(name=video_chunk_id, filepath=video_chunk.filepath)
 
         self.video_chunk_publisher.publish(encode(VideoChunkMessage(
             camera_id=video_chunk.camera_id,
             timestamp=video_chunk.timestamp,
-            trace=get_trace_parent(),
+            trace=trace,
             encoding=video_chunk.encoding,
             framerate=video_chunk.framerate,
             width=video_chunk.width,
