@@ -30,9 +30,13 @@ def get_tracer(host, port, service_name='argus'):
     return tracer
 
 
-def get_current_trace_parent():
+def set_span_in_context(span):
+    return trace.set_span_in_context(span)
+
+
+def get_trace_parent(context=None):
     carrier = {}
-    prop.inject(carrier)
+    prop.inject(carrier, context)
     return carrier[TRACE_PARENT_KEY]
 
 

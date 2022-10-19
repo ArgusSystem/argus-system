@@ -1,9 +1,7 @@
-from logging import getLogger
-
 from picamera import PiCamera
 
-from utils.tracing.src.tracer import get_current_trace_parent
 from .local_video import create_local_storage
+from .processing_chunk import ProcessingChunk
 from .video_metadata import VideoMetadata, ENCODING
 
 QUALITY = 25
@@ -22,30 +20,30 @@ class VideoRecorder:
         create_local_storage()
 
     def record(self, is_running):
-        video_metadata = VideoMetadata(camera_id=self.camera_id,
-                                       framerate=self.framerate,
-                                       resolution=self.resolution,
-                                       duration=self.recording_time)
-        self.camera.start_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
+        processing_chunk = None
+        previous_record_span = None
 
         while is_running():
-            with self.tracer.start_as_current_span(video_metadata.id()):
-                chunk_trace = get_current_trace_parent()
+            camera_span = self.tracer.start_span('camera')
+            camera_context = self.tracer.set_span_in_context(camera_span)
+            record_span = self.tracer.start_span('record', camera_context)
 
-                with self.tracer.start_as_current_span('camera'):
-                    camera_trace = get_current_trace_parent()
+            video_metadata = VideoMetadata(camera_id=self.camera_id,
+                                           framerate=self.framerate,
+                                           resolution=self.resolution,
+                                           duration=self.recording_time)
 
-                    with self.tracer.start_as_current_span('record'):
-                        self.camera.wait_recording(self.recording_time)
+            if processing_chunk:
+                self.camera.split_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
+                self.output_queue.put(processing_chunk)
+                previous_record_span.close()
+            else:
+                self.camera.start_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
 
-                        new_video_metadata = VideoMetadata(camera_id=self.camera_id,
-                                                           framerate=self.framerate,
-                                                           resolution=self.resolution,
-                                                           duration=self.recording_time)
-                        self.camera.split_recording(new_video_metadata.filename, format=ENCODING, quality=QUALITY)
+            self.camera.wait_recording(self.recording_time)
 
-                        self.output_queue.put((chunk_trace, camera_trace, video_metadata))
-                        video_metadata = new_video_metadata
+            processing_chunk = ProcessingChunk(video_metadata, camera_span, camera_context)
+            previous_record_span = record_span
 
         self.camera.stop_recording()
         self.camera.close()

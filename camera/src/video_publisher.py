@@ -1,10 +1,10 @@
 from logging import getLogger
 
-from utils.tracing.src.tracer import get_context
 from .local_video import delete_video
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.tracing.src.tracer import get_trace_parent
 from utils.video_storage import StorageFactory, StorageType
 
 logger = getLogger(__name__)
@@ -22,26 +22,28 @@ class VideoPublisher:
         while is_running():
             self.input_queue.compute(self._publish)
 
-    def _publish(self, message):
-        chunk_trace, camera_trace, video_metadata = message
-        camera_context = get_context(camera_trace)
+    def _publish(self, processing_chunk):
+        video_metadata = processing_chunk.metadata
+        context = processing_chunk.context
 
         message = VideoChunkMessage(camera_id=video_metadata.camera_id,
                                     timestamp=video_metadata.timestamp,
-                                    trace=chunk_trace,
+                                    trace=get_trace_parent(context),
                                     encoding=video_metadata.encoding,
                                     framerate=video_metadata.framerate,
                                     width=video_metadata.resolution[0],
                                     height=video_metadata.resolution[1],
                                     duration=video_metadata.duration)
 
-        with self.tracer.start_as_current_span('store', context=camera_context):
+        with self.tracer.start_as_current_span('store', context=context):
             self.storage.store(name=str(message), filepath=video_metadata.filename)
 
-        with self.tracer.start_as_current_span('publish', context=camera_context):
+        with self.tracer.start_as_current_span('publish', context=context):
             self.publisher.publish(encode(message))
 
-        with self.tracer.start_as_current_span('clean', context=camera_context):
+        with self.tracer.start_as_current_span('clean', context=context):
             delete_video(video_metadata.filename)
 
         logger.info('Recorded: %s', video_metadata.timestamp)
+
+        processing_chunk.span.close()

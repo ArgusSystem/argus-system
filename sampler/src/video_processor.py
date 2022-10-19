@@ -6,7 +6,7 @@ from utils.events.src.message_clients.rabbitmq.publisher import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.frame_message import FrameMessage
-from utils.tracing.src.tracer import get_context, get_tracer
+from utils.tracing.src.tracer import get_context, get_tracer, get_trace_parent
 from utils.video_storage import StorageFactory, StorageType
 
 from .sample_video import sample
@@ -59,7 +59,6 @@ class VideoProcessor:
             with self.tracer.start_as_current_span('store-and-publish-chunk'):
                 self._store_and_publish_video_chunk(video_chunk_id=video_chunk_id,
                                                     video_chunk=converted_video_chunk,
-                                                    trace=video_chunk_message.trace,
                                                     duration=duration,
                                                     samples=[frame.offset for frame in frames])
 
@@ -76,13 +75,13 @@ class VideoProcessor:
             self.frame_storage.store(name=str(frame_message), filepath=frame.filepath)
             self.frame_publisher.publish(encode(frame_message))
 
-    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, trace, duration, samples):
+    def _store_and_publish_video_chunk(self, video_chunk_id, video_chunk, duration, samples):
         self.video_chunk_storage.store(name=video_chunk_id, filepath=video_chunk.filepath)
 
         self.video_chunk_publisher.publish(encode(VideoChunkMessage(
             camera_id=video_chunk.camera_id,
             timestamp=video_chunk.timestamp,
-            trace=trace,
+            trace=get_trace_parent(),
             encoding=video_chunk.encoding,
             framerate=video_chunk.framerate,
             width=video_chunk.width,

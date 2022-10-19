@@ -13,10 +13,10 @@ export function setUpDisplay(videoIndex) {
         // Get faces for the time
         for (const face_data of videoIndex.getFaces(metadata.mediaTime)) {
             // Define rectangle points, width and height
-            let x1 = face_data.bounding_box[0];
-            let y1 = face_data.bounding_box[1];
-            let x2 = face_data.bounding_box[2];
-            let y2 = face_data.bounding_box[3];
+            let x1 = face_data.boundingBox[0];
+            let y1 = face_data.boundingBox[1];
+            let x2 = face_data.boundingBox[2];
+            let y2 = face_data.boundingBox[3];
             let w = x2 - x1;
             let h = y2 - y1;
 

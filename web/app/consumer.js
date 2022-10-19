@@ -35,8 +35,8 @@ async function processVideoChunk(channel, msg, socketServer) {
 }
 
 async function processDetectedFace(channel, msg, socketServer){
-    const metadata = schemas.DETECTED_FACE_MESSAGE.fromBuffer(msg.content);
-    const detectedFaceMessage = buildDetectedFaceMessage(metadata);
+    const message = schemas.DETECTED_FACE_MESSAGE.fromBuffer(msg.content);
+    const detectedFaceMessage = buildDetectedFaceMessage(message);
     // logger.info(`New face: ${detectedFaceMessage.name}, prob: ${detectedFaceMessage.probability}`)
     socketServer.sendDetectedFace(detectedFaceMessage);
     channel.ack(msg);
