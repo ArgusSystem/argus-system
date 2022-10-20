@@ -20,3 +20,7 @@ def queue_bind(channel, queue_name, exchange_name, routing_key):
 
 def queue_unbind(channel, queue_name, exchange_name, routing_key):
     channel.queue_unbind(queue_name, exchange_name, routing_key)
+
+
+def queue_purge(channel, queue_name):
+    channel.queue_purge(queue_name)

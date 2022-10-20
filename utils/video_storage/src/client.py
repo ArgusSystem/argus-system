@@ -1,4 +1,5 @@
 from minio import Minio
+from minio.deleteobjects import DeleteObject
 
 
 class Client:
@@ -30,5 +31,12 @@ class Client:
     def fetch_file(self, bucket, name, filepath):
         self._client.fget_object(bucket, name, filepath)
 
-    def remove(self, bucket, name):
-        self._client.remove_object(bucket, name)
+    def remove(self, bucket, *names):
+        objects = [DeleteObject(name) for name in names]
+
+        if len(objects) > 0:
+            self._client.remove_objects(bucket, objects)
+
+    def list(self, bucket):
+        return self._client.list_objects(bucket)
+
