@@ -12,7 +12,7 @@ from utils.video_storage import StorageFactory, StorageType
 from .sample_video import sample
 from .fetch_video_chunk import fetch
 from .convert_to_video_stream import convert
-from .video_metadata import get_duration
+from .metadata import get_duration, store
 
 logger = getLogger(__name__)
 
@@ -32,6 +32,7 @@ class VideoProcessor:
 
         self.frame_publisher = Publisher.new(**frame_publisher_configuration)
         self.video_chunk_publisher = Publisher.new(**video_chunk_publisher_configuration)
+
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-sampler')
 
     def process(self, message):
@@ -50,6 +51,13 @@ class VideoProcessor:
 
             with self.tracer.start_as_current_span('sample'):
                 frames_dir, frames = sample(converted_video_chunk, self.sampling_rate)
+                samples = [frame.offset for frame in frames]
+
+            with self.tracer.start_as_current_span('store-metadata'):
+                store(camera_id=video_chunk_message.camera_id,
+                      timestamp=video_chunk_message.timestamp,
+                      duration=duration,
+                      samples=samples)
 
             with self.tracer.start_as_current_span('store-and-publish-frames'):
                 self._store_and_publish_frames(video_chunk_id=video_chunk_id,
@@ -61,7 +69,7 @@ class VideoProcessor:
                 self._store_and_publish_video_chunk(video_chunk_id=video_chunk_id,
                                                     video_chunk=converted_video_chunk,
                                                     duration=duration,
-                                                    samples=[frame.offset for frame in frames],
+                                                    samples=samples,
                                                     trace=sampler_trace)
 
             with self.tracer.start_as_current_span('clean'):

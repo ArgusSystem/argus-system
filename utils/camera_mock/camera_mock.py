@@ -12,6 +12,8 @@ from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.video_storage import StorageFactory, StorageType
 from utils.application.src.signal_handler import SignalHandler
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
+from utils.orm.src.models import Camera
+from utils.orm.src.database import connect
 
 
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would
@@ -91,8 +93,10 @@ if __name__ == "__main__":
     # Register signal handler
     stop_signal = Event()
 
+
     def stop_callback():
         stop_signal.set()
+
 
     signal_handler = SignalHandler()
     signal_handler.subscribe(stop_callback)
@@ -101,6 +105,21 @@ if __name__ == "__main__":
     webcam = WebCamCapture(cap, frame_queue, stop_signal)
     thread = Thread(target=webcam.run)
     thread.start()
+
+    # Create camera in db
+    connect(**configuration['db'])
+    camera_id = Camera.insert(alias='camera-mock',
+                              mac=0,
+                              width=width,
+                              height=height,
+                              framerate=fps,
+                              latitude=-34.61743,
+                              longitude=-58.36827) \
+        .on_conflict(conflict_target=[Camera.alias],
+                     preserve=[Camera.width, Camera.height, Camera.framerate]) \
+        .execute()
+
+    camera = Camera.get(Camera.id == camera_id)
 
     # Camera loop
     while not stop_signal.is_set():
@@ -130,7 +149,7 @@ if __name__ == "__main__":
                 break
 
             # Create new video chunk message
-            message = VideoChunkMessage(camera_id=camera_id,
+            message = VideoChunkMessage(camera_id=camera.alias,
                                         timestamp=timestamp,
                                         encoding=encoding,
                                         framerate=fps,

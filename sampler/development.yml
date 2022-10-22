@@ -20,6 +20,12 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
+db:
+  database: argus
+  host: localhost
+  port: 5432
+  user: argus
+  password: panoptes
 tracer:
   host: localhost
   port: 6831

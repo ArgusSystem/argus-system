@@ -3,8 +3,10 @@
 from src.video_processor import VideoProcessor
 from utils.application import run
 from utils.events.src.message_clients.rabbitmq import Consumer
+from utils.orm.src.database import connect
 
 CONSUMER_KEY = 'consumer'
+DB_KEY = 'db'
 FRAME_PUBLISHER_KEY = 'frame_publisher'
 VIDEO_CHUNK_PUBLISHER_KEY = 'video_chunk_publisher'
 SAMPLING_KEY = 'sampling_rate'
@@ -15,6 +17,8 @@ TRACER_KEY = 'tracer'
 if __name__ == "__main__":
     with run('argus-sampler') as application:
         configuration = application.configuration
+
+        connect(**configuration[DB_KEY])
 
         video_processor = VideoProcessor(sampling_rate=configuration[SAMPLING_KEY],
                                          storage_configuration=configuration[STORAGE_KEY],

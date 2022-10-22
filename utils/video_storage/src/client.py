@@ -32,10 +32,10 @@ class Client:
         self._client.fget_object(bucket, name, filepath)
 
     def remove(self, bucket, *names):
-        objects = [DeleteObject(name) for name in names]
+        errors = self._client.remove_objects(bucket, map(lambda x: DeleteObject(x), names))
 
-        if len(objects) > 0:
-            self._client.remove_objects(bucket, objects)
+        for error in errors:
+            print(error)
 
     def list(self, bucket):
         return self._client.list_objects(bucket)

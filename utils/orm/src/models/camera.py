@@ -3,7 +3,7 @@ from ..database import db
 
 
 class Camera(Model):
-    name = CharField(unique=True)
+    alias = CharField(unique=True)
     mac = BigIntegerField(unique=True)
 
     width = IntegerField()

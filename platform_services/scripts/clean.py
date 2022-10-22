@@ -19,7 +19,7 @@ for storage_type in StorageType:
     bucket = storage_type.value
 
     objects = storage_client.list(bucket)
-    storage_client.remove(bucket, objects)
+    storage_client.remove(bucket, *map(lambda x: x.object_name, objects))
 
 # Re-create PostgreSQL tables
 
