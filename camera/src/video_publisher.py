@@ -46,4 +46,4 @@ class VideoPublisher:
 
         logger.info('Recorded: %s', video_metadata.timestamp)
 
-        processing_chunk.span.close()
+        processing_chunk.span.end()

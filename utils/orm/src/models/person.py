@@ -1,12 +1,12 @@
-from peewee import CharField, Model
+from peewee import CharField, IntegerField, Model
 
 from ..database import db
 
 
 class Person(Model):
     name = CharField()
+    dni = IntegerField()
 
     class Meta:
         database = db
-        # TODO: Check how to change table name
-        tablename = 'people'
+        table_name = 'people'
