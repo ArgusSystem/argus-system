@@ -3,8 +3,8 @@ export function setUpDisplay(videoInterpolator) {
     const canvas = document.getElementById('video-canvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.width = 640;
-    canvas.height = 480;
+    canvas.width = 1920;
+    canvas.height = 1080;
     let frame_count = 0;
 
     const updateCanvas = (now, metadata) => {
