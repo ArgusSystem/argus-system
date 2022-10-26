@@ -4,7 +4,7 @@ export class SocketClient {
     console.log("Connected to web server!");
   }
 
-  onVideoChunk (callback) {
+  onChunk (callback) {
     this.client.on('chunk', callback);
   }
 

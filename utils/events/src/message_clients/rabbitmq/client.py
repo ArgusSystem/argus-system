@@ -20,7 +20,7 @@ class Client:
     @contextmanager
     def channel(self):
         try:
-            self._connection.sleep(0.01)
+            self._connection.sleep(0.001)
         except StreamLostError:
             # print("client: connection is dead, reconnecting")
             self._connect()

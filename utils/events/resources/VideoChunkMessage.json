@@ -32,12 +32,15 @@
       "type": "int"
     },
     {
-      "name": "sampling_rate",
-      "type": "int"
+      "name": "samples",
+      "type": {
+        "type": "array",
+        "items": "int"
+      }
     },
     {
       "name": "duration",
-      "type": "int"
+      "type": "double"
     }
   ]
 }

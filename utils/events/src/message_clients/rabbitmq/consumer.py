@@ -13,7 +13,7 @@ class Consumer:
         self._stop_event = stop_event
 
     @classmethod
-    def new(cls, host, username, password, queue, on_message_callback, stop_event):
+    def new(cls, host, username, password, queue, on_message_callback, stop_event=Event()):
         return cls(Client(host, username, password), queue, on_message_callback, stop_event)
 
     def start(self):
