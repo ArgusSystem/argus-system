@@ -1,21 +1,43 @@
+from queue import Queue
+
 import cv2
-import sys
 import yaml
 import os
 import shutil
+from threading import Thread, Event
 from time import time_ns
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.video_storage import StorageFactory, StorageType
 from utils.application.src.signal_handler import SignalHandler
-from utils.tracing.src.tracer import get_current_trace_parent, get_tracer, get_context
-from camera.src.video_metadata import VideoMetadata
+from utils.tracing.src.tracer import get_trace_parent, get_tracer
+from utils.orm.src.models import Camera
+from utils.orm.src.database import connect
 
 
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would
 # Usage:
 # python camera_mock.py
+
+class WebCamCapture:
+
+    def __init__(self, cap, queue, stop_signal):
+        self.cap = cap
+        self.queue = queue
+        self.stop_signal = stop_signal
+
+    def run(self):
+        while cap.isOpened() and not self.stop_signal.is_set():
+            ret, frame = self.cap.read()
+
+            if ret:
+                self.queue.put(frame)
+            else:
+                break
+
+        self.cap.release()
+        frame_queue.put(None)
 
 
 if __name__ == "__main__":
@@ -46,7 +68,7 @@ if __name__ == "__main__":
         input_video = configuration['video_feed_filepath']
     cap = cv2.VideoCapture(input_video)
 
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = configuration['fps'] if 'fps' in configuration else int(cap.get(cv2.CAP_PROP_FPS))
     print("fps: " + str(fps))
 
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -69,77 +91,85 @@ if __name__ == "__main__":
         os.mkdir(output_dir)
 
     # Register signal handler
-    stop_signal_sent = False
+    stop_signal = Event()
+
 
     def stop_callback():
-        global stop_signal_sent
-        stop_signal_sent = True
+        stop_signal.set()
+
 
     signal_handler = SignalHandler()
     signal_handler.subscribe(stop_callback)
 
-    # Camera loop
-    while not stop_signal_sent:
+    frame_queue = Queue()
+    webcam = WebCamCapture(cap, frame_queue, stop_signal)
+    thread = Thread(target=webcam.run)
+    thread.start()
 
+    # Create camera in db
+    connect(**configuration['db'])
+    camera_id = Camera.insert(alias='camera-mock',
+                              mac=0,
+                              width=width,
+                              height=height,
+                              framerate=fps,
+                              latitude=-34.61743,
+                              longitude=-58.36827) \
+        .on_conflict(conflict_target=[Camera.alias],
+                     preserve=[Camera.width, Camera.height, Camera.framerate]) \
+        .execute()
+
+    camera = Camera.get(Camera.id == camera_id)
+
+    # Camera loop
+    while not stop_signal.is_set():
         # Setup new video chunk recording
         timestamp = time_ns() // 1_000_000
         frames_written = 0
         video_chunk_id += 1
         filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
         out = cv2.VideoWriter(filename, fourcc, fps, resolution)
-        trace_chunk_id = f'{camera_id}-{timestamp}'
 
-        # Record and publish one video chunk
-        with tracer.start_as_current_span(trace_chunk_id):
-            chunk_trace = get_current_trace_parent()
+        with tracer.start_as_current_span('camera'):
+            # Record one video chunk
+            with tracer.start_as_current_span('record'):
+                while frames_written < fps * recording_time:
+                    frame = frame_queue.get()
 
-            with tracer.start_as_current_span('camera'):
+                    if frame is None:
+                        break
 
-                # Record one video chunk
-                with tracer.start_as_current_span('record'):
-                    while cap.isOpened() and not stop_signal_sent:
-                        ret, frame = cap.read()
-                        if ret:
-                            frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
-                            out.write(frame)
-                            frames_written += 1
+                    frame = cv2.resize(frame, (width, height), interpolation=cv2.INTER_CUBIC)
+                    out.write(frame)
+                    frames_written += 1
+                print(frames_written)
+                out.release()
 
-                            # cv2.imshow('frame', frame)
-                            # if cv2.waitKey(1) & 0xFF == ord('q'):
-                            #     break
-                        else:
-                            break
+            if stop_signal.is_set():
+                break
 
-                        if frames_written == fps * recording_time:
-                            # Finish recording
-                            out.release()
-                            break
+            # Create new video chunk message
+            message = VideoChunkMessage(camera_id=camera.alias,
+                                        timestamp=timestamp,
+                                        encoding=encoding,
+                                        framerate=fps,
+                                        width=width,
+                                        height=height,
+                                        duration=recording_time,
+                                        trace=get_trace_parent())
 
-                if stop_signal_sent:
-                    out.release()
-                    break
+            # Store video chunk in file storage
+            with tracer.start_as_current_span('store'):
+                storage.store(name=str(message), filepath=filename)
 
-                # Create new video chunk message
-                message = VideoChunkMessage(camera_id=camera_id,
-                                            timestamp=timestamp,
-                                            encoding=encoding,
-                                            framerate=fps,
-                                            width=width,
-                                            height=height,
-                                            duration=recording_time,
-                                            trace=chunk_trace)
+            # Publish event of new video chunk
+            with tracer.start_as_current_span('publish'):
+                publisher.publish(encode(message))
 
-                # Store video chunk in file storage
-                with tracer.start_as_current_span('store'):
-                    storage.store(name=str(message), filepath=filename)
-
-                # Publish event of new video chunk
-                with tracer.start_as_current_span('publish'):
-                    publisher.publish(encode(message))
-
-                print("Sent a video chunk")
+            print("Sent a video chunk")
 
     # Release everything if job is finished
+    thread.join()
     cap.release()
     cv2.destroyAllWindows()
     shutil.rmtree(output_dir)

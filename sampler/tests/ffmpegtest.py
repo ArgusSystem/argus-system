@@ -1,7 +1,7 @@
 import os
 import sys
 import shutil
-from sampler.src.null_device import null_device
+from sampler.src.local_video_chunk import NULL_DEVICE
 
 if __name__ == "__main__":
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
         # do sampling from test video
         video_file = base_dir + "/" + sys.argv[2]
-        command = f'ffmpeg -i {video_file} -vf fps={samplerate} {output_dir}/%d.jpg > {null_device()} 2>&1'
+        command = f'ffmpeg -i {video_file} -vf fps={samplerate} {output_dir}/%d.jpg > {NULL_DEVICE} 2>&1'
         #print(command)
         os.system(command)
 
