@@ -55,10 +55,10 @@ class FaceClassificationTask:
 
             # Perform face classification
             with self.tracer.start_as_current_span('face-classification'):
-                classification_index, classification_probability = self.face_classifier.predict(embedding)
+                classification_name, classification_probability = self.face_classifier.predict(embedding)
                 name = 'unknown'
                 if classification_probability > self.threshold:
-                    name = self.face_classifier.get_name(classification_index)
+                    name = classification_name
 
             # Update database face row with result
             # face: Face = self.db.get(Face, face_id)

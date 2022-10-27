@@ -89,40 +89,42 @@ if __name__ == "__main__":
         # Recognition Treshold
         recognition_t = float(sys.argv[4])
 
-        # Start webcam
-        camera = cv2.VideoCapture(0)
+        # Load Images
+        image_paths_dir = sys.argv[5]
+        image_paths = []
+        for path, subdirs, files in os.walk(image_paths_dir):
+            for name in files:
+                image_paths.append(os.path.join(path, name))
+        images = {}
+        for i in range(len(image_paths)):
+            image_path = image_paths[i]
+            image = cv2.imread(image_path)
+            images[image_path] = image
 
-        # init FPS calc
-        start_time = time.time()
         processed_frames = 0
+        # Perform detection and classification
+        print("Length: " + str(len(image_paths)))
+        start_time = time.time()
+        total_boxes = []
+        for image_path in images:
+            image = images[image_path]
 
-        pool = ThreadPool(processes=1)
-        async_result = None
-        results = []
-        first_frame = True
-
-        while True:
-
-            # Read frame from Webcam
-            ret, image = camera.read()
-
-            if async_result is None:
-                async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
-            elif async_result.ready():
-                processed_frames += 1
-                if first_frame:
-                    start_time = time.time()
-                    processed_frames = 0
-                    first_frame = False
-                results = async_result.get()
-                async_result = pool.apply_async(detect_raw, (image.copy(), face_detector, face_embedder, face_classifier))
-            image = raw_to_frame(image, results)
+            results = detect_raw(image, face_detector, face_embedder, face_classifier)
+            max_dim = max(image.shape)
+            resize_factor = 1000 / max_dim
+            image = cv2.resize(image, (int(image.shape[1] * resize_factor), int(image.shape[0] * resize_factor)))
+            for res in results:
+                res['pt_1'] = (int(res['pt_1'][0] * resize_factor), int(res['pt_1'][1] * resize_factor))
+                res['pt_2'] = (int(res['pt_2'][0] * resize_factor), int(res['pt_2'][1] * resize_factor))
 
             # Show image on screen
+            image = raw_to_frame(image, results)
             cv2.imshow('img', image)
 
+            processed_frames += 1
+
             # Check for exit button 'q'
-            ch = cv2.waitKey(1) & 0xFF
+            ch = cv2.waitKey(0) & 0xFF
             if ch == ord("q"):
                 break
 
