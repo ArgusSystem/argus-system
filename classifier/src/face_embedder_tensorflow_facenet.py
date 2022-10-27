@@ -17,6 +17,7 @@ class FaceEmbedderTensorflowFacenet:
         pass
 
     def _preprocess_image(self, img):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         mean, std = img.mean(), img.std()
         # std_adj = np.maximum(std, 1.0 / np.sqrt(x.size))
         prewhitened = (img - mean) / std
@@ -26,7 +27,6 @@ class FaceEmbedderTensorflowFacenet:
 
     def get_embedding(self, image_path):
         img = cv2.imread(os.path.expanduser(image_path))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return self.get_embedding_mem(img)
 
     def get_embedding_mem(self, cv_image):

@@ -6,6 +6,7 @@ class FaceDetectorFactory:
 
     TENSORFLOW_MTCNN = 'tensorflow_mtcnn'
     TENSORFLOW_FACEBOXES = 'tensorflow_faceboxes'
+    PADDLE_MTCNN = 'paddle_mtcnn'
 
     @staticmethod
     def build(configuration):
@@ -14,9 +15,15 @@ class FaceDetectorFactory:
         if face_detector_type == FaceDetectorFactory.TENSORFLOW_MTCNN:
             from .face_detector_tensorflow_mtcnn import FaceDetectorTensorflowMTCNN
             return FaceDetectorTensorflowMTCNN()
+
         elif face_detector_type == FaceDetectorFactory.TENSORFLOW_FACEBOXES:
             from .face_detector_tensorflow_faceboxes import FaceDetectorTensorflowFaceboxes
             return FaceDetectorTensorflowFaceboxes()
+
+        elif face_detector_type == FaceDetectorFactory.PADDLE_MTCNN:
+            from .face_detector_paddle_mtcnn import FaceDetectorPaddleMTCNN
+            return FaceDetectorPaddleMTCNN()
+
         else:
             raise SystemExit('ERROR: Invalid face detector type: ' + face_detector_type)
 

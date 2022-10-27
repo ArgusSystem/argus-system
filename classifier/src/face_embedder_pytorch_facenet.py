@@ -13,22 +13,29 @@ class FaceEmbedderPytorchFacenet:
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         self.required_size = (160, 160)
-        self.face_embedder = InceptionResnetV1(pretrained='vggface2').eval()
+        #self.face_embedder = InceptionResnetV1(pretrained='vggface2').eval()
+        self.face_embedder = InceptionResnetV1(pretrained='casia-webface').eval()
 
     def close(self):
         pass
 
     def _preprocess_image(self, img):
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # relative prewhitening
         mean, std = img.mean(), img.std()
-        # std_adj = np.maximum(std, 1.0 / np.sqrt(x.size))
-        prewhitened = (img - mean) / std
+        std_adj = std.clip(min=1.0 / (float(img.size) ** 0.5))
+        #prewhitened = (img - mean) / std_adj
+        # fixed prewhitening
+        prewhitened = (img - 127.5) / 127.5
+        # no prewhitening
+        #prewhitened = img
         resized = cv2.resize(prewhitened, self.required_size)
-        #final_image = np.expand_dims(resized, axis=0)
+        #cv2.imshow("prewhitened", prewhitened)
+        #cv2.waitKey(1)
         return resized
 
     def get_embedding(self, image_path):
         img = cv2.imread(os.path.expanduser(image_path))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return self.get_embedding_mem(img)
 
     def get_embedding_mem(self, cv_image):

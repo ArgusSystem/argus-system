@@ -9,7 +9,7 @@ face_embedder:
     type: 'pytorch_facenet'
 
 face_classifier:
-  model: '../model/svclassifier_edu_gabo_pytorch_facenet.pkl'
+  model: 'classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl'
   threshold: 0.7
 
 publisher:
