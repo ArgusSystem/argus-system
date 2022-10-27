@@ -15,7 +15,11 @@ class FaceEmbedderFactory:
         elif face_embedder_type == "pytorch_facenet":
             from .face_embedder_pytorch_facenet import FaceEmbedderPytorchFacenet
             return FaceEmbedderPytorchFacenet()
-        
+
+        elif face_embedder_type == "paddle_mobilefacenet":
+            from .face_embedder_paddle_mobilefacenet import FaceEmbedderPaddleMobilefacenet
+            return FaceEmbedderPaddleMobilefacenet()
+
         else:
             raise SystemExit('ERROR: Invalid face embedder type: ' + face_embedder_type)
 
