@@ -6,7 +6,7 @@ import {VideoIndex} from "./modules/video_index.js";
 import { VideoInterpolator } from './modules/video_interpolator.js'
 
 
-const PRE_BUFFERED_THRESHOLD = 10;
+const PRE_BUFFERED_THRESHOLD = 2;
 
 window.addEventListener('load', () => {
     const socketClient = new SocketClient();
@@ -29,11 +29,11 @@ window.addEventListener('load', () => {
 
             console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
 
+            preBuffered += chunk.duration;
+
             if (preBuffered >= PRE_BUFFERED_THRESHOLD && video.paused) {
                 video.play();
             }
-
-            preBuffered += chunk.duration;
         });
 
         socketClient.onFace(face => facesIndex.add(face));
