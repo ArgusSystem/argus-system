@@ -27,7 +27,7 @@ class SVClassifier:
         best_class_index = np.argmax(predictions, axis=1)[0]
         best_class_probability = predictions[np.arange(1), best_class_index][0]
 
-        return self.class_names[best_class_index], best_class_probability
+        return best_class_index, best_class_probability
 
     def get_name(self, class_index):
         return self.class_names[class_index]
@@ -126,11 +126,12 @@ if __name__ == '__main__':
                 test_emb = test[i]
                 real_class = class_names[labels_test[i]]
 
-                pred_name, pred_prob = classifier.predict(test_emb)
-                print('%4d  Real: %s, Predicted: %s, Prob: %.3f' % (i, real_class, pred_name, pred_prob))
+                pred_index, pred_prob = classifier.predict(test_emb)
+                pred_class_index.append(pred_index)
+                print('%4d  Real: %s, Predicted: %s, Prob: %.3f' % (i, real_class, classifier.get_name(pred_index), pred_prob))
 
-            # accuracy = np.mean(np.equal(pred_class_index, labels_test))
-            # print('Accuracy: %.3f' % accuracy)
+            accuracy = np.mean(np.equal(pred_class_index, labels_test))
+            print('Accuracy: %.3f' % accuracy)
 
         else:
 
