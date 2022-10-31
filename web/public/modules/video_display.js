@@ -18,6 +18,13 @@ export function setUpDisplay(videoInterpolator) {
 
         // Get faces for the time
         for (const face_data of videoInterpolator.getFaces(metadata.mediaTime)) {
+            let color = 'green';
+            let name = face_data.name;
+            if (!face_data.is_match) {
+                color = 'red';
+                name = 'unknown';
+            }
+
             // Define rectangle points, width and height
             let x1 = face_data.boundingBox[0];
             let y1 = face_data.boundingBox[1];
@@ -28,8 +35,8 @@ export function setUpDisplay(videoInterpolator) {
 
             // Write face name over rectangle
             ctx.font = "20px Arial";
-            ctx.fillStyle = 'green';
-            ctx.fillText(`${face_data.name}, ${face_data.probability.toFixed(2)}`, x1, y1 - 10);
+            ctx.fillStyle = color;
+            ctx.fillText(`${name}, ${face_data.probability.toFixed(2)}`, x1, y1 - 10);
 
             // Draw face rectangle
             ctx.beginPath();
@@ -37,7 +44,7 @@ export function setUpDisplay(videoInterpolator) {
             ctx.fillStyle = "rgba(0,0,0,0)";
             ctx.fill();
             ctx.lineWidth = 5;
-            ctx.strokeStyle = 'green';
+            ctx.strokeStyle = color;
             ctx.stroke();
         }
 
