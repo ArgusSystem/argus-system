@@ -1,6 +1,7 @@
 import cv2
 
-from utils.orm.src.models import Camera, VideoChunk
+from utils.orm.src.models import VideoChunk
+from utils.orm.src.models.camera import get_camera
 
 
 def get_duration(video_chunk):
@@ -14,14 +15,8 @@ def get_duration(video_chunk):
     return duration
 
 
-cameras = {}
-
-
 def store(camera_id, timestamp, duration, samples):
-    if camera_id not in cameras:
-        cameras[camera_id] = Camera.get(Camera.alias == camera_id)
-
-    camera = cameras[camera_id]
+    camera = get_camera(camera_id)
 
     video_chunk = VideoChunk(camera=camera,
                              timestamp=timestamp,
