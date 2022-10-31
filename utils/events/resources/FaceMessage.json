@@ -12,6 +12,10 @@
       "type": "int"
     },
     {
+      "name": "timestamp",
+      "type": "long"
+    },
+    {
       "name": "face_num",
       "type": "int"
     },

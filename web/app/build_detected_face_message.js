@@ -4,7 +4,8 @@ function buildDetectedFaceMessage(message) {
     offset: message['offset'],
     name: message['name'],
     boundingBox: message['bounding_box'],
-    probability: message['probability']
+    probability: message['probability'],
+    is_match: message['is_match'],
   };
 }
 

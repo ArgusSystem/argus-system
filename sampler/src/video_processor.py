@@ -81,7 +81,7 @@ class VideoProcessor:
 
     def _store_and_publish_frames(self, video_chunk_id, frames, trace):
         for frame in frames:
-            frame_message = FrameMessage(video_chunk_id, frame.offset, trace)
+            frame_message = FrameMessage(video_chunk_id, frame.offset, frame.timestamp, trace)
             self.frame_storage.store(name=str(frame_message), filepath=frame.filepath)
             self.frame_publisher.publish(encode(frame_message))
 
