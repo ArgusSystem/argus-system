@@ -1,6 +1,14 @@
 from peewee import Model, CharField, DecimalField, BigIntegerField, IntegerField
 from ..database import db
 
+cameras = {}
+
+
+def get_camera(camera_id):
+    if camera_id not in cameras:
+        cameras[camera_id] = Camera.get(Camera.alias == camera_id)
+    return cameras[camera_id]
+
 
 class Camera(Model):
     alias = CharField(unique=True)
