@@ -12,12 +12,19 @@ face_classifier:
   model: '../model/svclassifier_edu_gabo_pytorch_facenet.pkl'
   threshold: 0.7
 
-publisher:
+publisher_web:
   host: localhost
   username: argus
   password: panoptes
   exchange: argus
   routing_key: published_detected_faces
+
+publisher_summarizer:
+  host: localhost
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: summarize_detected_faces
 
 logging:
   level: DEBUG
@@ -27,6 +34,13 @@ storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
+
+db:
+  database: argus
+  host: localhost
+  port: 5432
+  user: argus
+  password: panoptes
 
 tracer:
   host: localhost
