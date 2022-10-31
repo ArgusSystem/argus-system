@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print('[*] Configuring camera-mock')
 
     # input
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/camera_mock.yml") as config_file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/development.yml") as config_file:
         configuration = yaml.safe_load(config_file)
 
     # Create tracer
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     # Create camera in db
     connect(**configuration['db'])
-    camera_id = Camera.insert(alias='camera-mock',
+    camera_id = Camera.insert(alias=camera_id,
                               mac=0,
                               width=width,
                               height=height,
@@ -116,6 +116,8 @@ if __name__ == "__main__":
                               latitude=-34.61743,
                               longitude=-58.36827) \
         .on_conflict(conflict_target=[Camera.alias],
+                     preserve=[Camera.width, Camera.height, Camera.framerate]) \
+        .on_conflict(conflict_target=[Camera.mac],
                      preserve=[Camera.width, Camera.height, Camera.framerate]) \
         .execute()
 
@@ -166,7 +168,7 @@ if __name__ == "__main__":
             with tracer.start_as_current_span('publish'):
                 publisher.publish(encode(message))
 
-            print("Sent a video chunk")
+            print("Sent a video chunk: " + str(message))
 
     # Release everything if job is finished
     thread.join()
