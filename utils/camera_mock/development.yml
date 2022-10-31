@@ -20,8 +20,8 @@ tracer:
   port: 6831
 width: 640
 height: 480
-camera_id: camera-mock-1
+camera_id: cameramock
 webcam_feed: True
 video_feed_filepath: ''
-recording_time: 5
-fps: 20
+recording_time: 1
+fps: 30
