@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 
 
 def make_app(name, controllers):
@@ -6,5 +7,7 @@ def make_app(name, controllers):
 
     for controller in controllers:
         controller.make_routes(app)
+
+    CORS(app)
 
     return app

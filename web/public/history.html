@@ -5,12 +5,28 @@
   <title>Argus</title>
   <link rel="stylesheet" href="styles/index.css">
   <link rel="stylesheet" href="styles/history.css">
+
+  <!-- JQuery -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <!-- Leaflet map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
         crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
           integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
           crossorigin=""></script>
+
   <script src="history.js"></script>
 </head>
 <body>
@@ -19,7 +35,19 @@
     <a href="video.html">Live feed</a>
     <a class="active" href="history.html">History</a>
   </div>
+  <br>
+  <form class="form-inline">
+    <input id="personInput" class="form-control mr-sm-2" type="search" placeholder="Name" aria-label="Search">
 
-  <div id="map" style="width: 600px; height: 400px;"></div>
+    <div id="reportrange" class="daterange form-control mr-sm-2">
+      <i class="fa fa-calendar"></i>
+      <span></span>
+      <i class="fa fa-caret-down"></i>
+    </div>
+
+    <button class="btn btn-primary btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
+
+  <div hidden id="map" style="width: 600px; height: 400px;"></div>
 </body>
 </html>
