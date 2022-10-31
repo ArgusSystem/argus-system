@@ -1,8 +1,9 @@
 class FaceMessage:
 
-    def __init__(self, video_chunk_id, offset, face_num, bounding_box, trace):
+    def __init__(self, video_chunk_id, offset, timestamp, face_num, bounding_box, trace):
         self.video_chunk_id = video_chunk_id
         self.offset = offset
+        self.timestamp = timestamp
         self.face_num = face_num
         self.bounding_box = bounding_box
         self.trace = trace
@@ -11,6 +12,7 @@ class FaceMessage:
         return {
             'video_chunk_id': self.video_chunk_id,
             'offset': self.offset,
+            'timestamp': self.timestamp,
             'face_num': self.face_num,
             'bounding_box': self.bounding_box,
             'trace': self.trace

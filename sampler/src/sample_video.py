@@ -1,17 +1,18 @@
 import os
-from math import ceil
+from math import ceil, floor
 from .command import run
 from .local_video_chunk import LOCAL_DIR, NULL_DEVICE
 
 
 class Frame:
 
-    def __init__(self, offset, filepath):
+    def __init__(self, offset, timestamp, filepath):
         self.offset = offset
+        self.timestamp = timestamp
         self.filepath = filepath
 
 
-def get_frames(frames_dir, framerate, sampling_rate):
+def get_frames(frames_dir, video_timestamp, framerate, sampling_rate):
     files = os.listdir(frames_dir)
     files.sort(key=lambda f: int(f.split('.')[0]))
 
@@ -22,7 +23,9 @@ def get_frames(frames_dir, framerate, sampling_rate):
 
     for file in files:
         # Count offsets from 0 to N-1
-        frame = Frame(offset=ceil(offset) - 1,
+        offset = ceil(offset) - 1
+        frame = Frame(offset=offset,
+                      timestamp=floor(video_timestamp + offset * (1000 / framerate)),
                       filepath=os.path.join(frames_dir, file))
         frames.append(frame)
         offset += in_between_frames
@@ -41,4 +44,4 @@ def sample(video_chunk, sampling_rate):
         f'{os.path.join(frames_dir, "%d.jpg")} '
         f'> {NULL_DEVICE} 2>&1')
 
-    return frames_dir, get_frames(frames_dir, video_chunk.framerate, sampling_rate)
+    return frames_dir, get_frames(frames_dir, video_chunk.timestamp, video_chunk.framerate, sampling_rate)

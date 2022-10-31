@@ -80,6 +80,7 @@ class FaceDetectionTask:
                         # Queue face embedding job
                         face_message = FaceMessage(video_chunk_id=frame_message.video_chunk,
                                                    offset=frame_message.offset,
+                                                   timestamp=frame_message.timestamp,
                                                    face_num=face_num,
                                                    bounding_box=bounding_box,
                                                    trace=frame_message.trace)

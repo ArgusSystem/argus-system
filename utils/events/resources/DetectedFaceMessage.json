@@ -12,12 +12,20 @@
       "type": "int"
     },
     {
+      "name": "timestamp",
+      "type": "long"
+    },
+    {
       "name": "face_num",
       "type": "int"
     },
     {
       "name": "name",
       "type": "string"
+    },
+    {
+      "name": "person_id",
+      "type": "int"
     },
     {
       "name": "bounding_box",
@@ -29,6 +37,10 @@
     {
       "name": "probability",
       "type": "float"
+    },
+    {
+      "name": "is_match",
+      "type": "boolean"
     },
     {
       "name": "trace",
