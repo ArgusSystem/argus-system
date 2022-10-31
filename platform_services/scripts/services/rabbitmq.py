@@ -3,8 +3,8 @@ from utils.events.src.message_clients.rabbitmq.management import queue_bind, que
 
 
 class RabbitMQService:
-    def __init__(self):
-        self.client = Client('localhost', 'argus', 'panoptes')
+    def __init__(self, host):
+        self.client = Client(host, 'argus', 'panoptes')
 
         self.queues_by_exchange = {
             'argus': [
@@ -12,7 +12,8 @@ class RabbitMQService:
                 'published_video_chunks',
                 'frames',
                 'faces',
-                'published_detected_faces'
+                'published_detected_faces',
+                'summarize_detected_faces'
             ]
         }
 

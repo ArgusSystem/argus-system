@@ -3,8 +3,8 @@ from utils.video_storage.src.client import Client
 
 
 class MinioService:
-    def __init__(self):
-        self.client = Client('localhost', 9500, 'argus', 'panoptes')
+    def __init__(self, host):
+        self.client = Client(host, 9500, 'argus', 'panoptes')
 
     def setup(self):
         for storage_type in StorageType:

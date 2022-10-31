@@ -65,7 +65,7 @@ export class VideoInterpolator {
 
   #markStaleChunk(chunkId) {
     if (this.staleChunkId !== null)
-      this.facesIndex.remove(chunkId);
+      this.facesIndex.remove(this.staleChunkId);
 
     this.staleChunkId = chunkId;
   }

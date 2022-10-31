@@ -33,7 +33,8 @@ def detect_raw(img, detector, encoder, classifier):
         encoding = encoder.get_embedding_mem(face)
         #encoding = l2_normalizer.transform(encoding.reshape(1, -1))[0]
         name = 'unknown'
-        pred_name, pred_prob = classifier.predict(encoding)
+        pred_index, pred_prob = classifier.predict(encoding)
+        pred_name = classifier.get_name(pred_index)
         if pred_prob > recognition_t:
             name = pred_name
         res['name'] = name
