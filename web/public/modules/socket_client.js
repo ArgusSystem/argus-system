@@ -1,6 +1,7 @@
 export class SocketClient {
   constructor () {
-    this.client = io.connect('http://localhost:8080/video', { forceNew: true });
+    const {protocol, hostname, port} = window.location;
+    this.client = io.connect(`${protocol}//${hostname}:${port}/video`, { forceNew: true });
     console.log("Connected to web server!");
   }
 

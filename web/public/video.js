@@ -39,6 +39,6 @@ window.addEventListener('load', () => {
         socketClient.onFace(face => facesIndex.add(face));
 
         setUpDisplay(videoInterpolator);
-    })
+    });
 });
 

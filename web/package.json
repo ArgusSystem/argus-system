@@ -7,7 +7,7 @@
   "author": "Eduardo Neira <aneira@fi.uba.ar>",
   "scripts": {
     "start-dev": "node server.js -c development.yml",
-    "watch": "nodemon ./server.js"
+    "watch": "nodemon ./server.js -c development.yml"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.2.0",
