@@ -2,9 +2,10 @@ from utils.orm.src.models.camera import Camera
 
 
 def _get_cameras():
-    cameras = Camera.select(Camera.alias, Camera.latitude, Camera.longitude).execute()
+    cameras = Camera.select(Camera.id, Camera.alias, Camera.latitude, Camera.longitude).execute()
 
-    return list(map(lambda camera: {'name': camera.alias,
+    return list(map(lambda camera: {'id': camera.id,
+                                    'name': camera.alias,
                                     'latitude': camera.latitude,
                                     'longitude': camera.longitude},
                     cameras))

@@ -1,9 +1,13 @@
-#map {
-    height: 500px;
+#filters {
+    background: white;
 }
 
-form {
-    padding-left: 1%;
+#submit-filter {
+    float: right;
+}
+
+#map {
+    height: 500px;
 }
 
 .daterange {

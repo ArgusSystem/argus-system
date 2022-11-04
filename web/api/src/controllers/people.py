@@ -2,9 +2,8 @@ from utils.orm.src import Person
 
 
 def _get_people():
-    people = Person.select().execute()
-
-    return list(map(lambda person: person.name, people))
+    people = Person.select(Person.id, Person.name).execute()
+    return list(map(lambda person: {'id': person.id, 'text': person.name}, people))
 
 
 class PeopleController:

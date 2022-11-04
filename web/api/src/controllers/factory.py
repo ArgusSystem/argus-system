@@ -1,6 +1,7 @@
 from utils.orm.src.database import connect
 
 from .camera import CameraController
+from .history import HistoryController
 from .people import PeopleController
 
 
@@ -13,5 +14,6 @@ class ControllersFactory:
     def all():
         return [
             CameraController,
+            HistoryController,
             PeopleController
         ]
