@@ -27,7 +27,7 @@ def _get_history():
         .where((Sighting.person_id == person_id) &
                (Sighting.start_time >= from_date) &
                (Sighting.end_time < to_date)) \
-        .order_by(Sighting.start_time) \
+        .order_by(Sighting.start_time.desc()) \
         .execute()
 
     return list(map(lambda s: {'camera_id': s.camera_id,

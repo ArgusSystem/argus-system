@@ -1,3 +1,5 @@
+import { onSightings } from './sightings.js'
+
 const {protocol, hostname} = window.location;
 
 const DATE_FORMAT = 'DD/MM/YYYY';
@@ -24,11 +26,13 @@ function search(endpoint) {
 		.catch((error) => console.error('Failed to fetch people!', error));
 }
 
-export function loadFilterSubmit() {
+export function loadFilterSubmit(cameras) {
     $("#filter-form").submit(function(e) {
         e.preventDefault();
 
         const endpoint = buildURL();
-        search(endpoint).then(data => console.log('Successful search: %s', data));
+        search(endpoint).then(data => {
+            onSightings(cameras, data);
+        });
     });
 }

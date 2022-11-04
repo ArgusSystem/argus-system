@@ -4,18 +4,17 @@ import { loadTimeRange } from './history/timeRange.js'
 import { loadFilterSubmit } from './history/search.js'
 
 
-
 $(document).ready(async () => {
 	const cameras = {};
 	await fetchCameras()
-		.then(data => cameras[data.id] = data);
+		.then(data => data.forEach(camera => cameras[camera.id] = camera));
 
 	await fetchPeople()
 		.then(data => $('.select-person').select2({placeholder: "Person's name", data: data}));
 
 	loadTimeRange();
 
-	loadFilterSubmit();
+	loadFilterSubmit(cameras);
 
 	const map = L.map('map').setView([51.505, -0.09], 13);
 
