@@ -21,6 +21,13 @@ export class Map {
 
     init() {
         const map = this.map;
+
+        for (const marker of Object.values(this.markers)) {
+            this.map.removeLayer(marker);
+        }
+
+        this.markers = {}
+        this.activeMarker = null;
         setTimeout(() => { map.invalidateSize() }, 100);
     }
 
@@ -37,7 +44,7 @@ export class Map {
                 this.activeMarker = marker;
             }
 
-            marker.addTo(this.map);
+            this.map.addLayer(marker);
 
             this.markers[camera.id] = marker;
             this.markersCount++;
@@ -49,7 +56,7 @@ export class Map {
 
         const marker = this.markers[camera_id];
 
-        this.map.setView(marker.getLatLng(), DEFAULT_ZOOM);
+        this.map.panTo(marker.getLatLng(), DEFAULT_ZOOM);
         marker.setOpacity( 1.0);
 
         this.activeMarker = marker;

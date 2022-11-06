@@ -19,3 +19,7 @@
     display: inline-block;
     cursor: pointer;
 }
+
+.sighting-time {
+    float: right;
+}
