@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang='en'>
+<meta charset="UTF-8">
+<head>
+  <title>Argus</title>
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/video.css">
+</head>
+<body>
+  <div class="topnav">
+    <a href="index.html">Home</a>
+    <a class="active" href="video.html">Live feed</a>
+    <a href="history.html">History</a>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type='module' src='modules/video.js'></script>
+
+  <video hidden muted id='auxiliary-video'></video>
+  <canvas id='video-canvas'></canvas>
+</body>
+</html>

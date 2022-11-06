@@ -1,0 +1,30 @@
+#filters {
+    background: white;
+}
+
+#submit-filter {
+    float: right;
+}
+
+#map {
+    height: 600px;
+}
+
+.card-header {
+    font-size: large;
+    font-weight: bold;
+}
+
+.daterange {
+    display: inline-block;
+    cursor: pointer;
+}
+
+#sightings-list {
+    max-height: 555px;
+    overflow-y: auto;
+}
+
+.sighting-time {
+    float: right;
+}

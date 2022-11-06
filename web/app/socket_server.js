@@ -5,8 +5,10 @@ class SocketServer {
   constructor (httpServer) {
     this.io = new Server(httpServer);
 
-    this.io.of('/video').on('connection', function (socket) {
-      logger.debug('New client connected!');
+    this.io.of('/video').on('connection', (socket) => {
+      logger.debug('New client %s connected!', socket.id)
+
+      socket.on('disconnect', () => logger.debug('Client %s disconnected!', socket.id))
     });
   }
 

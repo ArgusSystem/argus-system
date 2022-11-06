@@ -1,9 +1,9 @@
-import {SocketClient} from './modules/socket_client.js'
-import {setUpDisplay} from './modules/video_display.js'
-import {VideoBuffer} from './modules/video_buffer.js'
-import {FacesIndex} from './modules/faces_index.js';
-import {VideoIndex} from "./modules/video_index.js";
-import { VideoInterpolator } from './modules/video_interpolator.js'
+import {SocketClient} from './video/socket_client.js'
+import {setUpDisplay} from './video/video_display.js'
+import {VideoBuffer} from './video/video_buffer.js'
+import {FacesIndex} from './video/faces_index.js';
+import {VideoIndex} from "./video/video_index.js";
+import { VideoInterpolator } from './video/video_interpolator.js'
 
 
 const PRE_BUFFERED_THRESHOLD = 2;
@@ -39,6 +39,6 @@ window.addEventListener('load', () => {
         socketClient.onFace(face => facesIndex.add(face));
 
         setUpDisplay(videoInterpolator);
-    })
+    });
 });
 
