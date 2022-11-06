@@ -20,6 +20,11 @@
     cursor: pointer;
 }
 
+#sightings-list {
+    max-height: 555px;
+    overflow-y: auto;
+}
+
 .sighting-time {
     float: right;
 }
