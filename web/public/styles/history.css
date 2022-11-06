@@ -7,11 +7,12 @@
 }
 
 #map {
-    height: 500px;
+    height: 600px;
 }
 
-.sightings-information {
-    width: 30%;
+.card-header {
+    font-size: large;
+    font-weight: bold;
 }
 
 .daterange {

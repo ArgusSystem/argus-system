@@ -46,14 +46,18 @@
         <div class="card-body">
             <form class="card-text" id="filter-form">
                 <div class="form-group mb-3">
-                    <label for="select-person">Name</label>
+                    <h6>
+                      <label for="select-person">Name</label>
+                    </h6>
                     <select class="select-person form-control" name="person" id="select-person">
                         <option></option> <!-- Placeholder -->
                     </select>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="history-range">Date</label>
+                    <h6>
+                        <label for="history-range">Date</label>
+                    </h6>
                     <div id="history-range" class="daterange form-control mr-sm-2">
                         <i class="fa fa-calendar"></i>
                         <span></span>
@@ -70,15 +74,22 @@
 <br>
 
 <div hidden id="sightings" class="container-ms">
-    <div class="card sightings-information">
-      <div class="card-header">
-        Sightings
-      </div>
+    <div class="row w-100">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    Sightings
+                </div>
 
-      <ul id="sightings-list" class="list-group list-group-flush">
-      </ul>
+              <div id="sightings-list" class="list-group list-group-flush">
+              </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div id="map"></div>
+        </div>
     </div>
-    <div id="map" style="width: 600px; height: 400px;"></div>
 </div>
 </body>
 </html>

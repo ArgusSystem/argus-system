@@ -26,7 +26,7 @@ function search(endpoint) {
 		.catch((error) => console.error('Failed to fetch people!', error));
 }
 
-export function loadFilterSubmit(cameras) {
+export function loadSearchSubmit(cameras) {
     $("#filter-form").submit(function(e) {
         e.preventDefault();
 
