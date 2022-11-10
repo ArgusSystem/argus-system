@@ -1,0 +1,14 @@
+#face_embedder: tensorflow_facenet
+#face_embedder: paddle_mobilefacenet
+face_embedder: pytorch_facenet
+
+#images_dir: datasets/fiuba/aligned
+#images_dir: datasets/lfw/aligned
+#images_dir: datasets/lfw/test
+#images_dir: datasets/lfw/test_unknown
+images_dir: datasets/japon/aligned/unknown
+#images_dir: datasets/japon/aligned/known
+
+#output_embeddings_file: datasets/fiuba
+output_embeddings_file: datasets/japon/aligned
+#output_embeddings_file: datasets/lfw

@@ -1,0 +1,9 @@
+
+# ---- Face Detector Type
+face_detector: tensorflow_faceboxes
+#face_detector: tensorflow_mtcnn
+#face_detector: paddle_mtcnn
+
+#images_dir: datasets/fiuba/raw
+images_dir: datasets/japon/raw
+#images_dir: datasets/lfw/raw

@@ -25,7 +25,7 @@ class FaceDetectionTask:
         self.frame_storage = storage_factory.new(StorageType.VIDEO_FRAMES)
         self.face_storage = storage_factory.new(StorageType.FRAME_FACES)
 
-        self.face_detector = FaceDetectorFactory.build(**face_detector_configuration)
+        self.face_detector = FaceDetectorFactory.build(face_detector_configuration)
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-detector')
         self.publisher_to_classifier = Publisher.new(**publisher_to_classifier_configuration)
 
