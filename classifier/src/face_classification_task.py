@@ -4,7 +4,7 @@ from utils.events.src.messages.face_message import FaceMessage
 from utils.events.src.messages.detected_face_message import DetectedFaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from utils.events.src.messages.helper import get_camera_id, get_timestamp
-from .classifier_support_vector import SVClassifier
+from .face_classifier_factory import FaceClassifierFactory
 from .face_embedder_factory import FaceEmbedderFactory
 from utils.video_storage import StorageFactory, StorageType
 from utils.tracing.src.tracer import get_context, get_tracer
@@ -29,8 +29,8 @@ class FaceClassificationTask:
 
         self.threshold = face_classifier_configuration[FACE_CLASSIFIER_THRESHOLD_KEY]
 
-        self.face_classifier = SVClassifier.load(face_classifier_configuration[FACE_CLASSIFIER_MODEL_KEY])
-        self.face_embedder = FaceEmbedderFactory.build(**face_embedder_configuration)
+        self.face_classifier = FaceClassifierFactory.build(face_classifier_configuration)
+        self.face_embedder = FaceEmbedderFactory.build(face_embedder_configuration)
 
         self.publisher_to_web = Publisher.new(**publisher_to_web_configuration)
         self.publisher_to_summarizer = Publisher.new(**publisher_to_summarizer_configuration)

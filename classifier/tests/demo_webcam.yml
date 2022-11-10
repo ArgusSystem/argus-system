@@ -1,0 +1,22 @@
+# ---- Face Detector Type
+face_detector: tensorflow_faceboxes
+#face_detector: 'none'
+#face_detector: tensorflow_mtcnn
+#face_detector: paddle_mtcnn
+
+# ---- Face Embedder Type
+#face_embedder: tensorflow_facenet
+#face_embedder: paddle_mobilefacenet
+face_embedder: pytorch_facenet
+
+# ---- Face Classifier Type
+face_classifier:
+  # ---- Face Classifier Model File
+  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: datasets/fiuba/randomforest.pkl
+  #model: datasets/lfw/distclassifier.pkl
+  #model: datasets/lfw/svclassifier.pkl
+
+# ---- Face Classification Prob Threshold
+threshold: 0.65

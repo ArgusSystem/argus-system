@@ -1,0 +1,21 @@
+
+# ---- Face Classifier Type
+face_classifier_type: distance_classifier
+#face_classifier_type: sv_classifier
+
+embeddings_file: datasets/fiuba/embeddings_train_pytorch_facenet.txt
+#pickle_file: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
+pickle_file: classifier/model/distance_edu_gabo_pytorch_facenet.pkl
+
+#embeddings_file: datasets/fiuba/embeddings_train_tensorflow_facenet.txt
+#pickle_file: classifier/model/svclassifier_edu_gabo_tensorflow_facenet.pkl
+#pickle_file: classifier/model/distance_edu_gabo_tensorflow_facenet.pkl
+
+#embeddings_file: datasets/fiuba/embeddings_train_paddle_mobilefacenet.txt
+#pickle_file: classifier/model/svclassifier_edu_gabo_paddle_mobilefacenet.pkl
+#pickle_file: classifier/model/distance_edu_gabo_paddle_mobilefacenet.pkl
+
+
+#embeddings_file: datasets/lfw/embeddings_train_pytorch_facenet.txt
+#pickle_file: datasets/lfw/distclassifier.pkl
+#pickle_file: datasets/lfw/svclassifier.pkl

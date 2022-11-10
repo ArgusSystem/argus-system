@@ -1,0 +1,5 @@
+
+# ---- Face Detector Type
+face_detector: tensorflow_faceboxes
+#face_detector: tensorflow_mtcnn
+#face_detector: paddle_mtcnn

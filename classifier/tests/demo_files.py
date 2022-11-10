@@ -1,14 +1,17 @@
 import sys
 import cv2
 import time
-from classifier import FaceEmbedderFactory
-from classifier.src.classifier_support_vector import SVClassifier
-from utils.image_processing.src.image_serialization import draw_boxes
-from multiprocessing.pool import ThreadPool
+from classifier import FaceEmbedderFactory, FaceClassifierFactory
 from detector import FaceDetectorFactory
 import os
-# from sklearn.preprocessing import Normalizer
+from utils.application.src.configuration import load_configuration
 
+# This script gets all images in a directory (including subdirectories) and performs face detection and face
+# classification on them using the specified detector, embedder and classifier.
+# Then it shows each image on screen with drawn bounding boxes and labels.
+
+# Run this script from argus-system/
+# Configure by changing ./demo_files.yml
 
 confidence_t = 0.99
 required_size = (160, 160)
@@ -25,7 +28,10 @@ def get_face(img, box):
 
 
 def detect_raw(img, detector, encoder, classifier):
-    boxes = detector.detect_face_image(img.copy())
+    if not detector:
+        boxes = [[0, 0, img.shape[1], img.shape[0]]]
+    else:
+        boxes = detector.detect_face_image(img.copy())
     results = []
     for bbox in boxes:
         res = {}
@@ -54,81 +60,91 @@ def raw_to_frame(img, results):
         if name == 'unknown':
             cv2.rectangle(img, pt_1, pt_2, (0, 0, 255), 2)
             cv2.putText(img, name, pt_1, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
+            #print(name)
         else:
             cv2.rectangle(img, pt_1, pt_2, (0, 255, 0), 2)
-            cv2.putText(img, name + f'__{prob:.2f}', (pt_1[0], pt_1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1,
+            cv2.putText(img, name + f'__{prob:.8f}', (pt_1[0], pt_1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1,
                         (0, 200, 200), 2)
+            #print(name, prob)
+    return img
+
+
+def write_text_with_background(img, text):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    thickness = 2
+    (text_width, text_height) = cv2.getTextSize(text, font, fontScale=font_scale, thickness=thickness)[0]
+    text_offset_x = 0
+    text_offset_y = 25
+    box_coords = (
+    (text_offset_x - 2, text_offset_y - text_height - 2), (text_offset_x + text_width + 2, text_offset_y + 2))
+    cv2.rectangle(img, box_coords[0], box_coords[1], (255, 255, 255), cv2.FILLED)
+    cv2.putText(img, text, (text_offset_x, text_offset_y), font, font_scale, (0, 0, 0), thickness)
     return img
 
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 2:
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    configuration = load_configuration(base_dir + '/demo_files.yml')
 
-        print("--------------------------------")
-        print("This script receives a face embedder type and displays a webcam feed with overlaid face detection and classification.")
-        print("Press 'q' to quit.")
-        print("")
-        print("Usage: ")
-        print("python demo_webcam.py 'face_detector_type' 'face_embedder_type' 'face_classifier.pkl' 'recognition_treshold'")
-        print("--------------------------------")
-
+    # Create Face Detector
+    face_detector_type = configuration['face_detector']
+    if face_detector_type == 'none':
+        face_detector = None
     else:
-        base_dir = os.path.dirname(os.path.realpath(__file__))
-
-        # Create Face Detector
-        face_detector_type = sys.argv[1]
         face_detector = FaceDetectorFactory.build_by_type(face_detector_type)
 
-        # Create Face Embedder
-        face_embedder_type = sys.argv[2]
-        face_embedder = FaceEmbedderFactory.build_by_type(face_embedder_type)
+    # Create Face Embedder
+    face_embedder_type = configuration['face_embedder']
+    face_embedder = FaceEmbedderFactory.build_by_type(face_embedder_type)
 
-        # Create Face Classifier
-        face_classifier = SVClassifier.load(sys.argv[3])
+    # Create Face Classifier
+    face_classifier = FaceClassifierFactory.build(configuration['face_classifier'])
 
-        # Recognition Treshold
-        recognition_t = float(sys.argv[4])
+    # Recognition Treshold
+    recognition_t = float(configuration['threshold'])
 
-        # Load Images
-        image_paths_dir = sys.argv[5]
-        image_paths = []
-        for path, subdirs, files in os.walk(image_paths_dir):
-            for name in files:
-                image_paths.append(os.path.join(path, name))
-        images = {}
-        for i in range(len(image_paths)):
-            image_path = image_paths[i]
-            image = cv2.imread(image_path)
-            images[image_path] = image
+    # Load Images
+    image_paths_dir = configuration['images_dir']
+    image_paths = []
+    for path, subdirs, files in os.walk(image_paths_dir):
+        for name in files:
+            image_paths.append(os.path.join(path, name))
+    images = {}
+    for i in range(len(image_paths)):
+        image_path = image_paths[i]
+        image = cv2.imread(image_path)
+        images[image_path] = image
 
-        processed_frames = 0
-        # Perform detection and classification
-        print("Length: " + str(len(image_paths)))
-        start_time = time.time()
-        total_boxes = []
-        for image_path in images:
-            image = images[image_path]
+    processed_frames = 0
+    # Perform detection and classification
+    print("Length: " + str(len(image_paths)))
+    start_time = time.time()
+    total_boxes = []
+    for image_path in images:
+        image = images[image_path]
 
-            results = detect_raw(image, face_detector, face_embedder, face_classifier)
-            max_dim = max(image.shape)
-            resize_factor = 1000 / max_dim
-            image = cv2.resize(image, (int(image.shape[1] * resize_factor), int(image.shape[0] * resize_factor)))
-            for res in results:
-                res['pt_1'] = (int(res['pt_1'][0] * resize_factor), int(res['pt_1'][1] * resize_factor))
-                res['pt_2'] = (int(res['pt_2'][0] * resize_factor), int(res['pt_2'][1] * resize_factor))
+        results = detect_raw(image, face_detector, face_embedder, face_classifier)
+        max_dim = max(image.shape)
+        resize_factor = 1000 / max_dim
+        image = cv2.resize(image, (int(image.shape[1] * resize_factor), int(image.shape[0] * resize_factor)))
+        for res in results:
+            res['pt_1'] = (int(res['pt_1'][0] * resize_factor), int(res['pt_1'][1] * resize_factor))
+            res['pt_2'] = (int(res['pt_2'][0] * resize_factor), int(res['pt_2'][1] * resize_factor))
 
-            # Show image on screen
-            image = raw_to_frame(image, results)
-            cv2.imshow('img', image)
+        # Show image on screen
+        image = raw_to_frame(image, results)
+        image = write_text_with_background(image, image_path)
+        cv2.imshow('img', image)
 
-            processed_frames += 1
+        processed_frames += 1
 
-            # Check for exit button 'q'
-            ch = cv2.waitKey(0) & 0xFF
-            if ch == ord("q"):
-                break
+        # Check for exit button 'q'
+        ch = cv2.waitKey(0) & 0xFF
+        if ch == ord("q"):
+            break
 
-        # FPS calc
-        total_time = time.time() - start_time
-        print("FPS: " + str(processed_frames / total_time))
+    # FPS calc
+    total_time = time.time() - start_time
+    print("FPS: " + str(processed_frames / total_time))
