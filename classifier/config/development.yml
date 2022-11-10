@@ -5,11 +5,11 @@ consumer:
   queue: faces
 
 face_embedder:
-  configuration:
-    type: 'pytorch_facenet'
+  type: pytorch_facenet
 
 face_classifier:
-  model: 'classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl'
+  #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
+  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
   threshold: 0.7
 
 publisher_web:

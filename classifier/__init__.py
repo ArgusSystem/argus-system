@@ -1,1 +1,1 @@
-from .src import FaceClassificationTask, FaceEmbedderFactory, SVClassifier
+from .src import FaceClassificationTask, FaceEmbedderFactory, FaceClassifierFactory, SVClassifier, DistanceClassifier
