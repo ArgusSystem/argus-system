@@ -85,7 +85,11 @@ if __name__ == "__main__":
     recognition_t = float(configuration['threshold'])
 
     # Start webcam
-    camera = cv2.VideoCapture(0)
+    video_path = configuration['video_feed_filepath']
+    cam_index = 0
+    if video_path:
+        cam_index = video_path
+    camera = cv2.VideoCapture(cam_index)
 
     # init FPS calc
     start_time = time.time()

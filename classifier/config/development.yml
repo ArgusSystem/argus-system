@@ -9,8 +9,9 @@ face_embedder:
 
 face_classifier:
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
-  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
-  threshold: 0.7
+  #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  model: classifier/model/distance_rope_pytorch_facenet.pkl
+  threshold: 0.55
 
 publisher_web:
   host: localhost

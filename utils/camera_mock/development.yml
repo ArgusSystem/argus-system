@@ -21,7 +21,7 @@ tracer:
 width: 640
 height: 480
 camera_id: cameramock
-webcam_feed: True
-video_feed_filepath: ''
+webcam_feed: False
+video_feed_filepath: datasets/rope/trailer_640.mp4
 recording_time: 1
 fps: 30

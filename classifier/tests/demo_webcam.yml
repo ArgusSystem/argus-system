@@ -12,11 +12,15 @@ face_embedder: pytorch_facenet
 # ---- Face Classifier Type
 face_classifier:
   # ---- Face Classifier Model File
-  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: datasets/fiuba/randomforest.pkl
   #model: datasets/lfw/distclassifier.pkl
   #model: datasets/lfw/svclassifier.pkl
+  model: datasets/rope/distance_rope_pytorch_facenet.pkl
+  #model: datasets/rope/sv_rope_pytorch_facenet.pkl
 
 # ---- Face Classification Prob Threshold
-threshold: 0.65
+threshold: 0.55
+
+video_feed_filepath: datasets/rope/trailer_1280.mp4
