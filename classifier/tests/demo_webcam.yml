@@ -15,12 +15,18 @@ face_classifier:
   #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: datasets/fiuba/randomforest.pkl
+
   #model: datasets/lfw/distclassifier.pkl
   #model: datasets/lfw/svclassifier.pkl
-  model: datasets/rope/distance_rope_pytorch_facenet.pkl
+
+  #model: datasets/rope/distance_rope_pytorch_facenet.pkl
   #model: datasets/rope/sv_rope_pytorch_facenet.pkl
 
-# ---- Face Classification Prob Threshold
-threshold: 0.55
+  #model: datasets/friends/distance_friends_pytorch_facenet.pkl
+  model: datasets/friends/sv_friends_pytorch_facenet.pkl
 
-video_feed_filepath: datasets/rope/trailer_1280.mp4
+# ---- Face Classification Prob Threshold
+threshold: 0.6
+
+#video_feed_filepath: datasets/rope/trailer_1280.mp4
+video_feed_filepath: datasets/friends/friends_s05e10.mkv

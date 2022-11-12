@@ -29,6 +29,6 @@ db:
 tracer:
   host: localhost
   port: 6831
-sampling_rate: 5
+sampling_rate: 1
 logging:
   level: INFO

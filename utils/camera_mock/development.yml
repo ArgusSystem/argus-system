@@ -18,10 +18,10 @@ db:
 tracer:
   host: localhost
   port: 6831
-width: 640
+width: 854
 height: 480
 camera_id: cameramock
 webcam_feed: False
-video_feed_filepath: datasets/rope/trailer_640.mp4
-recording_time: 1
+video_feed_filepath: datasets/friends/friends_s05e10.mp4
+recording_time: 5
 fps: 30

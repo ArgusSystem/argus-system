@@ -1,15 +1,17 @@
 # ---- Face Classifier Type
 face_classifier:
   # ---- Face Classifier Model File
-  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
   #model: datasets/fiuba/randomforest.pkl
   #model: datasets/lfw/distclassifier.pkl
   #model: datasets/lfw/svclassifier.pkl
+  model: datasets/friends-joined/distance_friends_pytorch_facenet.pkl
 
 #embeddings_file: datasets/lfw/embeddings_train_pytorch_facenet.txt
 #embeddings_file: datasets/lfw/embeddings_test_unknown_pytorch_facenet.txt
 #embeddings_file: datasets/lfw/embeddings_test_pytorch_facenet.txt
 #embeddings_file: datasets/japon/aligned/embeddings_test_pytorch_facenet.txt
-embeddings_file: datasets/japon/aligned/embeddings_test_unknown_pytorch_facenet.txt
+#embeddings_file: datasets/japon/aligned/embeddings_test_unknown_pytorch_facenet.txt
+embeddings_file: datasets/friends-recognition/embeddings_test_pytorch_facenet.txt
 
-probability_threshold: 0.65
+probability_threshold: 0.4

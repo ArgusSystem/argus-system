@@ -14,6 +14,12 @@ import os
 # Run this script from argus-system/
 # Configure by changing ./demo_webcam.yml
 
+# If playing a video instead of a webcam feed:
+# Press SPACEBAR to pause the video
+# Press F to advance and process one frame
+# Press S to skip 100 frames
+# Press W to skip 1000 frames
+
 confidence_t = 0.99
 required_size = (160, 160)
 # l2_normalizer = Normalizer('l2')
@@ -99,31 +105,47 @@ if __name__ == "__main__":
     async_result = None
     results = []
     first_frame = True
+    paused = False
+    process_one_frame = False
 
     while True:
 
-        # Read frame from Webcam
-        ret, image = camera.read()
+        if not paused or process_one_frame:
+            # Read frame from Webcam
+            ret, image = camera.read()
 
-        if async_result is None:
-            async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
-        elif async_result.ready():
-            processed_frames += 1
-            if first_frame:
-                start_time = time.time()
-                processed_frames = 0
-                first_frame = False
-            results = async_result.get()
-            async_result = pool.apply_async(detect_raw, (image.copy(), face_detector, face_embedder, face_classifier))
-        image = raw_to_frame(image, results)
+            if async_result is None:
+                async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
+            elif async_result.ready():
+                processed_frames += 1
+                if first_frame:
+                    start_time = time.time()
+                    processed_frames = 0
+                    first_frame = False
+                results = async_result.get()
+                async_result = pool.apply_async(detect_raw, (image.copy(), face_detector, face_embedder, face_classifier))
+            image = raw_to_frame(image, results)
 
-        # Show image on screen
-        cv2.imshow('img', image)
+            # Show image on screen
+            cv2.imshow('img', image)
 
         # Check for exit button 'q'
+        process_one_frame = False
         ch = cv2.waitKey(1) & 0xFF
         if ch == ord("q"):
             break
+        elif ch == ord(" "):
+            paused = not paused
+        elif ch == ord("f"):
+            process_one_frame = True
+        elif ch == ord("s"):
+            for i in range(100):
+                ret, image = camera.read()
+            cv2.imshow('img', image)
+        elif ch == ord("w"):
+            for i in range(1000):
+                ret, image = camera.read()
+            cv2.imshow('img', image)
 
     # FPS calc
     total_time = time.time() - start_time
