@@ -18,10 +18,11 @@ db:
 tracer:
   host: localhost
   port: 6831
-width: 854
-height: 480
-camera_id: cameramock
+width: 1280
+height: 720
 webcam_feed: False
-video_feed_filepath: datasets/friends/friends_s05e10.mp4
+video_feed_filepath: datasets/friends/friends_s05e10_1280_cut.mp4
+cam_alias_change_frames: [1, 2782, 6091, 6847, 8805, 10727, 12714, 14916, 15740, 17575, 19600, 22949, 25207, 27365, 29597, 31542, 36546]
+cam_alias: ['joeyhouse', 'cafe', 'agent', 'street', 'joeyhouse', 'rachelhouse', 'joeyhouse', 'street', 'joeyhouse', 'boyfriendhouse', 'rachelhouse', 'joeyhouse', 'cafe', 'street', 'boyfriendhouse', 'joeyhouse', 'rachelhouse']
 recording_time: 5
 fps: 30
