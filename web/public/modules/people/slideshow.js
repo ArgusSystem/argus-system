@@ -77,7 +77,7 @@ function createNextButton(person) {
 export function createSlideshow(person) {
     const carousel = document.createElement('div');
     carousel.setAttribute('id', getSlideShowId(person));
-    carousel.setAttribute('class', 'carousel slide');
+    carousel.setAttribute('class', 'carousel carousel-dark slide');
     carousel.setAttribute('data-interval', 'false');
 
     carousel.appendChild(createInner(person));

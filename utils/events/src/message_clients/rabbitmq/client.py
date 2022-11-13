@@ -16,6 +16,7 @@ class Client:
     def _connect(self):
         self._connection = BlockingConnection(parameters=self._parameters)
         self._channel = self._connection.channel()
+        self._channel.basic_qos(prefetch_count=10)
 
     @contextmanager
     def channel(self):

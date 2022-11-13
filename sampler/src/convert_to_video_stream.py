@@ -15,6 +15,7 @@ def convert(video_chunk):
         f'-movflags +dash '
         f'-preset ultrafast '
         f'{output_filepath} '
+        f'-y '
         f'> {NULL_DEVICE} 2>&1')
 
     return LocalVideoChunk(camera_id=video_chunk.camera_id,

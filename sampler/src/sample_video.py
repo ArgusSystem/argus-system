@@ -23,7 +23,7 @@ def get_frames(frames_dir, video_timestamp, framerate, sampling_rate):
 
     for file in files:
         # Count offsets from 0 to N-1
-        offset = ceil(offset) - 1
+        offset = ceil(offset)
         frame = Frame(offset=offset,
                       timestamp=floor(video_timestamp + offset * (1000 / framerate)),
                       filepath=os.path.join(frames_dir, file))
