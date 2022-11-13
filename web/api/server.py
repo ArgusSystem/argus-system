@@ -10,7 +10,8 @@ SERVER_KEY = 'server'
 
 if __name__ == "__main__":
     with run('argus-web-api') as application:
-        controllers_factory = ControllersFactory(db_configuration=application.configuration[DB_KEY])
+        controllers_factory = ControllersFactory(db_configuration=application.configuration[DB_KEY],
+                                                 storage_configuration=application.configuration[VIDEO_STORAGE_KEY])
 
         server = ServerThread(**application.configuration[SERVER_KEY],
                               app=make_app(application.name, controllers_factory.all()))

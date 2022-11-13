@@ -1,3 +1,5 @@
+import { createSlideshow } from './slideshow.js'
+
 function getHeaderId(person) {
     return `header-${person.id}`;
 }
@@ -46,7 +48,8 @@ function createCollapse(person) {
 
     const body = document.createElement('div');
     body.setAttribute('class', 'accordion-body');
-    body.innerHTML = person.id;
+
+    body.appendChild(createSlideshow(person));
 
     collapse.appendChild(body);
 

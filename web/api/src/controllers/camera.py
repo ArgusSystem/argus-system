@@ -15,4 +15,4 @@ class CameraController:
 
     @staticmethod
     def make_routes(app):
-        app.route('/camera')(_get_cameras)
+        app.route('/cameras')(_get_cameras)
