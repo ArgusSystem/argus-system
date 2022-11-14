@@ -9,8 +9,8 @@ import { createNavigationBar, Tab } from '../components/navbar.js'
 
 const PRE_BUFFERED_THRESHOLD = 5;
 
-window.addEventListener('load', () => {
-    createNavigationBar(Tab.LIVE_FEED);
+window.addEventListener('load', async () => {
+    await createNavigationBar(Tab.LIVE_FEED);
 
     const socketClient = new SocketClient();
     const mediaSource = new MediaSource;
@@ -42,5 +42,7 @@ window.addEventListener('load', () => {
 
         setUpDisplay(videoInterpolator);
     });
+
+    document.getElementById('cover').hidden = false;
 });
 
