@@ -1,5 +1,5 @@
 consumer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   queue: summarize_detected_faces
@@ -8,12 +8,12 @@ logging:
   level: DEBUG
 
 tracer:
-  host: localhost
+  host: argus
   port: 6831
 
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes

@@ -5,7 +5,7 @@ import yaml
 import os
 import shutil
 from threading import Thread, Event
-from time import time_ns
+from time import time_ns, sleep
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
@@ -107,14 +107,17 @@ if __name__ == "__main__":
     # Create camera in db
     connect(**configuration['db'])
     cameras = {}
+    cam_lat = configuration['cam_latitude']
+    cam_long = configuration['cam_longitude']
+    cam_lat_long_var = configuration['cam_lat_long_var']
     for current_cam_alias in cam_alias:
         camera_id = Camera.insert(alias=current_cam_alias,
                                   mac=random.randint(0, 999999),
                                   width=width,
                                   height=height,
                                   framerate=fps,
-                                  latitude= -34.61743 + random.uniform(-1.0, 1.0),
-                                  longitude= -58.36827 + random.uniform(-1.0, 1.0)) \
+                                  latitude=cam_lat + random.uniform(-cam_lat_long_var, cam_lat_long_var),
+                                  longitude=cam_long + random.uniform(-cam_lat_long_var, cam_lat_long_var)) \
             .on_conflict(conflict_target=[Camera.alias],
                          preserve=[Camera.width, Camera.height, Camera.framerate]) \
             .execute()
@@ -193,6 +196,10 @@ if __name__ == "__main__":
 
             current_cam_alias = new_cam_alias
             print("Sent a video chunk: " + str(message))
+
+            #sleep(recording_time/2)
+
+            #input()
 
             if frame is None:
                 break

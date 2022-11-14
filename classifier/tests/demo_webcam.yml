@@ -29,4 +29,6 @@ face_classifier:
 threshold: 0.6
 
 #video_feed_filepath: datasets/rope/trailer_1280.mp4
-video_feed_filepath: datasets/friends/friends_s05e10.mkv
+video_feed_filepath: datasets/friends/friends_s05e10_1280_cut.mp4
+cam_id_change_frames: [1, 2782, 6091, 6847, 8805, 10727, 12714, 14916, 15740, 17575, 19600, 22949, 25207, 27365, 29597, 31542, 36546]
+cam_ids: ['joey_house', 'cafe', 'agent_office', 'street', 'joey_house', 'rachel_house', 'joey_house', 'street', 'joey_house', 'boyfriend_house', 'rachel_house', 'joey_house', 'cafe', 'street', 'boyfriend_house', 'joey_house', 'rachel_house']

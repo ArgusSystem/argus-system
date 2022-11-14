@@ -71,6 +71,20 @@ def raw_to_frame(img, results):
     return img
 
 
+def write_text_with_background(img, text):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    thickness = 2
+    (text_width, text_height) = cv2.getTextSize(text, font, fontScale=font_scale, thickness=thickness)[0]
+    text_offset_x = 0
+    text_offset_y = 25
+    box_coords = (
+    (text_offset_x - 2, text_offset_y - text_height - 2), (text_offset_x + text_width + 2, text_offset_y + 2))
+    cv2.rectangle(img, box_coords[0], box_coords[1], (255, 255, 255), cv2.FILLED)
+    cv2.putText(img, text, (text_offset_x, text_offset_y), font, font_scale, (0, 0, 0), thickness)
+    return img
+
+
 if __name__ == "__main__":
 
     base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -97,6 +111,10 @@ if __name__ == "__main__":
         cam_index = video_path
     camera = cv2.VideoCapture(cam_index)
 
+    # Cam id test
+    cam_id_change_frames = configuration['cam_id_change_frames']
+    cam_ids = configuration['cam_ids']
+
     # init FPS calc
     start_time = time.time()
     processed_frames = 0
@@ -107,12 +125,14 @@ if __name__ == "__main__":
     first_frame = True
     paused = False
     process_one_frame = False
+    frame_number = 0
 
     while True:
 
         if not paused or process_one_frame:
             # Read frame from Webcam
             ret, image = camera.read()
+            frame_number += 1
 
             if async_result is None:
                 async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
@@ -127,6 +147,13 @@ if __name__ == "__main__":
             image = raw_to_frame(image, results)
 
             # Show image on screen
+            camera_id = cam_ids[0]
+            for change_frame in cam_id_change_frames:
+                if frame_number <= change_frame:
+                    break
+                else:
+                    camera_id = cam_ids[cam_id_change_frames.index(change_frame)]
+            image = write_text_with_background(image, camera_id)
             cv2.imshow('img', image)
 
         # Check for exit button 'q'
@@ -141,10 +168,12 @@ if __name__ == "__main__":
         elif ch == ord("s"):
             for i in range(100):
                 ret, image = camera.read()
+                frame_number += 1
             cv2.imshow('img', image)
         elif ch == ord("w"):
             for i in range(1000):
                 ret, image = camera.read()
+                frame_number += 1
             cv2.imshow('img', image)
 
     # FPS calc

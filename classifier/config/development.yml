@@ -1,5 +1,5 @@
 consumer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   queue: faces
@@ -14,14 +14,14 @@ face_classifier:
   threshold: 0.6
 
 publisher_web:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: published_detected_faces
 
 publisher_summarizer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
@@ -31,18 +31,18 @@ logging:
   level: DEBUG
 
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes
 
 tracer:
-  host: localhost
+  host: argus
   port: 6831
