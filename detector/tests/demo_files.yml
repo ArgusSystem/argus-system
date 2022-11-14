@@ -5,5 +5,9 @@ face_detector: tensorflow_faceboxes
 #face_detector: paddle_mtcnn
 
 #images_dir: datasets/fiuba/raw
-images_dir: datasets/japon/raw
+#images_dir: datasets/japon/raw
+#images_dir: datasets/rope/raw
+#images_dir: datasets/friends/raw
+#images_dir: datasets/friends-recognition/raw
+images_dir: datasets/friends-recognition/raw-test
 #images_dir: datasets/lfw/raw

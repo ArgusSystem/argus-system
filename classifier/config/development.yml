@@ -1,5 +1,5 @@
 consumer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   queue: faces
@@ -9,18 +9,19 @@ face_embedder:
 
 face_classifier:
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
-  model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
-  threshold: 0.7
+  #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  model: classifier/model/sv_friends_pytorch_facenet.pkl
+  threshold: 0.6
 
 publisher_web:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: published_detected_faces
 
 publisher_summarizer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
@@ -30,18 +31,18 @@ logging:
   level: DEBUG
 
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes
 
 tracer:
-  host: localhost
+  host: argus
   port: 6831

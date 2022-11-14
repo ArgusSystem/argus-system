@@ -86,5 +86,6 @@ class FaceDetectionTask:
                                                    trace=frame_message.trace)
                         self.face_storage.store(name=str(face_message), data=image_to_bytestring(cropped_face))
                         self.publisher_to_classifier.publish(encode(face_message))
+                        face_num += 1
 
         logger.info("Finished processing message - %s, found %d faces", str(frame_message), len(bounding_boxes))

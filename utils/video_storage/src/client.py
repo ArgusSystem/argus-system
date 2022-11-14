@@ -19,11 +19,11 @@ class Client:
     def remove_bucket(self, name):
         self._client.remove_bucket(name)
 
-    def store(self, bucket, name, data, size):
-        self._client.put_object(bucket, name, data=data, length=size)
+    def store(self, bucket, name, data, size, metadata):
+        self._client.put_object(bucket, name, data=data, length=size, metadata=metadata)
 
-    def store_file(self, bucket, name, filepath):
-        self._client.fput_object(bucket, name, filepath)
+    def store_file(self, bucket, name, filepath, metadata):
+        self._client.fput_object(bucket, name, filepath, metadata=metadata)
 
     def fetch(self, bucket, name):
         return self._client.get_object(bucket, name).data

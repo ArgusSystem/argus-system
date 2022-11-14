@@ -24,9 +24,9 @@ class PostgresqlService:
                latitude=-34.61743,
                longitude=-58.36827).save()
 
-        Person.insert(id=0, name='gonza', dni='33333333').execute()
-        Person(name='gabo', dni='11111111').save()
-        Person(name='edu', dni='22222222').save()
+        #Person.insert(id=0, name='gonza', dni='33333333').execute()
+        #Person(name='gabo', dni='11111111').save()
+        #Person(name='edu', dni='22222222').save()
 
 
     def clean(self):

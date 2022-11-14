@@ -1,7 +1,7 @@
-const {protocol, hostname} = window.location;
+import { API_URL } from './url.js'
 
 export function fetchPeople() {
-    return fetch(`${protocol}//${hostname}:5000/people`)
+    return fetch(`${API_URL}/people`)
 		.then((response) => response.json())
 		.catch((error) => console.error('Failed to fetch people!', error));
 }

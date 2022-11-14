@@ -3,15 +3,15 @@ server:
 logger:
   level: 'debug'
 tracing:
-    endpoint: 'http://localhost:14268/api/traces'
+    endpoint: 'http://argus:14268/api/traces'
 consumer:
-  url: 'amqp://argus:panoptes@localhost:5672'
+  url: 'amqp://argus:panoptes@argus:5672'
   video_queue: 'published_video_chunks'
   faces_queue: 'published_detected_faces'
 schemas: '../utils/events/resources'
 storage:
   client:
-    endPoint: 'localhost'
+    endPoint: 'argus'
     port: 9500
     accessKey: 'argus'
     secretKey: 'panoptes'

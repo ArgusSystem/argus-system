@@ -45,7 +45,7 @@ if __name__ == '__main__':
                 pred_equals.append(1)
             else:
                 pred_equals.append(0)
-                print('%4d  Real: %s, Predicted: %s, Prob: %.3f' % (i, test_class_name, classifier.get_name(pred_index), pred_prob))
+                print('%4d %s Real: %s, Predicted: %s, Prob: %.3f' % (i, filename, test_class_name, classifier.get_name(pred_index), pred_prob))
 
     accuracy = np.mean(pred_equals)
     print('Accuracy: %.3f' % accuracy)
