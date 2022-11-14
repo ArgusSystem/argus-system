@@ -4,14 +4,16 @@ import {VideoBuffer} from './video/video_buffer.js'
 import {FacesIndex} from './video/faces_index.js';
 import {VideoIndex} from "./video/video_index.js";
 import { VideoInterpolator } from './video/video_interpolator.js'
+import { createNavigationBar, Tab } from '../components/navbar.js'
 
 
-const PRE_BUFFERED_THRESHOLD = 2;
+const PRE_BUFFERED_THRESHOLD = 5;
 
 window.addEventListener('load', () => {
+    createNavigationBar(Tab.LIVE_FEED);
+
     const socketClient = new SocketClient();
     const mediaSource = new MediaSource;
-
 
     const video = document.getElementById('auxiliary-video');
     video.src = URL.createObjectURL(mediaSource);
