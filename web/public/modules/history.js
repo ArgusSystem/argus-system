@@ -1,5 +1,5 @@
-import {fetchCameras} from './history/cameras.js';
-import { fetchPeople } from './history/people.js';
+import {fetchCameras} from './api/cameras.js';
+import { fetchPeople } from './api/people.js';
 import { loadTimeRange } from './history/timeRange.js';
 import { loadSearchSubmit } from './history/search.js';
 

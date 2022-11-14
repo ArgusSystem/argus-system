@@ -1,5 +1,5 @@
 consumer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   queue: frames
@@ -10,7 +10,7 @@ face_detector:
 debug: False
 
 publisher:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
@@ -20,11 +20,11 @@ logging:
   level: DEBUG
 
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 
 tracer:
-  host: localhost
+  host: argus
   port: 6831

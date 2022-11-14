@@ -1,27 +1,39 @@
 publisher:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: new_video_chunks
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes
 tracer:
-  host: localhost
+  host: argus
   port: 6831
-width: 640
-height: 480
-camera_id: cameramock
-webcam_feed: True
-video_feed_filepath: ''
+
 recording_time: 1
+width: 1280
+height: 720
 fps: 30
+
+cam_latitude: 40.72132
+cam_longitude: -73.99773
+# If using multiple cams with 'cam_alias', add a random variation to each cam's lat and long
+cam_lat_long_var: -0.00155
+
+# If false, provide a video_feed_filepath to use instead of a webcam feed
+webcam_feed: False
+video_feed_filepath: datasets/friends/friends_s05e10_1280_cut.mp4
+
+# Each element of the list corresponds to an element in 'cam_alias'
+# To have a fixed cam alias during the entire feed, use: [1] ['cam_alias']
+cam_alias_change_frames: [1, 2782, 6091, 6847, 8805, 10727, 12714, 14916, 15740, 17575, 19600, 22949, 25207, 27365, 29597, 31542, 36546]
+cam_alias: ['joeyhouse', 'cafe', 'agent', 'street', 'joeyhouse', 'rachelhouse', 'joeyhouse', 'street', 'joeyhouse', 'boyfriendhouse', 'rachelhouse', 'joeyhouse', 'cafe', 'street', 'boyfriendhouse', 'joeyhouse', 'rachelhouse']

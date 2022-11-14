@@ -2,7 +2,7 @@ from .minio import MinioService
 from .postgresql import PostgresqlService
 from .rabbitmq import RabbitMQService
 
-host = 'localhost'
+host = 'argus'
 
 services = [
     MinioService(host),

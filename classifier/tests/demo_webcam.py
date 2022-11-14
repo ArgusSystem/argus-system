@@ -14,6 +14,12 @@ import os
 # Run this script from argus-system/
 # Configure by changing ./demo_webcam.yml
 
+# If playing a video instead of a webcam feed:
+# Press SPACEBAR to pause the video
+# Press F to advance and process one frame
+# Press S to skip 100 frames
+# Press W to skip 1000 frames
+
 confidence_t = 0.99
 required_size = (160, 160)
 # l2_normalizer = Normalizer('l2')
@@ -65,6 +71,20 @@ def raw_to_frame(img, results):
     return img
 
 
+def write_text_with_background(img, text):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    thickness = 2
+    (text_width, text_height) = cv2.getTextSize(text, font, fontScale=font_scale, thickness=thickness)[0]
+    text_offset_x = 0
+    text_offset_y = 25
+    box_coords = (
+    (text_offset_x - 2, text_offset_y - text_height - 2), (text_offset_x + text_width + 2, text_offset_y + 2))
+    cv2.rectangle(img, box_coords[0], box_coords[1], (255, 255, 255), cv2.FILLED)
+    cv2.putText(img, text, (text_offset_x, text_offset_y), font, font_scale, (0, 0, 0), thickness)
+    return img
+
+
 if __name__ == "__main__":
 
     base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -85,7 +105,15 @@ if __name__ == "__main__":
     recognition_t = float(configuration['threshold'])
 
     # Start webcam
-    camera = cv2.VideoCapture(0)
+    video_path = configuration['video_feed_filepath']
+    cam_index = 0
+    if video_path:
+        cam_index = video_path
+    camera = cv2.VideoCapture(cam_index)
+
+    # Cam id test
+    cam_id_change_frames = configuration['cam_id_change_frames']
+    cam_ids = configuration['cam_ids']
 
     # init FPS calc
     start_time = time.time()
@@ -95,31 +123,58 @@ if __name__ == "__main__":
     async_result = None
     results = []
     first_frame = True
+    paused = False
+    process_one_frame = False
+    frame_number = 0
 
     while True:
 
-        # Read frame from Webcam
-        ret, image = camera.read()
+        if not paused or process_one_frame:
+            # Read frame from Webcam
+            ret, image = camera.read()
+            frame_number += 1
 
-        if async_result is None:
-            async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
-        elif async_result.ready():
-            processed_frames += 1
-            if first_frame:
-                start_time = time.time()
-                processed_frames = 0
-                first_frame = False
-            results = async_result.get()
-            async_result = pool.apply_async(detect_raw, (image.copy(), face_detector, face_embedder, face_classifier))
-        image = raw_to_frame(image, results)
+            if async_result is None:
+                async_result = pool.apply_async(detect_raw, (image, face_detector, face_embedder, face_classifier))
+            elif async_result.ready():
+                processed_frames += 1
+                if first_frame:
+                    start_time = time.time()
+                    processed_frames = 0
+                    first_frame = False
+                results = async_result.get()
+                async_result = pool.apply_async(detect_raw, (image.copy(), face_detector, face_embedder, face_classifier))
+            image = raw_to_frame(image, results)
 
-        # Show image on screen
-        cv2.imshow('img', image)
+            # Show image on screen
+            camera_id = cam_ids[0]
+            for change_frame in cam_id_change_frames:
+                if frame_number <= change_frame:
+                    break
+                else:
+                    camera_id = cam_ids[cam_id_change_frames.index(change_frame)]
+            image = write_text_with_background(image, camera_id)
+            cv2.imshow('img', image)
 
         # Check for exit button 'q'
+        process_one_frame = False
         ch = cv2.waitKey(1) & 0xFF
         if ch == ord("q"):
             break
+        elif ch == ord(" "):
+            paused = not paused
+        elif ch == ord("f"):
+            process_one_frame = True
+        elif ch == ord("s"):
+            for i in range(100):
+                ret, image = camera.read()
+                frame_number += 1
+            cv2.imshow('img', image)
+        elif ch == ord("w"):
+            for i in range(1000):
+                ret, image = camera.read()
+                frame_number += 1
+            cv2.imshow('img', image)
 
     # FPS calc
     total_time = time.time() - start_time

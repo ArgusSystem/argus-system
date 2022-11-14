@@ -1,5 +1,5 @@
--r ../utils/application/requirements.txt
--r ../utils/video_storage/requirements.txt
--r ../utils/tracing/requirements.txt
+-r ../../utils/application/requirements.txt
+-r ../../utils/video_storage/requirements.txt
+-r ../../utils/tracing/requirements.txt
 flask
-flask-opentracing
+flask-cors
