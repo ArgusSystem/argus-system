@@ -3,7 +3,7 @@ import { fetchHTMLElement } from './utils.js'
 
 export class Tab {
     static HOME = new Tab('Home', 'index.html');
-    static LIVE_FEED = new Tab('Live Feed', 'video.html');
+    static LIVE_FEED = new Tab('Live Feed', 'cameras.html');
     static HISTORY = new Tab('History', 'history.html');
     static PEOPLE = new Tab('People', 'people.html');
 

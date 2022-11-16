@@ -5,13 +5,11 @@ import {FacesIndex} from './video/faces_index.js';
 import {VideoIndex} from "./video/video_index.js";
 import { VideoInterpolator } from './video/video_interpolator.js'
 import { createNavigationBar, Tab } from '../components/navbar.js'
-
+import { params } from './video/params.js'
 
 const PRE_BUFFERED_THRESHOLD = 5;
 
-window.addEventListener('load', async () => {
-    await createNavigationBar(Tab.LIVE_FEED);
-
+function createVideo() {
     const socketClient = new SocketClient();
     const mediaSource = new MediaSource;
 
@@ -42,6 +40,14 @@ window.addEventListener('load', async () => {
 
         setUpDisplay(videoInterpolator);
     });
+}
+
+window.addEventListener('load', async () => {
+    await createNavigationBar(Tab.LIVE_FEED);
+
+    document.getElementById('camera-name').innerText = params.camera;
+
+    createVideo();
 
     document.getElementById('cover').hidden = false;
 });
