@@ -1,6 +1,6 @@
 import {fetchCameras} from './api/cameras.js';
 import { fetchPeople } from './api/people.js';
-import { loadTimeRange } from './history/timeRange.js';
+import { loadTimeRange } from './history/time-range.js';
 import { loadSearchSubmit } from './history/search.js';
 import { createNavigationBar, Tab } from '../components/navbar.js'
 
