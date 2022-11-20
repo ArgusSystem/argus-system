@@ -1,13 +1,10 @@
-import { fetchPeople } from './api/people.js';
-import { createAccordion } from './people/accordion.js'
 import { createNavigationBar, Tab } from '../components/navbar.js'
+import { createPeopleList } from './people/people_list.js'
 
 window.addEventListener('load', async () => {
 	await createNavigationBar(Tab.PEOPLE);
 
-    const people = await fetchPeople();
-
-    createAccordion(people);
+    await createPeopleList();
 
     document.getElementById('cover').hidden = false;
 });

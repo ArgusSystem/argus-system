@@ -1,5 +1,5 @@
-import { fetchHTMLElement } from './utils.js'
-import { API_URL } from '../modules/api/url.js'
+import { fetchHTMLElement } from './utils.js';
+import { API_URL } from '../modules/api/url.js';
 
 
 export async function createCamera(camera) {

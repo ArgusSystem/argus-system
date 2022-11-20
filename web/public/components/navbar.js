@@ -1,5 +1,5 @@
-import { createLink } from './link.js'
-import { fetchHTMLElement } from './utils.js'
+import { createLink } from './link.js';
+import { fetchHTMLElement } from './utils.js';
 
 export class Tab {
     static HOME = new Tab('Home', 'index.html');
