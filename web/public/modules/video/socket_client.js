@@ -1,8 +1,7 @@
 export class SocketClient {
-    constructor () {
+    constructor (camera) {
         const {protocol, hostname, port} = window.location;
-        this.client = io.connect(`${protocol}//${hostname}:${port}/video`, { forceNew: true });
-        console.log("Connected to web server!");
+        this.client = io.connect(`${protocol}//${hostname}:${port}/video-${camera}`, { forceNew: true });
     }
 
     onChunk (callback) {

@@ -13,7 +13,7 @@ camera.save()
 video_chunk = VideoChunk(camera=camera, timestamp=0, duration=1.0, samples=[0, 5, 10, 20, 25])
 video_chunk.save()
 
-frames_storage = StorageFactory('localhost', 9500, 'argus', 'panoptes').new(StorageType.VIDEO_FRAMES)
+frames_storage = StorageFactory('argus', 9500, 'argus', 'panoptes').new(StorageType.VIDEO_FRAMES)
 frames_storage.store(f'{camera.alias}-{video_chunk.timestamp}-{video_chunk.samples[-1]}',
                      filepath='frames/last_frame.jpeg')
 

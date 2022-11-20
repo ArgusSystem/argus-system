@@ -11,7 +11,7 @@ export async function createCamera(camera) {
     img.setAttribute('alt', camera.name);
 
     const link  = element.querySelector('#video-link');
-    link.setAttribute('href', `video.html?camera=${camera.name}`);
+    link.setAttribute('href', `video.html?camera=${camera.id}`);
 
     return element;
 }

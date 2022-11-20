@@ -1,53 +1,17 @@
-import {SocketClient} from './video/socket_client.js'
-import {setUpDisplay} from './video/video_display.js'
-import {VideoBuffer} from './video/video_buffer.js'
-import {FacesIndex} from './video/faces_index.js';
-import {VideoIndex} from "./video/video_index.js";
-import { VideoInterpolator } from './video/video_interpolator.js'
 import { createNavigationBar, Tab } from '../components/navbar.js'
-import { params } from './video/params.js'
+import { params } from './api/params.js'
+import { fetchCamera } from './api/cameras.js'
+import { createVideo } from './video/video_source.js'
 
-const PRE_BUFFERED_THRESHOLD = 5;
-
-function createVideo() {
-    const socketClient = new SocketClient();
-    const mediaSource = new MediaSource;
-
-    const video = document.getElementById('auxiliary-video');
-    video.src = URL.createObjectURL(mediaSource);
-
-    mediaSource.addEventListener('sourceopen', (e) => {
-        const videoBuffer = new VideoBuffer(mediaSource);
-        const facesIndex = new FacesIndex();
-        const videoIndex = new VideoIndex();
-        const videoInterpolator = new VideoInterpolator(videoIndex, facesIndex);
-        let preBuffered = 0;
-
-        socketClient.onChunk(chunk => {
-            videoBuffer.append(chunk);
-            videoIndex.add(chunk);
-
-            console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
-
-            preBuffered += chunk.duration;
-
-            if (preBuffered >= PRE_BUFFERED_THRESHOLD && video.paused) {
-                video.play();
-            }
-        });
-
-        socketClient.onFace(face => facesIndex.add(face));
-
-        setUpDisplay(videoInterpolator);
-    });
-}
 
 window.addEventListener('load', async () => {
     await createNavigationBar(Tab.LIVE_FEED);
 
-    document.getElementById('camera-name').innerText = params.camera;
+    const camera = await fetchCamera(params.camera)
 
-    createVideo();
+    document.getElementById('camera-name').innerText = camera.name;
+
+    createVideo(camera);
 
     document.getElementById('cover').hidden = false;
 });

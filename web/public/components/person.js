@@ -17,7 +17,7 @@ export async function createPersonHeader() {
     mapTextToRow(row,
         document.createTextNode('Name'),
         document.createTextNode('Created At'),
-        document.createTextNode('Last seen'),
+        document.createTextNode('Last Seen'),
         document.createTextNode('Photos'));
 
     return row;
@@ -30,7 +30,7 @@ function createSlideshowItem(person, photo) {
     const img = document.createElement('img');
     img.setAttribute('src', `${API_URL}/people/${person.id}/photos/${photo}`);
     img.setAttribute('alt', person.text);
-    img.setAttribute('class', 'd-block');
+    img.setAttribute('class', 'm-auto w-auto d-block');
 
     item.appendChild(img);
 

@@ -8,18 +8,27 @@ from utils.orm.src.models import Camera, VideoChunk
 LOCAL_DIR = gettempdir()
 
 
+def _to_json(camera):
+    return {
+        'id': camera.id,
+        'name': camera.alias,
+        'width': camera.width,
+        'height': camera.height,
+        'latitude': camera.latitude,
+        'longitude': camera.longitude
+    }
+
+
 def _get_cameras():
     cameras = Camera.select(Camera.id, Camera.alias,
                             Camera.width, Camera.height,
                             Camera.latitude, Camera.longitude).execute()
 
-    return list(map(lambda camera: {'id': camera.id,
-                                    'name': camera.alias,
-                                    'width': camera.width,
-                                    'height': camera.height,
-                                    'latitude': camera.latitude,
-                                    'longitude': camera.longitude},
-                    cameras))
+    return list(map(_to_json, cameras))
+
+
+def _get_camera(camera_id):
+    return _to_json(Camera.get(Camera.id == camera_id))
 
 
 class CameraController:
@@ -29,6 +38,7 @@ class CameraController:
 
     def make_routes(self, app):
         app.route('/cameras')(_get_cameras)
+        app.route('/cameras/<camera_id>')(_get_camera)
         app.route('/cameras/<camera_id>/frame')(self._get_frame)
 
     def _get_frame(self, camera_id):
