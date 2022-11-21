@@ -36,6 +36,6 @@ export function createVideo(camera) {
 
         socketClient.onFace(face => facesIndex.add(face));
 
-        setUpDisplay(videoInterpolator);
+        setUpDisplay(camera, videoInterpolator);
     });
 }
