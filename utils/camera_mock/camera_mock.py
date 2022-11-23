@@ -1,21 +1,21 @@
+import os
+import random
+import tempfile
 from queue import Queue
+from threading import Event, Thread
+from time import time_ns
 
 import cv2
 import yaml
-import os
-import shutil
-from threading import Thread, Event
-from time import time_ns, sleep
-from utils.events.src.messages.marshalling import encode
-from utils.events.src.message_clients.rabbitmq import Publisher
-from utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from utils.video_storage import StorageFactory, StorageType
+
 from utils.application.src.signal_handler import SignalHandler
-from utils.tracing.src.tracer import get_trace_parent, get_tracer
-from utils.orm.src.models import Camera
+from utils.events.src.message_clients.rabbitmq import Publisher
+from utils.events.src.messages.marshalling import encode
+from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.orm.src.database import connect
-import random
-import tempfile
+from utils.orm.src.models import Camera
+from utils.tracing.src.tracer import get_trace_parent, get_tracer
+from utils.video_storage import StorageFactory, StorageType
 
 
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would

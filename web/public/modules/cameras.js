@@ -1,10 +1,10 @@
 import { createNavigationBar, Tab } from '../components/navbar.js'
-import { createPeopleList } from './people/people_list.js'
+import { createCameras } from './cameras/camera_list.js'
 
 window.addEventListener('load', async () => {
-	await createNavigationBar(Tab.PEOPLE);
+    await createNavigationBar(Tab.LIVE_FEED);
 
-    await createPeopleList();
+    await createCameras();
 
     document.getElementById('cover').hidden = false;
 });

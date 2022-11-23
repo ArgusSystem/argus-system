@@ -14,7 +14,7 @@ class ControllersFactory:
 
     def all(self):
         return [
-            CameraController,
+            CameraController(self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             HistoryController,
             PeopleController(self.storage_factory.new(StorageType.PEOPLE))
         ]

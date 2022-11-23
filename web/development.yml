@@ -8,6 +8,8 @@ consumer:
   url: 'amqp://argus:panoptes@argus:5672'
   video_queue: 'published_video_chunks'
   faces_queue: 'published_detected_faces'
+database:
+  url: 'postgres://argus:panoptes@argus:5432/argus'
 schemas: '../utils/events/resources'
 storage:
   client:

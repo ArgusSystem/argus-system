@@ -1,10 +1,14 @@
-export function setUpDisplay(videoInterpolator) {
+export function setUpDisplay(camera, videoInterpolator) {
     const video = document.getElementById('auxiliary-video');
+    video.width = camera.width;
+    video.height = camera.height;
+
     const canvas = document.getElementById('video-canvas');
+    canvas.width = camera.width;
+    canvas.height = camera.height;
+
     const ctx = canvas.getContext('2d');
 
-    canvas.width = 1280;
-    canvas.height = 720;
     let frame_count = 0;
 
     const updateCanvas = (now, metadata) => {

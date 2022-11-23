@@ -1,11 +1,3 @@
-#filters {
-    background: white;
-}
-
-#submit-filter {
-    float: right;
-}
-
 #map {
     height: 600px;
 }

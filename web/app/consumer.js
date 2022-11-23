@@ -1,10 +1,10 @@
-const configuration = require('./configuration')
-const logger = require('./logger')
+const configuration = require('./configuration');
+const logger = require('./logger');
 const amqp = require('amqplib/callback_api');
 const schemas = require('./schemas');
-const buildVideoChunkMessage = require('./build_video_chunk_message')
-const { tracer, get_context } = require('./tracer')
-const buildDetectedFaceMessage = require('./build_detected_face_message')
+const buildVideoChunkMessage = require('./build_video_chunk_message');
+const { tracer, get_context } = require('./tracer');
+const buildDetectedFaceMessage = require('./build_detected_face_message');
 
 const consumerConfiguration = configuration['consumer'];
 
