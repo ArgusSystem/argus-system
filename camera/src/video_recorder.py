@@ -13,8 +13,6 @@ class VideoRecorder:
     def __init__(self, camera_id, resolution, framerate, recording_time, tracer, output_queue):
         self.camera = PiCamera(resolution=resolution, framerate=framerate)
         self.camera_id = camera_id
-        self.framerate = framerate
-        self.resolution = tuple([int(x) for x in resolution.split('x')])
         self.recording_time = recording_time
         self.output_queue = output_queue
         self.tracer = tracer
@@ -29,10 +27,7 @@ class VideoRecorder:
             camera_context = set_span_in_context(camera_span)
             record_span = self.tracer.start_span('record', camera_context)
 
-            video_metadata = VideoMetadata(camera_id=self.camera_id,
-                                           framerate=self.framerate,
-                                           resolution=self.resolution,
-                                           duration=self.recording_time)
+            video_metadata = VideoMetadata(camera_id=self.camera_id, duration=self.recording_time)
 
             if processing_chunk:
                 self.camera.split_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)

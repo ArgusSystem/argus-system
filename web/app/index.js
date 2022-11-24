@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 
 const SocketServer = require('./socket_server');
-const fetchCameras = require('./fetch_cameras');
+const camerasPromise = require('./fetch_cameras');
 const Consumer = require('./consumer');
 
 // Create app and server
@@ -13,9 +13,9 @@ const server = http.createServer(app);
 app.use(express.static('public'));
 
 
-fetchCameras().then(cameras => {
+camerasPromise.then(cameras => {
     // Create SocketServer
-    const socketServer = new SocketServer(server, cameras);
+    const socketServer = new SocketServer(server, Object.keys(cameras));
 
     // Create RabbitMQ consumer
     const consumer = new Consumer(socketServer);

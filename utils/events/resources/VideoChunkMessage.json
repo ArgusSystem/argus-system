@@ -20,18 +20,6 @@
       "type": "string"
     },
     {
-      "name": "framerate",
-      "type": "int"
-    },
-    {
-      "name": "width",
-      "type": "int"
-    },
-    {
-      "name": "height",
-      "type": "int"
-    },
-    {
       "name": "samples",
       "type": {
         "type": "array",
@@ -40,6 +28,10 @@
     },
     {
       "name": "duration",
+      "type": "double"
+    },
+    {
+      "name": "sequence_id",
       "type": "double"
     }
   ]

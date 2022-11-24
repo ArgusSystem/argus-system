@@ -21,7 +21,5 @@ def convert(video_chunk):
     return LocalVideoChunk(camera_id=video_chunk.camera_id,
                            timestamp=video_chunk.timestamp,
                            encoding=ENCODING,
-                           framerate=video_chunk.framerate,
-                           width=video_chunk.width,
-                           height=video_chunk.height,
+                           sequence_id=video_chunk.sequence_id,
                            filepath=output_filepath)
