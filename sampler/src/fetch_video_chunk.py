@@ -9,10 +9,8 @@ def fetch(video_chunk_message, remote_storage):
 
     local_video_chunk = LocalVideoChunk(camera_id=video_chunk_message.camera_id,
                                         timestamp=video_chunk_message.timestamp,
+                                        sequence_id=video_chunk_message.sequence_id,
                                         encoding=video_chunk_message.encoding,
-                                        framerate=video_chunk_message.framerate,
-                                        width=video_chunk_message.width,
-                                        height=video_chunk_message.height,
                                         filepath=filepath)
 
     return local_video_chunk

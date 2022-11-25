@@ -93,9 +93,7 @@ class VideoProcessor:
             timestamp=video_chunk.timestamp,
             trace=trace,
             encoding=video_chunk.encoding,
-            framerate=video_chunk.framerate,
-            width=video_chunk.width,
-            height=video_chunk.height,
             samples=samples,
-            duration=duration
+            duration=duration,
+            sequence_id=video_chunk.sequence_id
         )))

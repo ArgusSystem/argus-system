@@ -1,5 +1,7 @@
 import os
 from math import ceil, floor
+
+from utils.orm.src.models.camera import get_camera
 from .command import run
 from .local_video_chunk import LOCAL_DIR, NULL_DEVICE
 
@@ -44,4 +46,6 @@ def sample(video_chunk, sampling_rate):
         f'{os.path.join(frames_dir, "%d.jpg")} '
         f'> {NULL_DEVICE} 2>&1')
 
-    return frames_dir, get_frames(frames_dir, video_chunk.timestamp, video_chunk.framerate, sampling_rate)
+    framerate = get_camera(video_chunk.camera_id).framerate
+
+    return frames_dir, get_frames(frames_dir, video_chunk.timestamp, framerate, sampling_rate)
