@@ -1,7 +1,7 @@
 from os import path
 from tempfile import gettempdir
 
-from flask import send_file
+from flask import send_file, jsonify
 
 from utils.orm.src.models import Camera, VideoChunk
 
@@ -44,14 +44,18 @@ class CameraController:
     def _get_frame(self, camera_id):
         filepath = path.join(LOCAL_DIR, camera_id)
 
-        video_chunk = VideoChunk \
-            .select() \
-            .join(Camera) \
-            .where(Camera.id == camera_id) \
-            .order_by(VideoChunk.timestamp.desc()) \
-            .get()
+        try:
+            video_chunk = VideoChunk \
+                .select() \
+                .join(Camera) \
+                .where(Camera.id == camera_id) \
+                .order_by(VideoChunk.timestamp.desc()) \
+                .get()
+            frame = f'{video_chunk.camera.alias}-{video_chunk.timestamp}-{video_chunk.samples[-1]}'
+            self.frame_storage.fetch(frame, filepath)
+            return send_file(filepath, mimetype='image/jpeg')
+        except:
+            resp = jsonify(success=True)
+            return resp
 
-        frame = f'{video_chunk.camera.alias}-{video_chunk.timestamp}-{video_chunk.samples[-1]}'
-        self.frame_storage.fetch(frame, filepath)
 
-        return send_file(filepath, mimetype='image/jpeg')

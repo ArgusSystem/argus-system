@@ -3,3 +3,4 @@
 -r ../../utils/tracing/requirements.txt
 flask
 flask-cors
+tzdata
