@@ -180,11 +180,9 @@ if __name__ == "__main__":
             message = VideoChunkMessage(camera_id=current_cam_alias,
                                         timestamp=timestamp,
                                         encoding=encoding,
-                                        framerate=fps,
-                                        width=width,
-                                        height=height,
                                         duration=recording_time,
-                                        trace=get_trace_parent())
+                                        trace=get_trace_parent(),
+                                        sequence_id=video_chunk_id-1)
 
             # Store video chunk in file storage
             with tracer.start_as_current_span('store'):
