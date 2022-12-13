@@ -15,6 +15,7 @@ from logging import getLogger
 
 FACE_CLASSIFIER_MODEL_KEY = 'model'
 FACE_CLASSIFIER_THRESHOLD_KEY = 'threshold'
+FACE_CLASSIFIER_MINIO_KEY = 'minio'
 
 logger = getLogger(__name__)
 
@@ -29,6 +30,9 @@ class FaceClassificationTask:
 
         self.threshold = face_classifier_configuration[FACE_CLASSIFIER_THRESHOLD_KEY]
 
+        if face_classifier_configuration[FACE_CLASSIFIER_MINIO_KEY] != '':
+            people_storage = StorageFactory(**storage_configuration).new(StorageType.PEOPLE)
+            people_storage.fetch(face_classifier_configuration[FACE_CLASSIFIER_MINIO_KEY], face_classifier_configuration[FACE_CLASSIFIER_MODEL_KEY])
         self.face_classifier = FaceClassifierFactory.build(face_classifier_configuration)
         self.face_embedder = FaceEmbedderFactory.build(face_embedder_configuration)
 

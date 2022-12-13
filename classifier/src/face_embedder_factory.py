@@ -4,19 +4,23 @@ import yaml
 
 class FaceEmbedderFactory:
 
+    TENSORFLOW_FACENET = "tensorflow_facenet"
+    PYTORCH_FACENET = "pytorch_facenet"
+    PADDLE_MOBILEFACENET = "paddle_mobilefacenet"
+
     @staticmethod
     def build(configuration):
         face_embedder_type = configuration['type']
 
-        if face_embedder_type == "tensorflow_facenet":
+        if face_embedder_type == FaceEmbedderFactory.TENSORFLOW_FACENET:
             from .face_embedder_tensorflow_facenet import FaceEmbedderTensorflowFacenet
             return FaceEmbedderTensorflowFacenet()
 
-        elif face_embedder_type == "pytorch_facenet":
+        elif face_embedder_type == FaceEmbedderFactory.PYTORCH_FACENET:
             from .face_embedder_pytorch_facenet import FaceEmbedderPytorchFacenet
             return FaceEmbedderPytorchFacenet()
 
-        elif face_embedder_type == "paddle_mobilefacenet":
+        elif face_embedder_type == FaceEmbedderFactory.PADDLE_MOBILEFACENET:
             from .face_embedder_paddle_mobilefacenet import FaceEmbedderPaddleMobilefacenet
             return FaceEmbedderPaddleMobilefacenet()
 

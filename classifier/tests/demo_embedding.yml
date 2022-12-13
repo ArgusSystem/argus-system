@@ -8,11 +8,10 @@ face_embedder: pytorch_facenet
 #images_dir: datasets/lfw/test_unknown
 #images_dir: datasets/japon/aligned/unknown
 #images_dir: datasets/rope/aligned
-#images_dir: datasets/friends/aligned
-images_dir: datasets/friends-joined/aligned
+images_dir: datasets/friends/aligned
 #images_dir: datasets/japon/aligned/known
 
 #output_embeddings_file: datasets/fiuba
 #output_embeddings_file: datasets/rope
-output_embeddings_file: datasets/friends-joined
+output_embeddings_file: datasets/friends
 #output_embeddings_file: datasets/lfw
