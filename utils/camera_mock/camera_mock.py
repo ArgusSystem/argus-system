@@ -83,8 +83,6 @@ if __name__ == "__main__":
     print("output width: " + str(width) + ", output height: " + str(height))
     resolution = (width, height)
 
-    video_chunk_id = 0
-
     # Define the codec and create VideoWriter object
     base_dir = os.path.dirname(os.path.realpath(__file__))
     output_dir = tempfile.gettempdir()
@@ -107,6 +105,7 @@ if __name__ == "__main__":
     # Create camera in db
     connect(**configuration['db'])
     cameras = {}
+    video_chunk_id = {}
     cam_lat = configuration['cam_latitude']
     cam_long = configuration['cam_longitude']
     cam_lat_long_var = configuration['cam_lat_long_var']
@@ -123,6 +122,7 @@ if __name__ == "__main__":
             .execute()
 
         cameras[current_cam_alias] = str(camera_id)
+        video_chunk_id[current_cam_alias] = 0
 
     current_cam_alias = cam_alias[0]
     new_cam_alias = cam_alias[0]
@@ -143,8 +143,8 @@ if __name__ == "__main__":
         else:
             timestamp = timestamp_start + int(total_frames * (1.0 / fps) * 1000)
         frames_written = 0
-        video_chunk_id += 1
-        filename = output_dir + "/" + str(camera_id) + "_" + str(video_chunk_id) + ".mp4"
+        video_chunk_id[current_cam_alias] += 1
+        filename = output_dir + "/" + str(current_cam_alias) + "_" + str(video_chunk_id[current_cam_alias]) + ".mp4"
         out = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
         with tracer.start_as_current_span('camera'):
@@ -180,11 +180,9 @@ if __name__ == "__main__":
             message = VideoChunkMessage(camera_id=current_cam_alias,
                                         timestamp=timestamp,
                                         encoding=encoding,
-                                        framerate=fps,
-                                        width=width,
-                                        height=height,
                                         duration=recording_time,
-                                        trace=get_trace_parent())
+                                        trace=get_trace_parent(),
+                                        sequence_id=video_chunk_id[current_cam_alias]-1)
 
             # Store video chunk in file storage
             with tracer.start_as_current_span('store'):

@@ -44,6 +44,7 @@ def detect_raw(img, detector, encoder, classifier):
         if pred_prob > recognition_t:
             name = pred_name
         res['name'] = name
+        res['index'] = str(pred_index)
         res['prob'] = pred_prob
         res['pt_1'] = pt_1
         res['pt_2'] = pt_2
@@ -54,6 +55,7 @@ def detect_raw(img, detector, encoder, classifier):
 def raw_to_frame(img, results):
     for res in results:
         name = res['name']
+        index = res['index']
         prob = res['prob']
         pt_1 = res['pt_1']
         pt_2 = res['pt_2']
@@ -63,7 +65,7 @@ def raw_to_frame(img, results):
             #print(name)
         else:
             cv2.rectangle(img, pt_1, pt_2, (0, 255, 0), 2)
-            cv2.putText(img, name + f'__{prob:.8f}', (pt_1[0], pt_1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1,
+            cv2.putText(img, index + "-" + name + f'__{prob:.8f}', (pt_1[0], pt_1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 1,
                         (0, 200, 200), 2)
             #print(name, prob)
     return img

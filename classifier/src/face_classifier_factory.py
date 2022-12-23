@@ -3,13 +3,11 @@ from .classifier_distance import DistanceClassifier
 import pickle
 import os
 
-classifier_classes = {
-    'sv_classifier': SVClassifier,
-    'distance_classifier': DistanceClassifier
-}
-
 
 class FaceClassifierFactory:
+
+    SV_CLASSIFIER = 'sv_classifier'
+    DISTANCE_CLASSIFIER = 'distance_classifier'
 
     @staticmethod
     def build(configuration):
@@ -31,3 +29,9 @@ class FaceClassifierFactory:
             classifier.save(pickle_file)
         else:
             raise SystemExit('ERROR: Invalid face classifier type: ' + face_classifier_type)
+
+
+classifier_classes = {
+    FaceClassifierFactory.SV_CLASSIFIER: SVClassifier,
+    FaceClassifierFactory.DISTANCE_CLASSIFIER: DistanceClassifier
+}

@@ -2,13 +2,13 @@ server:
   host: 0.0.0.0
   port: 5000
 video_storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes

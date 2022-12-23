@@ -1,6 +1,6 @@
 from utils.video_storage import StorageType
 from utils.video_storage.src.client import Client
-
+from minio.error import S3Error
 
 class MinioService:
     def __init__(self, host):
@@ -18,4 +18,7 @@ class MinioService:
             bucket = storage_type.value
 
             objects = self.client.list(bucket)
-            self.client.remove(bucket, *map(lambda x: x.object_name, objects))
+            try:
+                self.client.remove(bucket, *map(lambda x: x.object_name, objects))
+            except S3Error as error:
+                print(error)

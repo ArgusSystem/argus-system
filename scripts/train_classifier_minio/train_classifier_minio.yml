@@ -1,0 +1,23 @@
+storage:
+  host: argus
+  port: 9500
+  access_key: argus
+  secret_key: panoptes
+
+db:
+  database: argus
+  host: argus
+  port: 5432
+  user: argus
+  password: panoptes
+
+embeddings_file: 'embeddings.txt'
+classifier_file: 'classifier.pkl'
+
+face_detector:
+  type: 'tensorflow_faceboxes'
+
+face_embedder:
+  type: 'pytorch_facenet'
+
+classifier_type: 'sv_classifier'

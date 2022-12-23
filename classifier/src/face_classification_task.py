@@ -9,12 +9,13 @@ from .face_embedder_factory import FaceEmbedderFactory
 from utils.video_storage import StorageFactory, StorageType
 from utils.tracing.src.tracer import get_context, get_tracer
 from utils.image_processing.src.image_serialization import bytestring_to_image
-from utils.orm.src.models import Face, VideoChunk
+from utils.orm.src.models import Face, VideoChunk, Person
 from utils.orm.src.models.camera import get_camera
 from logging import getLogger
 
 FACE_CLASSIFIER_MODEL_KEY = 'model'
 FACE_CLASSIFIER_THRESHOLD_KEY = 'threshold'
+FACE_CLASSIFIER_MINIO_KEY = 'minio'
 
 logger = getLogger(__name__)
 
@@ -29,6 +30,9 @@ class FaceClassificationTask:
 
         self.threshold = face_classifier_configuration[FACE_CLASSIFIER_THRESHOLD_KEY]
 
+        if face_classifier_configuration[FACE_CLASSIFIER_MINIO_KEY] != '':
+            people_storage = StorageFactory(**storage_configuration).new(StorageType.PEOPLE)
+            people_storage.fetch(face_classifier_configuration[FACE_CLASSIFIER_MINIO_KEY], face_classifier_configuration[FACE_CLASSIFIER_MODEL_KEY])
         self.face_classifier = FaceClassifierFactory.build(face_classifier_configuration)
         self.face_embedder = FaceEmbedderFactory.build(face_embedder_configuration)
 
@@ -61,8 +65,10 @@ class FaceClassificationTask:
             # Perform face classification
             with self.tracer.start_as_current_span('face-classification'):
                 classification_index, classification_probability = self.face_classifier.predict(embedding)
-                name = self.face_classifier.get_name(classification_index)
+                face_id = int(self.face_classifier.get_name(classification_index))
                 is_match = classification_probability > self.threshold
+                name = Person.get(Person.id == face_id).name
+
 
             # Insert face to database
             with self.tracer.start_as_current_span('insert-db-detected-face'):
@@ -73,7 +79,7 @@ class FaceClassificationTask:
                                                        int(get_timestamp(face_message.video_chunk_id))),
                             offset=face_message.offset,
                             timestamp=face_message.timestamp,
-                            person=classification_index,
+                            person=face_id,
                             bounding_box=face_message.bounding_box,
                             probability=classification_probability,
                             is_match=is_match)
@@ -86,7 +92,7 @@ class FaceClassificationTask:
                                                             timestamp=face_message.timestamp,
                                                             face_num=face_message.face_num,
                                                             name=name,
-                                                            person_id=classification_index,
+                                                            person_id=face_id,
                                                             bounding_box=face_message.bounding_box,
                                                             probability=classification_probability,
                                                             is_match=is_match,

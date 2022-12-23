@@ -2,7 +2,8 @@ from os import path
 from tempfile import gettempdir
 from zoneinfo import ZoneInfo
 
-from flask import send_file
+from flask import send_file, request, jsonify
+import datetime
 
 from utils.orm.src import Person, Face
 
@@ -21,14 +22,17 @@ def _local_time(date):
 
 
 def _last_seen(person_id):
-    return Face.select(Face.timestamp) \
+    face = Face.select(Face.timestamp) \
         .where(Face.person_id == person_id) \
         .order_by(Face.timestamp.desc()) \
-        .get_or_none()
+        .first()
+    if face:
+        return _local_time(datetime.datetime.fromtimestamp(face.timestamp / 1e3))
+    return None
 
 
 def _get_people():
-    people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).execute()
+    people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.name).execute()
 
     return list(map(lambda person: {
         'id': person.id,
@@ -47,6 +51,7 @@ class PeopleController:
     def make_routes(self, app):
         app.route('/people')(_get_people)
         app.route('/people/<person_id>/photos/<photo>')(self._get_photo)
+        app.route('/people/<person_id>/photos', methods=["POST"])(self._add_person_photo)
 
     def _get_photo(self, person_id, photo):
         filepath = path.join(LOCAL_DIR, photo)
@@ -55,3 +60,30 @@ class PeopleController:
         self.people_storage.fetch(photo, filepath)
 
         return send_file(filepath, mimetype=f'image/{mime}')
+
+    def _add_person_photo(self, person_id):
+        # If person id is -1, create new person
+        if person_id == "-1":
+            person_id = Person.insert(name=request.form.get("name"), photos=[]).execute()
+        person = Person.get(Person.id == person_id)
+
+        # For each photo received
+        for name in request.files:
+            image = request.files[name]
+
+            # Determine new photo id
+            new_photo_number = 1
+            if len(person.photos) > 0:
+                new_photo_number = max([int(''.join(c for c in name if c.isdigit())) for name in person.photos]) + 1
+            new_photo_id = person.name + "_" + str(new_photo_number).zfill(3) + "." + image.filename.split(".")[1]
+            person.photos.append(new_photo_id)
+
+            # Upload photo to storage
+            self.people_storage.store(new_photo_id, image.read())
+
+        # Add all photos to person's list in db
+        person.save()
+
+        # Return OK
+        resp = jsonify(success=True)
+        return resp

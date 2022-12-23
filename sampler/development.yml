@@ -1,33 +1,33 @@
 consumer:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   queue: new_video_chunks
 frame_publisher:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: frames
 video_chunk_publisher:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: published_video_chunks
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 db:
   database: argus
-  host: localhost
+  host: argus
   port: 5432
   user: argus
   password: panoptes
 tracer:
-  host: localhost
+  host: argus
   port: 6831
 sampling_rate: 6
 logging:

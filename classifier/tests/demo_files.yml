@@ -14,16 +14,18 @@ face_embedder: pytorch_facenet
 face_classifier:
   # ---- Face Classifier Model File
   #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
-  model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: datasets/fiuba/randomforest.pkl
   #model: datasets/lfw/distclassifier.pkl
   #model: datasets/lfw/svclassifier.pkl
+  model: datasets/friends/sv_friends_pytorch_facenet.pkl
 
 # ---- Face Classification Prob Threshold
 #threshold: 0.65
 threshold: 0.7
 
 # ---- Test Dataset Dir
-images_dir: datasets/japon/raw
+images_dir: datasets/friends/raw/test
+#images_dir: datasets/japon/raw
 #images_dir: datasets/lfw/test
 #images_dir: datasets/lfw/test_unknown
