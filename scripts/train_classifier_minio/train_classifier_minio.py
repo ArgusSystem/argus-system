@@ -1,9 +1,10 @@
 
 import os
 import yaml
+import cv2
 from tempfile import gettempdir
 
-from utils.image_processing.src.image_serialization import bytestring_to_image
+from utils.image_processing.src.image_serialization import bytestring_to_image, write_text_with_background, resize_keep_aspect_ratio
 from utils.video_storage import StorageFactory, StorageType
 from utils.orm.src.database import connect
 from utils.orm.src import Person
@@ -42,7 +43,7 @@ face_embedder = FaceEmbedderFactory.build(configuration[FACE_EMBEDDER_KEY])
 face_classifier_type = configuration[CLASSIFIER_TYPE_KEY]
 
 # Get people list from db
-people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.name).execute()
+people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.id).execute()
 
 embedding_lines = []
 for person in people:
@@ -53,33 +54,59 @@ for person in people:
         # Perform face detection on photo
         img = bytestring_to_image(img_bytestring)
         bounding_boxes = face_detector.detect_face_image(img)
+
+        # Get the first face
+        add_face = True
         x1, y1, x2, y2 = bounding_boxes[0]
         cropped_face = img[y1:y2, x1:x2]
 
-        # Get embedding from face
-        embedding = face_embedder.get_embedding_mem(cropped_face)
+        # If there are many faces in the photo, check which one to add to the model
+        if len(bounding_boxes) > 1:
+            for bounding_box in bounding_boxes:
+                x1, y1, x2, y2 = bounding_box
+                cropped_face = img[y1:y2, x1:x2]
 
-        # Add embedding to list
-        emb_csv = ','.join(['%.8f' % num for num in embedding])
-        line = photo + "," + emb_csv + "\n"
-        embedding_lines.append(line)
+                # Show cropped face and ask for user confirmation to add it to model
+                cropped_face_copy = cropped_face.copy()
+                cropped_face_copy = resize_keep_aspect_ratio(cropped_face_copy, width=600)
+                cropped_face_copy = write_text_with_background(cropped_face_copy, person.name + ". Add to model y/n")
+                cv2.imshow("face", cropped_face_copy)
 
-        # # Get embeddings file
-        # embeddings_filepath = path.join(LOCAL_DIR, EMBEDDINGS_FILE)
-        # try:
-        #     people_storage.fetch(EMBEDDINGS_FILE, embeddings_filepath)
-        # except S3Error:
-        #     with open(embeddings_filepath, 'w') as blank_file:
-        #         pass
-        #
-        # # Add new embedding to embeddings file
-        # with open(embeddings_filepath, "a") as file:
-        #     emb_csv = ','.join(['%.8f' % num for num in embedding])
-        #     line = new_photo_id + "," + emb_csv + "\n"
-        #     file.write(line)
-        #
-        # # Store new embeddings file
-        # people_storage.store(name=EMBEDDINGS_FILE, filepath=embeddings_filepath)
+                # Check user y/n
+                ch = ord(" ")
+                while ch != ord("y") and ch != ord("n"):
+                    ch = cv2.waitKey(0) & 0xFF
+                add_face = ch == ord("y")
+
+                # If yes, skip all other faces in this photo
+                if add_face:
+                    break
+
+        if add_face:
+            # Get embedding from face
+            embedding = face_embedder.get_embedding_mem(cropped_face)
+
+            # Add embedding to list
+            emb_csv = ','.join(['%.8f' % num for num in embedding])
+            line = photo.replace(person.name, str(person.id)) + "," + emb_csv + "\n"
+            embedding_lines.append(line)
+
+            # # Get embeddings file
+            # embeddings_filepath = path.join(LOCAL_DIR, EMBEDDINGS_FILE)
+            # try:
+            #     people_storage.fetch(EMBEDDINGS_FILE, embeddings_filepath)
+            # except S3Error:
+            #     with open(embeddings_filepath, 'w') as blank_file:
+            #         pass
+            #
+            # # Add new embedding to embeddings file
+            # with open(embeddings_filepath, "a") as file:
+            #     emb_csv = ','.join(['%.8f' % num for num in embedding])
+            #     line = new_photo_id + "," + emb_csv + "\n"
+            #     file.write(line)
+            #
+            # # Store new embeddings file
+            # people_storage.store(name=EMBEDDINGS_FILE, filepath=embeddings_filepath)
 
 # Write embeddings file
 embeddings_filepath = os.path.join(LOCAL_DIR, EMBEDDINGS_FILE)

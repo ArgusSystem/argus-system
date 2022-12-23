@@ -27,6 +27,8 @@ class SVClassifier:
         best_class_index = np.argmax(predictions, axis=1)[0]
         best_class_probability = predictions[np.arange(1), best_class_index][0]
 
+        print(self.class_names)
+        print(best_class_index, best_class_probability)
         return best_class_index, best_class_probability
     
     def contains(self, name):
@@ -40,6 +42,7 @@ def load_images(embeddings_file):
 
     # Load all images
     classes = {}
+    class_names = []
     nrof_images = 0
     with open(embeddings_file, 'r') as f:
         for line in f:
@@ -51,6 +54,7 @@ def load_images(embeddings_file):
             embedding = np.array([float(e) for e in tokens[1:]])
             if class_name not in classes:
                 classes[class_name] = {}
+                class_names.append(class_name)
 
             classes[class_name][filename_no_ext] = embedding
             nrof_images += 1
@@ -60,9 +64,7 @@ def load_images(embeddings_file):
     images_array_index = 0
     labels = []
 
-    class_names = list(classes.keys())
-
-    for i in range(len(classes)):
+    for i in range(len(class_names)):
         class_name = class_names[i]
 
         images = list(classes[class_name].keys())
@@ -71,6 +73,6 @@ def load_images(embeddings_file):
         for image in images:
             images_array[images_array_index, :] = classes[class_name][image]
             images_array_index = images_array_index + 1
-        labels += [i] * len(images)
+        labels += [class_name] * len(images)
 
     return class_names, images_array, labels
