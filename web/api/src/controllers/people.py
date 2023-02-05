@@ -6,6 +6,7 @@ from flask import send_file, request, jsonify
 import datetime
 
 from utils.orm.src import Person, Face
+from scripts.train_classifier_minio.train_classifier_minio import train_model
 
 LOCAL_DIR = gettempdir()
 
@@ -52,6 +53,7 @@ class PeopleController:
         app.route('/people')(_get_people)
         app.route('/people/<person_id>/photos/<photo>')(self._get_photo)
         app.route('/people/<person_id>/photos', methods=["POST"])(self._add_person_photo)
+        app.route('/people/train', methods=["POST"])(self._train_model)
 
     def _get_photo(self, person_id, photo):
         filepath = path.join(LOCAL_DIR, photo)
@@ -83,6 +85,13 @@ class PeopleController:
 
         # Add all photos to person's list in db
         person.save()
+
+        # Return OK
+        resp = jsonify(success=True)
+        return resp
+
+    def _train_model(self):
+        train_model()
 
         # Return OK
         resp = jsonify(success=True)

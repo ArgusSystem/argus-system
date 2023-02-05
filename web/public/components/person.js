@@ -63,6 +63,10 @@ function createAlbumButton(person, icon) {
     return button;
 }
 
+export function train_model_button() {
+    fetch(`${API_URL}/people/train`, { method: 'POST' })
+}
+
 function is_image_file(filename) {
     const idxDot = filename.lastIndexOf(".") + 1;
     const extFile = filename.substr(idxDot, filename.length).toLowerCase();

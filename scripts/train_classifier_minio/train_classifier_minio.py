@@ -20,109 +20,113 @@ CLASSIFIER_FILE_KEY = 'classifier_file'
 DB_KEY = 'db'
 STORAGE_KEY = 'storage'
 CLASSIFIER_TYPE_KEY = 'classifier_type'
+USER_INTERACTION = 'user_interaction_on_multiple_faces'
 
-with open(os.path.dirname(os.path.realpath(__file__)) + "/train_classifier_minio.yml") as config_file:
-    configuration = yaml.safe_load(config_file)
 
-EMBEDDINGS_FILE = configuration[EMBEDDINGS_FILE_KEY]
-CLASSIFIER_FILE = configuration[CLASSIFIER_FILE_KEY]
+def train_model():
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/train_classifier_minio.yml") as config_file:
+        configuration = yaml.safe_load(config_file)
 
-# Connect to db
-connect(**configuration[DB_KEY])
+    embeddings_file = configuration[EMBEDDINGS_FILE_KEY]
+    classifier_file = configuration[CLASSIFIER_FILE_KEY]
+    ask_user_interaction = configuration[USER_INTERACTION]
 
-# Setup people photos storage
-people_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.PEOPLE)
+    # Connect to db
+    connect(**configuration[DB_KEY])
 
-# Create face detector
-face_detector = FaceDetectorFactory.build(configuration[FACE_DETECTOR_KEY])
+    # Setup people photos storage
+    people_storage = StorageFactory(**configuration[STORAGE_KEY]).new(StorageType.PEOPLE)
 
-# Create face embedder
-face_embedder = FaceEmbedderFactory.build(configuration[FACE_EMBEDDER_KEY])
+    # Create face detector
+    face_detector = FaceDetectorFactory.build(configuration[FACE_DETECTOR_KEY])
 
-# Set classifier type
-face_classifier_type = configuration[CLASSIFIER_TYPE_KEY]
+    # Create face embedder
+    face_embedder = FaceEmbedderFactory.build(configuration[FACE_EMBEDDER_KEY])
 
-# Get people list from db
-people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.id).execute()
+    # Set classifier type
+    face_classifier_type = configuration[CLASSIFIER_TYPE_KEY]
 
-embedding_lines = []
-for person in people:
-    for photo in person.photos:
-        # Get photo
-        img_bytestring = people_storage.fetch(photo)
+    # Get people list from db
+    people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.id).execute()
 
-        # Perform face detection on photo
-        img = bytestring_to_image(img_bytestring)
-        bounding_boxes = face_detector.detect_face_image(img)
+    embedding_lines = []
+    for person in people:
+        for photo in person.photos:
+            # Get photo
+            img_bytestring = people_storage.fetch(photo)
 
-        # Get the first face
-        add_face = True
-        x1, y1, x2, y2 = bounding_boxes[0]
-        cropped_face = img[y1:y2, x1:x2]
+            # Perform face detection on photo
+            img = bytestring_to_image(img_bytestring)
+            bounding_boxes = face_detector.detect_face_image(img)
 
-        # If there are many faces in the photo, check which one to add to the model
-        if len(bounding_boxes) > 1:
-            for bounding_box in bounding_boxes:
-                x1, y1, x2, y2 = bounding_box
-                cropped_face = img[y1:y2, x1:x2]
+            # Get the first face
+            add_face = True
+            x1, y1, x2, y2 = bounding_boxes[0]
+            cropped_face = img[y1:y2, x1:x2]
 
-                # Show cropped face and ask for user confirmation to add it to model
-                cropped_face_copy = cropped_face.copy()
-                cropped_face_copy = resize_keep_aspect_ratio(cropped_face_copy, width=600)
-                cropped_face_copy = write_text_with_background(cropped_face_copy, person.name + ". Add to model y/n")
-                cv2.imshow("face", cropped_face_copy)
+            # If there are many faces in the photo, check which one to add to the model
+            if ask_user_interaction and len(bounding_boxes) > 1:
+                for bounding_box in bounding_boxes:
+                    x1, y1, x2, y2 = bounding_box
+                    cropped_face = img[y1:y2, x1:x2]
 
-                # Check user y/n
-                ch = ord(" ")
-                while ch != ord("y") and ch != ord("n"):
-                    ch = cv2.waitKey(0) & 0xFF
-                add_face = ch == ord("y")
+                    # Show cropped face and ask for user confirmation to add it to model
+                    cropped_face_copy = cropped_face.copy()
+                    cropped_face_copy = resize_keep_aspect_ratio(cropped_face_copy, width=600)
+                    cropped_face_copy = write_text_with_background(cropped_face_copy, person.name + ". Add to model y/n")
+                    cv2.imshow("face", cropped_face_copy)
 
-                # If yes, skip all other faces in this photo
-                if add_face:
-                    break
+                    # Check user y/n
+                    ch = ord(" ")
+                    while ch != ord("y") and ch != ord("n"):
+                        ch = cv2.waitKey(0) & 0xFF
+                    add_face = ch == ord("y")
 
-        if add_face:
-            # Get embedding from face
-            embedding = face_embedder.get_embedding_mem(cropped_face)
+                    # If yes, skip all other faces in this photo
+                    if add_face:
+                        break
 
-            # Add embedding to list
-            emb_csv = ','.join(['%.8f' % num for num in embedding])
-            line = photo.replace(person.name, str(person.id)) + "," + emb_csv + "\n"
-            embedding_lines.append(line)
+            if add_face:
+                # Get embedding from face
+                embedding = face_embedder.get_embedding_mem(cropped_face)
 
-            # # Get embeddings file
-            # embeddings_filepath = path.join(LOCAL_DIR, EMBEDDINGS_FILE)
-            # try:
-            #     people_storage.fetch(EMBEDDINGS_FILE, embeddings_filepath)
-            # except S3Error:
-            #     with open(embeddings_filepath, 'w') as blank_file:
-            #         pass
-            #
-            # # Add new embedding to embeddings file
-            # with open(embeddings_filepath, "a") as file:
-            #     emb_csv = ','.join(['%.8f' % num for num in embedding])
-            #     line = new_photo_id + "," + emb_csv + "\n"
-            #     file.write(line)
-            #
-            # # Store new embeddings file
-            # people_storage.store(name=EMBEDDINGS_FILE, filepath=embeddings_filepath)
+                # Add embedding to list
+                emb_csv = ','.join(['%.8f' % num for num in embedding])
+                line = photo.replace(person.name, str(person.id)) + "," + emb_csv + "\n"
+                embedding_lines.append(line)
 
-# Write embeddings file
-embeddings_filepath = os.path.join(LOCAL_DIR, EMBEDDINGS_FILE)
-with open(embeddings_filepath, "w") as file:
-    for line in embedding_lines:
-        file.write(line)
+                # # Get embeddings file
+                # embeddings_filepath = path.join(LOCAL_DIR, EMBEDDINGS_FILE)
+                # try:
+                #     people_storage.fetch(EMBEDDINGS_FILE, embeddings_filepath)
+                # except S3Error:
+                #     with open(embeddings_filepath, 'w') as blank_file:
+                #         pass
+                #
+                # # Add new embedding to embeddings file
+                # with open(embeddings_filepath, "a") as file:
+                #     emb_csv = ','.join(['%.8f' % num for num in embedding])
+                #     line = new_photo_id + "," + emb_csv + "\n"
+                #     file.write(line)
+                #
+                # # Store new embeddings file
+                # people_storage.store(name=EMBEDDINGS_FILE, filepath=embeddings_filepath)
 
-# Store embeddings file
-people_storage.store(name=EMBEDDINGS_FILE, filepath=embeddings_filepath)
+    # Write embeddings file
+    embeddings_filepath = os.path.join(LOCAL_DIR, embeddings_file)
+    with open(embeddings_filepath, "w") as file:
+        for line in embedding_lines:
+            file.write(line)
 
-# Train classifier with new embedding
-try:
-    classifier_filepath = os.path.join(LOCAL_DIR, CLASSIFIER_FILE)
-    FaceClassifierFactory.train(face_classifier_type, embeddings_filepath, classifier_filepath)
-    # Upload new trained model
-    people_storage.store(name=CLASSIFIER_FILE, filepath=classifier_filepath)
-# si hay solo 1 clase da error
-except ValueError as e:
-    print("ERROR: " + str(e) + " - Can't train classifier with less than two classes")
+    # Store embeddings file
+    people_storage.store(name=embeddings_file, filepath=embeddings_filepath)
+
+    # Train classifier with new embedding
+    try:
+        classifier_filepath = os.path.join(LOCAL_DIR, classifier_file)
+        FaceClassifierFactory.train(face_classifier_type, embeddings_filepath, classifier_filepath)
+        # Upload new trained model
+        people_storage.store(name=classifier_file, filepath=classifier_filepath)
+    # si hay solo 1 clase da error
+    except ValueError as e:
+        print("ERROR: " + str(e) + " - Can't train classifier with less than two classes")
