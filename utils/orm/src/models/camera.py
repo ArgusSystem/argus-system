@@ -1,5 +1,6 @@
-from peewee import Model, CharField, DecimalField, BigIntegerField, IntegerField
+from peewee import Model, CharField, DecimalField, BigIntegerField, IntegerField, ForeignKeyField
 from ..database import db
+from .room import Room
 
 cameras = {}
 
@@ -21,6 +22,8 @@ class Camera(Model):
 
     latitude = DecimalField(max_digits=8, decimal_places=6)
     longitude = DecimalField(max_digits=9, decimal_places=6)
+
+    room = ForeignKeyField(Room)
 
     class Meta:
         database = db
