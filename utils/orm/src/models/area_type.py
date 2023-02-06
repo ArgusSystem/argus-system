@@ -3,7 +3,7 @@ from peewee import CharField, Model
 from ..database import db
 
 
-class RoomType(Model):
+class AreaType(Model):
     name = CharField()
 
     class Meta:

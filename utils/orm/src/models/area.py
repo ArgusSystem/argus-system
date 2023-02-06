@@ -1,11 +1,11 @@
 from peewee import CharField, Model, ForeignKeyField
-from .room_type import RoomType
+from .room_type import AreaType
 from ..database import db
 
 
-class Room(Model):
+class Area(Model):
     name = CharField()
-    type = ForeignKeyField(RoomType)
+    type = ForeignKeyField(AreaType)
 
     class Meta:
         database = db
