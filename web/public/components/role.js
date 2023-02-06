@@ -1,64 +1,39 @@
-import {createRoleRow} from "./role/row.js";
-import {createDeleteIcon, createAddIcon} from "./icons.js";
+import {
+    createTextNode,
+    createDeleteButton,
+    createSaveButton,
+    mapChildrenToRow,
+    createTableHeader,
+    fetchHTMLElement,
+    createInputTextNode
+} from "./utils.js";
 
-function mapTextToRow(row, nameCol, deleteCol) {
-   row.querySelector('.role-name').appendChild(nameCol);
-   row.querySelector('.role-delete').appendChild(deleteCol);
+async function createRoleRow(){
+    return await fetchHTMLElement('components/table_rows/role.html');
 }
 
 export async function createRoleHeader() {
-    const row = await createRoleRow();
-
-    row.classList.add('text-bg-secondary');
-
-    mapTextToRow(row,
-        document.createTextNode('Name'),
-        document.createTextNode('Delete'));
-
-    return row;
+    return createTableHeader(await createRoleRow(), "Name", "Save", "Delete");
 }
 
-function deleteRole(role_id){
+function _delete(id){
     return null;
 }
 
-function createDeleteRoleButton(role, icon) {
-    let button = document.createElement('button');
-
-    button.setAttribute('class', 'btn m-0 p-0');
-    button.setAttribute('type', 'button');
-
-    button.onclick = () => deleteRole(role);
-    button.appendChild(icon);
-
-    return button;
+function _save(id){
+    return null;
 }
 
 export async function createRoleItem(role) {
-    const deleteIcon = await createDeleteIcon();
-
-    const row = await createRoleRow();
-
-    mapTextToRow(row,
-        document.createTextNode(role['name']),
-        createDeleteRoleButton(role.id, deleteIcon));
-
-    return row;
+    return mapChildrenToRow(await createRoleRow(),
+        createTextNode(role['name']),
+        createSaveButton(role['id'], _save),
+        createDeleteButton(role['id'], _delete));
 }
 
 export async function createNewRoleItem() {
-    const deleteIcon = await createAddIcon();
-
-    const row = await createRoleRow();
-
-    let role_name_input = document.createElement("input");
-    role_name_input.setAttribute('type', 'text');
-    role_name_input.setAttribute('id', 'role_name_input');
-    role_name_input.setAttribute('placeholder', '*new role name*');
-
-    mapTextToRow(row,
-        role_name_input,
-        createDeleteRoleButton(-1, deleteIcon));
-
-    return row;
+    return mapChildrenToRow(await createRoleRow(),
+        createInputTextNode('role_name_input', '*new role name*'),
+        await createSaveButton(-1, _save),
+        await createDeleteButton(-1, _delete));
 }

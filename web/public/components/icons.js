@@ -11,3 +11,7 @@ export async function createAddIcon() {
 export async function createDeleteIcon() {
     return await fetchHTMLElement('components/icons/delete.html');
 }
+
+export async function createSaveIcon() {
+    return await fetchHTMLElement('components/icons/save.html');
+}
