@@ -13,7 +13,7 @@ async function createRestrictionRow(){
 }
 
 export async function createRestrictionsHeader() {
-    return createTableHeader(await createRestrictionRow(), "Role", "Area", "Start", "End", "Save", "Delete");
+    return createTableHeader(await createRestrictionRow(), "Id", "Role", "Area", "Start", "End", "Save", "Delete");
 }
 
 function _delete(id){
@@ -26,6 +26,7 @@ function _save(id){
 
 export async function createRestrictionsItem(restriction) {
     return mapChildrenToRow(await createRestrictionRow(),
+        createTextNode(restriction['id']),
         createTextNode(restriction['role']),
         createTextNode(restriction['area']),
         createTextNode(restriction['start time']),
@@ -36,6 +37,7 @@ export async function createRestrictionsItem(restriction) {
 
 export async function createNewRestrictionItem() {
     return mapChildrenToRow(await createRestrictionRow(),
+        createInputTextNode('restriction_id_input', '-1'),
         createInputTextNode('restriction_role_input', '*role*'),
         createInputTextNode('restriction_area_input', '*area*'),
         createInputTextNode('restriction_start_input', '*start time*'),

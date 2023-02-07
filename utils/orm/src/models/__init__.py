@@ -3,3 +3,7 @@ from .video_chunk import VideoChunk
 from .sighting import Sighting
 from .person import Person
 from .face import Face
+from .person_role import PersonRole
+from .area import Area
+from .area import AreaType
+from .permission_rule import PermissionRule

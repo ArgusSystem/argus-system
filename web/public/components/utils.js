@@ -32,21 +32,32 @@ export function createTextNode(text){
     return document.createTextNode(text);
 }
 
-export function createInputTextNode(id, placeholder) {
+export function createInputTextNode(id, placeholder, value="") {
     let text_input = document.createElement("input");
     text_input.setAttribute('type', 'text');
     text_input.setAttribute('id', id);
     text_input.setAttribute('placeholder', placeholder);
+    text_input.setAttribute('value', value);
     return text_input;
 }
 
+export function createInputDropdownNode(id, options, selected) {
+    let dropwdown = document.createElement("select");
+    dropwdown.setAttribute('id', id);
+
+    for (let option of options) {
+        let elem = document.createElement("option");
+        elem.innerHTML = option;
+        elem.selected = option.includes(selected);
+        dropwdown.appendChild(elem);
+    }
+
+    return dropwdown;
+}
+
 export function mapChildrenToRow(row, ...children) {
-    //console.log(row);
     let nodes = row.querySelectorAll('*');
-    //console.log(nodes);
-    //console.log(children);
     for (let i = 1; i < nodes.length; ++i) {
-        //console.log(children[i-1]);
         nodes[i].appendChild(children[i-1]);
     }
     return row;

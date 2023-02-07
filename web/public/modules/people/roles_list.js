@@ -6,8 +6,7 @@ export async function createRolesList() {
 
     list.appendChild(await createRoleHeader());
 
-   // const roles = await fetchRoles();
-    const roles = [];
+    const roles = await fetchRoles();
     for (const role of roles) {
         list.appendChild(await createRoleItem(role));
     }

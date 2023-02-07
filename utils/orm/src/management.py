@@ -8,4 +8,4 @@ def create_tables(database):
 
 def drop_tables(database):
     assert database.is_connection_usable()
-    database.drop_tables(Model.__subclasses__())
+    database.drop_tables(Model.__subclasses__(), cascade=True)

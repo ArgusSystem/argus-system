@@ -13,7 +13,7 @@ async function createCameraRow(){
 }
 
 export async function createCamerasHeader() {
-    return createTableHeader(await createCameraRow(), "Alias", "Area", "Lat.", "Long.", "Save", "Delete");
+    return createTableHeader(await createCameraRow(), "Id", "Alias", "Area", "Lat.", "Long.", "Save", "Delete");
 }
 
 function _delete(id){
@@ -26,6 +26,7 @@ function _save(id){
 
 export async function createCamerasItem(camera) {
     return mapChildrenToRow(await createCameraRow(),
+        createTextNode(camera['id']),
         createTextNode(camera['alias']),
         createTextNode(camera['area']),
         createTextNode(camera['latitude']),
@@ -36,6 +37,7 @@ export async function createCamerasItem(camera) {
 
 export async function createNewCameraItem() {
     return mapChildrenToRow(await createCameraRow(),
+        createInputTextNode('camera_id_input', '-1'),
         createInputTextNode('camera_alias_input', '*new camera alias*'),
         createInputTextNode('camera_area_input', '*area*'),
         createInputTextNode('camera_latitude_input', '*latitude*'),

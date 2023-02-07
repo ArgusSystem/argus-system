@@ -13,7 +13,7 @@ async function createAreaRow(){
 }
 
 export async function createAreasHeader() {
-    return createTableHeader(await createAreaRow(), "Name", "Type", "Save", "Delete");
+    return createTableHeader(await createAreaRow(), "Id", "Name", "Type", "Save", "Delete");
 }
 
 function _delete(id){
@@ -26,6 +26,7 @@ function _save(id){
 
 export async function createAreasItem(area) {
     return mapChildrenToRow(await createAreaRow(),
+        createTextNode(area['id']),
         createTextNode(area['name']),
         createTextNode(area['type']),
         createSaveButton(area['id'], _save),
@@ -34,6 +35,7 @@ export async function createAreasItem(area) {
 
 export async function createNewAreaItem() {
     return mapChildrenToRow(await createAreaRow(),
+        createInputTextNode('area_id_input', '-1'),
         createInputTextNode('area_name_input', '*new area name*'),
         createInputTextNode('area_type_input', '*area type*'),
         await createSaveButton(-1, _save),

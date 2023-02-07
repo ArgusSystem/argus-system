@@ -1,5 +1,5 @@
 from peewee import CharField, Model, ForeignKeyField
-from .room_type import AreaType
+from .area_type import AreaType
 from ..database import db
 
 

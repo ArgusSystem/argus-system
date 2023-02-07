@@ -4,6 +4,7 @@ from utils.video_storage import StorageFactory, StorageType
 from .camera import CameraController
 from .history import HistoryController
 from .people import PeopleController
+from .roles import RolesController
 
 
 class ControllersFactory:
@@ -16,5 +17,6 @@ class ControllersFactory:
         return [
             CameraController(self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             HistoryController,
-            PeopleController(self.storage_factory.new(StorageType.PEOPLE))
+            PeopleController(self.storage_factory.new(StorageType.PEOPLE)),
+            RolesController()
         ]
