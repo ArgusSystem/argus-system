@@ -6,4 +6,4 @@ from .face import Face
 from .person_role import PersonRole
 from .area import Area
 from .area import AreaType
-from .permission_rule import PermissionRule
+from .restriction import Restriction

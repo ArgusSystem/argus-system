@@ -5,11 +5,11 @@ from .area_type import AreaType
 from ..database import db
 
 
-class PermissionRule(Model):
+class Restriction(Model):
     role = ForeignKeyField(PersonRole)
     area_type = ForeignKeyField(AreaType)
-    time_start = ArrayField(TimeField)
-    time_end = ArrayField(TimeField)
+    time_start = TimeField()
+    time_end = TimeField()
 
     class Meta:
         database = db

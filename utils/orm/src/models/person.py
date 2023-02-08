@@ -8,7 +8,6 @@ class Person(Model):
     name = CharField()
     photos = ArrayField(CharField, default=[])
     created_at = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
-    #role = ForeignKeyField(PersonRole, lazy_load=False)
     role = ForeignKeyField(PersonRole)
 
     class Meta:

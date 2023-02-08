@@ -7,6 +7,7 @@ from .people import PeopleController
 from .roles import RolesController
 from .area_types import AreaTypesController
 from .areas import AreasController
+from .restrictions import RestrictionsController
 
 
 class ControllersFactory:
@@ -22,5 +23,6 @@ class ControllersFactory:
             PeopleController(self.storage_factory.new(StorageType.PEOPLE)),
             RolesController(),
             AreaTypesController(),
-            AreasController()
+            AreasController(),
+            RestrictionsController()
         ]
