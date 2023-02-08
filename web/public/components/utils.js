@@ -45,12 +45,22 @@ export function createInputDropdownNode(id, options, selected) {
     let dropwdown = document.createElement("select");
     dropwdown.setAttribute('id', id);
 
-    for (let option of options) {
+    let blank_elem = document.createElement("option");
+    blank_elem.innerHTML = '-- SELECT --';
+    blank_elem.setAttribute('value', '-1');
+    dropwdown.appendChild(blank_elem);
+
+    let selected_met = false;
+    for (let i = 0; i < options.length; ++i) {
         let elem = document.createElement("option");
-        elem.innerHTML = option;
-        elem.selected = option.includes(selected);
+        elem.innerHTML = options[i]['name'];
+        elem.selected = elem.innerHTML === selected;
+        selected_met |= elem.selected;
+        elem.setAttribute('value', options[i]['id']);
         dropwdown.appendChild(elem);
     }
+
+    blank_elem.selected = !selected_met;
 
     return dropwdown;
 }

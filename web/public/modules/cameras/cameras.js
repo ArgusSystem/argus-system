@@ -1,4 +1,5 @@
-// import { fetchCameras } from '../api/areas.js';
+import { fetchCameras } from '../api/cameras.js';
+import { fetchAreas } from '../api/areas.js';
 import { createCamerasHeader, createCamerasItem, createNewCameraItem } from '../../components/cameras.js'
 
 export async function createCamerasList() {
@@ -6,11 +7,11 @@ export async function createCamerasList() {
 
     list.appendChild(await createCamerasHeader());
 
-   // const cameras = await fetchCameras();
-    const cameras = [];
+    const cameras = await fetchCameras();
+    const areas = await fetchAreas();
     for (const camera of cameras) {
-        list.appendChild(await createCamerasItem(camera));
+        list.appendChild(await createCamerasItem(camera, areas));
     }
 
-    list.appendChild(await createNewCameraItem(null));
+    list.appendChild(await createNewCameraItem(areas));
 }

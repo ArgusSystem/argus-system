@@ -5,6 +5,8 @@ from .camera import CameraController
 from .history import HistoryController
 from .people import PeopleController
 from .roles import RolesController
+from .area_types import AreaTypesController
+from .areas import AreasController
 
 
 class ControllersFactory:
@@ -18,5 +20,7 @@ class ControllersFactory:
             CameraController(self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             HistoryController,
             PeopleController(self.storage_factory.new(StorageType.PEOPLE)),
-            RolesController()
+            RolesController(),
+            AreaTypesController(),
+            AreasController()
         ]

@@ -8,7 +8,7 @@ export async function createPeopleList() {
     list.appendChild(await createPersonHeader());
 
     const people = await fetchPeople();
-    const roles = (await fetchRoles()).map((elem) => { return elem['id'].toString() + ' - ' + elem['name']; });
+    const roles = await fetchRoles();
 
     for (const person of people) {
         list.appendChild(await createPersonItem(person, roles));

@@ -4,6 +4,7 @@ from tempfile import gettempdir
 from flask import send_file, jsonify
 
 from utils.orm.src.models import Camera, VideoChunk
+from peewee import IntegrityError
 
 LOCAL_DIR = gettempdir()
 
@@ -12,23 +13,45 @@ def _to_json(camera):
     return {
         'id': camera.id,
         'name': camera.alias,
+        'mac': camera.mac,
         'width': camera.width,
         'height': camera.height,
         'latitude': camera.latitude,
-        'longitude': camera.longitude
+        'longitude': camera.longitude,
+        'area': camera.area.name
     }
 
 
 def _get_cameras():
-    cameras = Camera.select(Camera.id, Camera.alias,
-                            Camera.width, Camera.height,
-                            Camera.latitude, Camera.longitude).execute()
+    cameras = Camera.select().execute()
 
     return list(map(_to_json, cameras))
 
 
 def _get_camera(camera_id):
     return _to_json(Camera.get(Camera.id == camera_id))
+
+
+def _update_camera(camera_id, alias, mac, area, latitude, longitude):
+    if camera_id == "-1":
+        camera_id = Camera.insert(alias=alias, mac=mac, area=area, latitude=latitude, longitude=longitude).execute()
+    else:
+        Camera.update(alias=alias, mac=mac, area=area, latitude=latitude, longitude=longitude)\
+            .where(Camera.id == camera_id).execute()
+    # Return OK
+    resp = jsonify(camera_id=camera_id)
+    return resp
+
+
+def _delete_camera(camera_id):
+    try:
+        Camera.delete().where(Camera.id == camera_id).execute()
+        # Role deleted ok
+        return jsonify(success=True)
+    except IntegrityError:
+        Camera._meta.database.rollback()
+        # Role is still referenced in other tables
+        return jsonify(success=False), 400
 
 
 class CameraController:
@@ -40,6 +63,8 @@ class CameraController:
         app.route('/cameras')(_get_cameras)
         app.route('/cameras/<camera_id>')(_get_camera)
         app.route('/cameras/<camera_id>/frame')(self._get_frame)
+        app.route('/cameras/<camera_id>/<alias>/<mac>/<area>/<latitude>/<longitude>', methods=["POST"])(_update_camera)
+        app.route('/cameras/<camera_id>', methods=["DELETE"])(_delete_camera)
 
     def _get_frame(self, camera_id):
         filepath = path.join(LOCAL_DIR, camera_id)

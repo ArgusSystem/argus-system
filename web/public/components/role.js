@@ -34,7 +34,7 @@ function _save(row){
     //console.log("save: ", row);
     let id = row.querySelector('.role-id').innerHTML;
     let name = row.querySelector('.role-name').querySelector('input#role_name_input').value;
-    console.log("save: ", id, name);
+    //console.log("save: ", id, name);
     fetch(`${API_URL}/roles/${id}/${name}`, { method: 'POST' }).then((response) => {
         response.json().then(async (body) => {
             if (response.ok && id === '-1') {

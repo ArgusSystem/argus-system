@@ -16,14 +16,14 @@ class Camera(Model):
     alias = CharField(unique=True)
     mac = BigIntegerField(unique=True)
 
-    width = IntegerField()
-    height = IntegerField()
-    framerate = IntegerField()
+    width = IntegerField(default=640)
+    height = IntegerField(default=480)
+    framerate = IntegerField(default=30)
 
     latitude = DecimalField(max_digits=8, decimal_places=6)
     longitude = DecimalField(max_digits=9, decimal_places=6)
 
-    room = ForeignKeyField(Area)
+    area = ForeignKeyField(Area)
 
     class Meta:
         database = db

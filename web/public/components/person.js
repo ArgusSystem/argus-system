@@ -1,7 +1,15 @@
 import { createAlbumIcon, createAddIcon } from './icons.js';
 import { API_URL } from '../modules/api/url.js'
-import {createTableHeader, mapChildrenToRow, createTextNode, createInputTextNode, createInputDropdownNode,
-createDeleteButton, createSaveButton, fetchHTMLElement} from "./utils.js";
+import {
+    createTableHeader,
+    mapChildrenToRow,
+    createTextNode,
+    createInputTextNode,
+    createInputDropdownNode,
+    createDeleteButton,
+    createSaveButton,
+    fetchHTMLElement
+} from "./utils.js";
 
 async function createPersonRow(){
     return await fetchHTMLElement('components/table_rows/person.html');
@@ -132,7 +140,7 @@ function _save(row) {
     let id = row.querySelector('.person-id').innerHTML;
     let name = row.querySelector('.person-name').querySelector('input#person_name_input').value;
     let role = (row.querySelector('.person-role').querySelector('select#person_role_input').value).split('-')[0];
-    console.log("save: ", id, name, role);
+    //console.log("save: ", id, name, role);
     fetch(`${API_URL}/people/${id}/${name}/${role}`, { method: 'POST' }).then((response) => {
         response.json().then(async (body) => {
             if (response.ok && id === '-1') {

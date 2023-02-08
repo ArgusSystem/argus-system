@@ -13,4 +13,3 @@ class PermissionRule(Model):
 
     class Meta:
         database = db
-        table_name = 'people'
