@@ -2,7 +2,7 @@ import os
 import random
 import tempfile
 from queue import Queue
-from threading import Event, Thread
+from threading import Event
 from time import time_ns
 
 import cv2
@@ -17,29 +17,9 @@ from utils.orm.src.models import Camera
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
 from utils.video_storage import StorageFactory, StorageType
 
-
 # This script records video from a webcam feed and sends it to a Sampler like a Camera would
 # Usage:
 # python camera_mock.py
-
-class WebCamCapture:
-
-    def __init__(self, cap, queue, stop_signal):
-        self.cap = cap
-        self.queue = queue
-        self.stop_signal = stop_signal
-
-    def run(self):
-        while cap.isOpened() and not self.stop_signal.is_set():
-            ret, frame = self.cap.read()
-
-            if ret:
-                self.queue.put(frame)
-            else:
-                break
-
-        self.cap.release()
-        frame_queue.put(None)
 
 
 if __name__ == "__main__":
@@ -88,54 +68,34 @@ if __name__ == "__main__":
     output_dir = tempfile.gettempdir()
     encoding = 'mp4v'
     fourcc = cv2.VideoWriter_fourcc(*encoding)
-    #if not os.path.exists(output_dir):
+    # if not os.path.exists(output_dir):
     #    os.mkdir(output_dir)
 
     # Register signal handler
     stop_signal = Event()
 
-
     def stop_callback():
         stop_signal.set()
-
 
     signal_handler = SignalHandler()
     signal_handler.subscribe(stop_callback)
 
     # Create camera in db
-    connect(**configuration['db'])
-    cameras = {}
     video_chunk_id = {}
-    cam_lat = configuration['cam_latitude']
-    cam_long = configuration['cam_longitude']
-    cam_lat_long_var = configuration['cam_lat_long_var']
-    for current_cam_alias in cam_alias:
-        camera_id = Camera.insert(alias=current_cam_alias,
-                                  mac=random.randint(0, 999999),
-                                  width=width,
-                                  height=height,
-                                  framerate=fps,
-                                  latitude=cam_lat + random.uniform(-cam_lat_long_var, cam_lat_long_var),
-                                  longitude=cam_long + random.uniform(-cam_lat_long_var, cam_lat_long_var)) \
-            .on_conflict(conflict_target=[Camera.alias],
-                         preserve=[Camera.width, Camera.height, Camera.framerate]) \
-            .execute()
 
-        cameras[current_cam_alias] = str(camera_id)
+    for i, current_cam_alias in enumerate(cam_alias):
         video_chunk_id[current_cam_alias] = 0
 
     current_cam_alias = cam_alias[0]
     new_cam_alias = cam_alias[0]
     total_frames = 0
 
-    frame_queue = Queue()
-    webcam = WebCamCapture(cap, frame_queue, stop_signal)
-    thread = Thread(target=webcam.run)
-    #thread.start()
+    # Timestamp to  Sunday, November 13, 2022 9:00:18.810 PM
     timestamp_start = 1668373218810
 
     # Camera loop
     frame = None
+
     while not stop_signal.is_set():
         # Setup new video chunk recording
         if use_webcam_feed:
@@ -151,7 +111,6 @@ if __name__ == "__main__":
             # Record one video chunk
             with tracer.start_as_current_span('record'):
                 while frames_written < fps * recording_time:
-                    #frame = frame_queue.get()
                     ret, frame = cap.read()
 
                     if frame is None:
@@ -170,7 +129,7 @@ if __name__ == "__main__":
                             new_cam_alias = cam_alias[cam_alias_change_frames.index(change_frame)]
                     if current_cam_alias != new_cam_alias:
                         break
-                #print(frames_written)
+                # print(frames_written)
                 out.release()
 
             if stop_signal.is_set():
@@ -182,7 +141,7 @@ if __name__ == "__main__":
                                         encoding=encoding,
                                         duration=recording_time,
                                         trace=get_trace_parent(),
-                                        sequence_id=video_chunk_id[current_cam_alias]-1)
+                                        sequence_id=video_chunk_id[current_cam_alias] - 1)
 
             # Store video chunk in file storage
             with tracer.start_as_current_span('store'):
@@ -195,15 +154,13 @@ if __name__ == "__main__":
             current_cam_alias = new_cam_alias
             print("Sent a video chunk: " + str(message))
 
-            #sleep(recording_time/2)
+            # sleep(recording_time/2)
 
-            #input()
+            # input()
 
             if frame is None:
                 break
 
-    # Release everything if job is finished
-    #thread.join()
     cap.release()
     cv2.destroyAllWindows()
-    #shutil.rmtree(output_dir)
+    # shutil.rmtree(output_dir)

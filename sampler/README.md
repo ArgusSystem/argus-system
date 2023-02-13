@@ -13,6 +13,9 @@ Although it isn't necessary, it is recommended to run the application in a virtu
 To install all the dependencies, execute the following script: 
 
 ```bash
+sudo apt install python3 python3-pip
+sudo apt install ffmpeg
+
 python3 -m pip install -r requirements.txt
 ```
 
@@ -23,5 +26,7 @@ Default parameters for development are stored in *development.yml*.
 ### Run
 
 ```bash
+export PYTHONPATH=$PYTHONPATH:$HOME/argus-system
+
 ./run.py -c configuration_file.yml
 ```

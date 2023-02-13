@@ -22,16 +22,11 @@ tracer:
 recording_time: 1
 width: 1280
 height: 720
-fps: 30
-
-cam_latitude: 40.72132
-cam_longitude: -73.99773
-# If using multiple cams with 'cam_alias', add a random variation to each cam's lat and long
-cam_lat_long_var: -0.00155
+fps: 24
 
 # If false, provide a video_feed_filepath to use instead of a webcam feed
 webcam_feed: False
-video_feed_filepath: datasets/friends/friends_s05e10_1280_cut.mp4
+video_feed_filepath: datasets/friends/friends.mkv
 
 # Each element of the list corresponds to an element in 'cam_alias'
 # To have a fixed cam alias during the entire feed, use: [1] ['cam_alias']
