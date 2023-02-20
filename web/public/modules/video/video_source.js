@@ -25,8 +25,6 @@ export function createVideo(camera) {
             videoBuffer.append(chunk);
             videoIndex.add(chunk);
 
-            console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
-
             preBuffered += chunk.duration;
 
             if (preBuffered >= PRE_BUFFERED_THRESHOLD && video.paused) {
