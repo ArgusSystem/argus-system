@@ -10,7 +10,7 @@ face_embedder:
 face_classifier:
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
-  model: classifier/model/sv_friends_pytorch_facenet.pkl
+  model: classifier/model/distance_friends_pytorch_facenet.pkl
   #model: classifier/model/classifier.pkl
   # if 'minio' specifies a name different from '', a model with that name is downloaded from minio on startup
   # and saved to the path specified by 'model'

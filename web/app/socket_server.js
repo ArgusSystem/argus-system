@@ -39,7 +39,9 @@ class SocketServer {
 
   sendDetectedFace (face) {
     const [cameraId, _] =  face.videoChunkId.split('-');
-    this.io.of(toNamespace(cameraId)).emit('face', face);
+    const namespace = toNamespace(cameraId);
+
+    this.io.of(namespace).emit('face', face);
     logger.debug(`Sent detected face to clients!`);
   }
 }
