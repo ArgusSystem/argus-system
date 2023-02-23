@@ -1,28 +1,23 @@
-import { createPersonRow } from './person/row.js';
 import { createAlbumIcon, createAddIcon } from './icons.js';
 import { API_URL } from '../modules/api/url.js'
+import {
+    createTableHeader,
+    mapChildrenToRow,
+    createTextNode,
+    createInputTextNode,
+    createInputDropdownNode,
+    createDeleteButton,
+    createSaveButton,
+    fetchHTMLElement
+} from "./utils.js";
 
-function mapTextToRow(row, nameCol, createdAtCol, lastSeenCol, photosCol, addPhotoCol) {
-   row.querySelector('.person-name').appendChild(nameCol);
-   row.querySelector('.person-created_at').appendChild(createdAtCol);
-   row.querySelector('.person-last_seen').appendChild(lastSeenCol);
-   row.querySelector('.person-photos').appendChild(photosCol);
-   row.querySelector('.person-add_photo').appendChild(addPhotoCol);
+async function createPersonRow(){
+    return await fetchHTMLElement('components/table_rows/person.html');
 }
 
 export async function createPersonHeader() {
-    const row = await createPersonRow();
-
-    row.classList.add('text-bg-secondary');
-
-    mapTextToRow(row,
-        document.createTextNode('Name'),
-        document.createTextNode('Created At'),
-        document.createTextNode('Last Seen'),
-        document.createTextNode('Photos'),
-        document.createTextNode('Add Photos'));
-
-    return row;
+    return createTableHeader(await createPersonRow(), "Id", "Name", "Role", "Created At", "Last seen",
+        "Photos", "Add Photos", "Save", "Delete");
 }
 
 function createSlideshowItem(person, photo) {
@@ -61,6 +56,10 @@ function createAlbumButton(person, icon) {
     button.appendChild(icon);
 
     return button;
+}
+
+export function train_model_button() {
+    fetch(`${API_URL}/people/train`, { method: 'POST' })
 }
 
 function is_image_file(filename) {
@@ -124,37 +123,69 @@ function createUploadPhotoButton(person, icon) {
     return button;
 }
 
-export async function createPersonItem(person) {
+function _delete(row) {
+    let id = row.querySelector('.person-id').innerHTML;
+    fetch(`${API_URL}/people/${id}`, { method: 'DELETE' }).then(async (response) => {
+        if (!response.ok) {
+            alert("Person is still in use, DELETE failed");
+        }
+        else{
+            // row.parentNode.removeChild(row);
+            window.location.reload()
+        }
+    });
+}
+
+function _save(row) {
+    let id = row.querySelector('.person-id').innerHTML;
+    let name = row.querySelector('.person-name').querySelector('input#person_name_input').value;
+    let role = (row.querySelector('.person-role').querySelector('select#person_role_input').value).split('-')[0];
+    //console.log("save: ", id, name, role);
+    fetch(`${API_URL}/people/${id}/${name}/${role}`, { method: 'POST' }).then((response) => {
+        response.json().then(async (body) => {
+            if (response.ok && id === '-1') {
+                window.location.reload()
+            }
+        });
+    });
+}
+
+export async function createPersonItem(person, roles) {
     const albumIcon = await createAlbumIcon();
     const addIcon = await createAddIcon();
 
     const row = await createPersonRow();
 
-    mapTextToRow(row,
-        document.createTextNode(person['text']),
-        document.createTextNode(person['created_at']),
-        document.createTextNode(person['last_seen'] || '-'),
+    mapChildrenToRow(row,
+        createTextNode(person['id']),
+        createInputTextNode("person_name_input", "", person['text']),
+        createInputDropdownNode("person_role_input", roles, person['role']),
+        createTextNode(person['created_at']),
+        createTextNode(person['last_seen'] || '-'),
         createAlbumButton(person, albumIcon),
-        createUploadPhotoButton(person.id, addIcon));
+        createUploadPhotoButton(person.id, addIcon),
+        await createSaveButton(row, _save),
+        await createDeleteButton(row, _delete));
 
     return row;
 }
 
-export async function createNewPersonItem() {
+export async function createNewPersonItem(roles) {
     const addIcon = await createAddIcon();
+
     const row = await createPersonRow();
 
-    let person_name_input = document.createElement("input");
-    person_name_input.setAttribute('type', 'text');
-    person_name_input.setAttribute('id', 'person_name_input');
-    person_name_input.setAttribute('placeholder', '*new person name*');
-
-    mapTextToRow(row,
-        person_name_input,
-        document.createTextNode('-'),
-        document.createTextNode('-'),
-        document.createTextNode('-'),
-        createUploadPhotoButton(-1, addIcon));
+    mapChildrenToRow(row,
+        createTextNode('-1'),
+        createInputTextNode("person_name_input", '*new person name*'),
+        createInputDropdownNode("person_role_input", roles),
+        createTextNode('-'),
+        createTextNode('-'),
+        createTextNode('-'),
+        // createUploadPhotoButton(-1, addIcon),
+        createTextNode('-'),
+        await createSaveButton(row, _save),
+        await createDeleteButton(row, _delete));
 
     return row;
 }
