@@ -30,5 +30,8 @@ video_feed_filepath: datasets/friends/friends.mkv
 
 # Each element of the list corresponds to an element in 'cam_alias'
 # To have a fixed cam alias during the entire feed, use: [1] ['cam_alias']
-cam_alias_change_frames: [1, 2782, 6091, 6847, 8805, 10727, 12714, 14916, 15740, 17575, 19600, 22949, 25207, 27365, 29597, 31542, 36546]
+# 30 FPS
+# cam_alias_change_frames: [1, 2782, 6091, 6847, 8805, 10727, 12714, 14916, 15740, 17575, 19600, 22949, 25207, 27365, 29597, 31542, 36546]
+# 24 FPS
+cam_alias_change_frames: [1, 2226, 4873, 5478, 7044, 8582, 10171, 11933, 12592, 14060, 15680, 18359, 20166, 21892, 23678, 25234, 29237]
 cam_alias: ['joeyhouse', 'cafe', 'agent', 'street', 'joeyhouse', 'rachelhouse', 'joeyhouse', 'street', 'joeyhouse', 'boyfriendhouse', 'rachelhouse', 'joeyhouse', 'cafe', 'street', 'boyfriendhouse', 'joeyhouse', 'rachelhouse']
