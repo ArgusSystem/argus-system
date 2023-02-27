@@ -3,6 +3,7 @@ import { fetchPeople } from './api/people.js';
 import { loadTimeRange } from './history/time-range.js';
 import { loadSearchSubmit } from './history/search.js';
 import { createNavigationBar, Tab } from '../components/navbar.js'
+import { createFooter } from '../components/footer.js'
 
 
 window.addEventListener('load', async () => {
@@ -18,6 +19,8 @@ window.addEventListener('load', async () => {
 	loadTimeRange();
 
 	loadSearchSubmit(cameras);
+
+	await createFooter();
 
 	document.getElementById('cover').hidden = false;
 });

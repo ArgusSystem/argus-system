@@ -74,8 +74,10 @@ if __name__ == "__main__":
     # Register signal handler
     stop_signal = Event()
 
+
     def stop_callback():
         stop_signal.set()
+
 
     signal_handler = SignalHandler()
     signal_handler.subscribe(stop_callback)
@@ -90,11 +92,18 @@ if __name__ == "__main__":
     new_cam_alias = cam_alias[0]
     total_frames = 0
 
-    # Timestamp to  Sunday, November 13, 2022 9:00:18.810 PM
-    timestamp_start = 1668373218810
+    # Timestamp to Sunday, November 13, 2022 9:00:18.810 PM
+    # timestamp_start = 1668373218810
+    # Timestamp to Wednesday, February 15, 2023 4:24:31 AM
+    # timestamp_start = 1676435071000
+    timestamp_start = 1677235071000
 
     # Camera loop
     frame = None
+
+    # Decimation
+    i_d = 0
+    d = 1
 
     while not stop_signal.is_set():
         # Setup new video chunk recording
@@ -129,38 +138,37 @@ if __name__ == "__main__":
                             new_cam_alias = cam_alias[cam_alias_change_frames.index(change_frame)]
                     if current_cam_alias != new_cam_alias:
                         break
-                # print(frames_written)
+
                 out.release()
 
             if stop_signal.is_set():
                 break
 
-            # Create new video chunk message
-            message = VideoChunkMessage(camera_id=current_cam_alias,
-                                        timestamp=timestamp,
-                                        encoding=encoding,
-                                        duration=recording_time,
-                                        trace=get_trace_parent(),
-                                        sequence_id=video_chunk_id[current_cam_alias] - 1)
+            if i_d % d == 0:
+                # Create new video chunk message
+                message = VideoChunkMessage(camera_id=current_cam_alias,
+                                            timestamp=timestamp,
+                                            encoding=encoding,
+                                            duration=recording_time,
+                                            trace=get_trace_parent(),
+                                            sequence_id=video_chunk_id[current_cam_alias] - 1)
 
-            # Store video chunk in file storage
-            with tracer.start_as_current_span('store'):
-                storage.store(name=str(message), filepath=filename)
+                # Store video chunk in file storage
+                with tracer.start_as_current_span('store'):
+                    storage.store(name=str(message), filepath=filename)
 
-            # Publish event of new video chunk
-            with tracer.start_as_current_span('publish'):
-                publisher.publish(encode(message))
+                # Publish event of new video chunk
+                with tracer.start_as_current_span('publish'):
+                    publisher.publish(encode(message))
+
+                print("Sent a video chunk: " + str(message))
+
+            i_d += 1
 
             current_cam_alias = new_cam_alias
-            print("Sent a video chunk: " + str(message))
-
-            # sleep(recording_time/2)
-
-            # input()
 
             if frame is None:
                 break
 
     cap.release()
     cv2.destroyAllWindows()
-    # shutil.rmtree(output_dir)
