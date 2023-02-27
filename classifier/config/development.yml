@@ -8,14 +8,18 @@ face_embedder:
   type: pytorch_facenet
 
 face_classifier:
+  # 'model' specifies the local path where the classifier model will be loaded from
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
-  model: classifier/model/distance_friends_pytorch_facenet.pkl
-  #model: classifier/model/classifier.pkl
-  # if 'minio' specifies a name different from '', a model with that name is downloaded from minio on startup
-  # and saved to the path specified by 'model'
-  #minio: classifier.pkl
-  minio: ''
+  #model: classifier/model/distance_friends_pytorch_facenet.pkl
+  #model: classifier/model/sv_friends_pytorch_facenet.pkl
+  model: classifier/model/classifier.pkl
+  # 'minio' specifies a filename for a classifier model that will be downloaded from minio on startup
+  # it is saved to the path specified by the 'model' variable above
+  # replace with an empty string to disable: minio: ''
+  # (currently downloaded from the 'people' bucket)
+  minio: classifier.pkl
+  #minio: ''
   threshold: 0.6
 
 publisher_web:

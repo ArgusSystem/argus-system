@@ -21,3 +21,5 @@ face_embedder:
   type: 'pytorch_facenet'
 
 classifier_type: 'sv_classifier'
+
+user_interaction_on_multiple_faces: false
