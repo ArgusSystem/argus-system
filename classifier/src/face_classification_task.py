@@ -63,11 +63,11 @@ class FaceClassificationTask:
             # self.db.add(face_embedding)
 
             # Perform face classification
+            # TODO: Check with Gabo
             with self.tracer.start_as_current_span('face-classification'):
-                classification_index, classification_probability = self.face_classifier.predict(embedding)
-                face_id = int(self.face_classifier.get_name(classification_index))
+                face_id, classification_probability = self.face_classifier.predict(embedding)
                 is_match = classification_probability > self.threshold
-                name = Person.get(Person.id == face_id).name
+                name = self.face_classifier.get_name(face_id)
 
 
             # Insert face to database

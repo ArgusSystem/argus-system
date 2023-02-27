@@ -2,6 +2,7 @@ from utils.video_storage import StorageType
 from utils.video_storage.src.client import Client
 from minio.error import S3Error
 
+
 class MinioService:
     def __init__(self, host):
         self.client = Client(host, 9500, 'argus', 'panoptes')

@@ -11,6 +11,7 @@ face_classifier:
   # 'model' specifies the local path where the classifier model will be loaded from
   #model: classifier/model/svclassifier_edu_gabo_pytorch_facenet.pkl
   #model: classifier/model/distanceclassifier_edu_gabo_pytorch_facenet.pkl
+  #model: classifier/model/distance_friends_pytorch_facenet.pkl
   #model: classifier/model/sv_friends_pytorch_facenet.pkl
   model: classifier/model/classifier.pkl
   # 'minio' specifies a filename for a classifier model that will be downloaded from minio on startup
