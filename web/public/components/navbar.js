@@ -39,4 +39,10 @@ async function loadNavigationBar() {
 export async function createNavigationBar(activeTab) {
     await loadNavigationBar();
     await addTabs(activeTab);
+
+    document.getElementById('userNameNavBar').innerText = `Hola, ${localStorage.getItem('username')}!`;
+    document.getElementById('logOutLink').onclick = (event) => {
+        localStorage.removeItem('username');
+        return true;
+    }
 }
