@@ -2,6 +2,7 @@ import { createLink } from './link.js';
 import { fetchHTMLElement } from './utils.js';
 import { Tab } from '../modules/tab.js'
 import { getUsername, signOut } from '../modules/session.js'
+import { createNotificationDropdown } from './notifications.js'
 
 
 async function addTabs(activeTab) {
@@ -24,6 +25,7 @@ async function loadNavigationBar() {
 export async function createNavigationBar(activeTab) {
     await loadNavigationBar();
     await addTabs(activeTab);
+    await createNotificationDropdown();
 
     document.getElementById('userNameNavBar').innerText = `Hola, ${getUsername()}!`;
     document.getElementById('logOutLink').onclick = () => {
