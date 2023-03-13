@@ -19,7 +19,7 @@ videoChunk = {
 };
 
 // UPLOAD VIDEO CHUNK TO S3
-const filepath = 'resources/camera-1-1664381744029976668.mp4';
+const filepath = 'assets/camera-1-1664381744029976668.mp4';
 
 minioClient.fPutObject('video-chunks', `${videoChunk.camera_id}-${videoChunk.timestamp}` , filepath, {}, function(err, etag) {
   return console.log(err, etag);
@@ -28,7 +28,7 @@ minioClient.fPutObject('video-chunks', `${videoChunk.camera_id}-${videoChunk.tim
 // SEND RABBITMQ EVENT
 const fs = require('fs')
 const avro = require('avsc')
-const data = fs.readFileSync('../../utils/events/resources/VideoChunkMessage.json', {encoding: 'utf8'});
+const data = fs.readFileSync('../../utils/events/assets/VideoChunkMessage.json', {encoding: 'utf8'});
 const VIDEO_CHUNK_SCHEMA = avro.Type.forSchema(JSON.parse(data));
 
 const amqp = require('amqplib');

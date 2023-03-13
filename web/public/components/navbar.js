@@ -1,23 +1,9 @@
 import { createLink } from './link.js';
 import { fetchHTMLElement } from './utils.js';
+import { Tab } from '../modules/tab.js'
+import { getUsername, signOut } from '../modules/session.js'
+import { createNotificationDropdown } from './notifications.js'
 
-export class Tab {
-    static HOME = new Tab('Home', 'index.html');
-    static LIVE_FEED = new Tab('Live Feed', 'cameras.html');
-    static HISTORY = new Tab('History', 'history.html');
-    static PEOPLE = new Tab('People', 'people.html');
-    static AREAS = new Tab('Areas', 'areas.html');
-    static RESTRICTIONS = new Tab('Restrictions', 'restrictions.html');
-
-    constructor (name, page) {
-        this.name = name;
-        this.page = page;
-    }
-
-    static values() {
-        return Object.keys(Tab).map(attribute => Tab[attribute]);
-    }
-}
 
 async function addTabs(activeTab) {
     const tabs = document.getElementById('tabs');
@@ -39,4 +25,11 @@ async function loadNavigationBar() {
 export async function createNavigationBar(activeTab) {
     await loadNavigationBar();
     await addTabs(activeTab);
+    await createNotificationDropdown();
+
+    document.getElementById('userNameNavBar').innerText = `Hola, ${getUsername()}!`;
+    document.getElementById('logOutLink').onclick = () => {
+        signOut();
+        return true;
+    }
 }

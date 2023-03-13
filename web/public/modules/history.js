@@ -2,11 +2,16 @@ import {fetchCameras} from './api/cameras.js';
 import { fetchPeople } from './api/people.js';
 import { loadTimeRange } from './history/time-range.js';
 import { loadSearchSubmit } from './history/search.js';
-import { createNavigationBar, Tab } from '../components/navbar.js'
+import { createNavigationBar } from '../components/navbar.js'
 import { createFooter } from '../components/footer.js'
+import { isSignedIn } from './session.js'
+import { redirectToIndex, Tab } from './tab.js'
 
 
 window.addEventListener('load', async () => {
+	if (!isSignedIn())
+        redirectToIndex();
+
 	await createNavigationBar(Tab.HISTORY);
 
 	const cameras = {};

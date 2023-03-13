@@ -8,6 +8,7 @@ from .roles import RolesController
 from .area_types import AreaTypesController
 from .areas import AreasController
 from .restrictions import RestrictionsController
+from .users import UsersControllers
 
 
 class ControllersFactory:
@@ -24,5 +25,6 @@ class ControllersFactory:
             RolesController(),
             AreaTypesController(),
             AreasController(),
-            RestrictionsController()
+            RestrictionsController(),
+            UsersControllers
         ]
