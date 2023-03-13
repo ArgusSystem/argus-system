@@ -7,3 +7,4 @@ from .person_role import PersonRole
 from .area import Area
 from .area import AreaType
 from .restriction import Restriction
+from .user import User

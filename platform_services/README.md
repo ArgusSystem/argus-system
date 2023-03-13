@@ -7,5 +7,5 @@
 ```shell
 docker compose up
 
-python3 -m scripts/setup.py
+python3 -m scripts/create_user.py
 ```
