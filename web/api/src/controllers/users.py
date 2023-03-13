@@ -12,13 +12,13 @@ def _log_in(username):
 
     try:
         user = User.get(User.username == username)
-    except DoesNotExist:
-        return 'No username found', 404
 
-    if user.is_authorized(password):
-        return user.alias
-    else:
-        return 'Invalid password', 401
+        if user.is_authorized(password):
+            return user.alias
+    except DoesNotExist:
+        pass
+
+    return 'Invalid username or password', 401
 
 
 class UsersControllers:

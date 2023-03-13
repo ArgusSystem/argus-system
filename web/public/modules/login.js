@@ -13,14 +13,15 @@ window.addEventListener('load', () => {
         endpoint.search = new URLSearchParams({password: data.password.value}).toString();
 
         fetch(endpoint)
-            .then(response => response.text())
-            .then(username => {
-                localStorage.setItem('username', username);
-                redirect();
-            })
-            .catch(error => {
-                // TODO: Show the error
-                console.log(error);
+            .then(response => {
+                response.text().then(text => {
+                    if (response.ok) {
+                        localStorage.setItem('username', text);
+                        redirect();
+                    } else {
+                        console.log(text);
+                    }
+                })
             });
     };
 
