@@ -1,7 +1,12 @@
-import { createNavigationBar, Tab } from '../components/navbar.js'
+import { createNavigationBar } from '../components/navbar.js'
 import { createRestrictionsList } from './restrictions/restrictions.js'
+import { isSignedIn } from './session.js'
+import { redirectToIndex, Tab } from './tab.js'
 
 window.addEventListener('load', async () => {
+    if (!isSignedIn())
+        redirectToIndex();
+
 	await createNavigationBar(Tab.RESTRICTIONS);
 
     await createRestrictionsList();

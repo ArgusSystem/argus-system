@@ -1,30 +1,21 @@
-import { API_URL, MAIN_URL } from './api/url.js'
-
-function redirect() {
-    window.location.replace(`${MAIN_URL}/home.html`);
-}
+import { isSignedIn, signIn } from './session.js'
+import { authorizeUser } from './api/users.js'
+import { redirectToTab, Tab } from './tab.js'
 
 window.addEventListener('load', () => {
     document.getElementById('log-in').onsubmit = (event) => {
         event.preventDefault();
 
         const data = event.target;
-        const endpoint = new URL(`${API_URL}/users/${data.username.value}`);
-        endpoint.search = new URLSearchParams({password: data.password.value}).toString();
 
-        fetch(endpoint)
-            .then(response => {
-                response.text().then(text => {
-                    if (response.ok) {
-                        localStorage.setItem('username', text);
-                        redirect();
-                    } else {
-                        console.log(text);
-                    }
-                })
-            });
+        authorizeUser(data.username.value, data.password.value)
+            .then(username => {
+                signIn(username);
+                redirectToTab(Tab.HOME);
+            })
+            .catch(console.log);
     };
 
-    if (localStorage.getItem('username'))
-        redirect();
+    if (isSignedIn())
+        redirectToTab(Tab.HOME);
 })
