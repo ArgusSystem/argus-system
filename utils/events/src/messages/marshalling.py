@@ -3,7 +3,7 @@ from io import BytesIO
 import os.path as path
 import json
 
-RESOURCES_DIR = path.join(path.dirname(__file__), '..', '..', 'assets')
+RESOURCES_DIR = path.join(path.dirname(__file__), '..', '..', 'resources')
 
 schema_cache = {}
 

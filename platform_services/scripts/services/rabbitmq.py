@@ -13,7 +13,8 @@ class RabbitMQService:
                 'frames',
                 'faces',
                 'published_detected_faces',
-                'summarize_detected_faces'
+                # 'summarize_detected_faces'
+                'face_rule_check'
             ]
         }
 

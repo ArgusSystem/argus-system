@@ -1,7 +1,7 @@
 from flask import request
 from datetime import datetime
 
-from utils.orm.src.models.sighting import Sighting
+from utils.orm.src import Sighting
 
 
 # Example: http://localhost:5000/history?person_id=0&from_date=31%2F10%2F2022&to_date=31%2F10%2F2022
@@ -23,7 +23,7 @@ def _get_history():
 
     assert from_date < to_date
 
-    sightings = Sighting.select(Sighting.camera_id, Sighting.start_time, Sighting.end_time) \
+    sightings = Sighting.select(Sighting.person_id, Sighting.camera_id, Sighting.severity, Sighting.start_time, Sighting.end_time) \
         .where((Sighting.person_id == person_id) &
                (Sighting.start_time >= from_date) &
                (Sighting.end_time < to_date)) \
@@ -31,6 +31,7 @@ def _get_history():
         .execute()
 
     return list(map(lambda s: {'camera_id': s.camera_id,
+                               'severity': s.severity,
                                'start_time': s.start_time,
                                'end_time': s.end_time},
                     sightings))

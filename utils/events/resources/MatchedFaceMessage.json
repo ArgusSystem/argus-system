@@ -1,0 +1,15 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "matched_face",
+  "fields": [
+    {
+      "name": "face_id",
+      "type": "string"
+    },
+    {
+      "name": "trace",
+      "type": "string"
+    }
+  ]
+}
