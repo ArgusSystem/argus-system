@@ -27,8 +27,8 @@ class SVClassifier:
         best_class_index = np.argmax(predictions, axis=1)[0]
         best_class_probability = predictions[np.arange(1), best_class_index][0]
 
-        print(self.class_names)
-        print(best_class_index, best_class_probability)
+        # print(self.class_names)
+        # print(best_class_index, best_class_probability)
         return best_class_index, best_class_probability
     
     def contains(self, name):

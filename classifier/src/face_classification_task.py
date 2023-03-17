@@ -2,6 +2,7 @@
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.face_message import FaceMessage
 from utils.events.src.messages.detected_face_message import DetectedFaceMessage
+from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from utils.events.src.messages.helper import get_camera_id, get_timestamp
 from .face_classifier_factory import FaceClassifierFactory
@@ -24,7 +25,7 @@ class FaceClassificationTask:
     def __init__(self, face_classifier_configuration,
                  face_embedder_configuration,
                  publisher_to_web_configuration,
-                 publisher_to_summarizer_configuration,
+                 publisher_to_warden_configuration,
                  storage_configuration,
                  tracer_configuration):
 
@@ -37,7 +38,7 @@ class FaceClassificationTask:
         self.face_embedder = FaceEmbedderFactory.build(face_embedder_configuration)
 
         self.publisher_to_web = Publisher.new(**publisher_to_web_configuration)
-        self.publisher_to_summarizer = Publisher.new(**publisher_to_summarizer_configuration)
+        self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
         self.face_storage = StorageFactory(**storage_configuration).new(StorageType.FRAME_FACES)
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-classifier')
 
@@ -63,11 +64,11 @@ class FaceClassificationTask:
             # self.db.add(face_embedding)
 
             # Perform face classification
-            # TODO: Check with Gabo
             with self.tracer.start_as_current_span('face-classification'):
-                face_id, classification_probability = self.face_classifier.predict(embedding)
+                classification_index, classification_probability = self.face_classifier.predict(embedding)
+                face_id = int(self.face_classifier.get_name(classification_index))
                 is_match = classification_probability > self.threshold
-                name = self.face_classifier.get_name(face_id)
+                name = Person.get(Person.id == face_id).name
 
 
             # Insert face to database
@@ -99,6 +100,7 @@ class FaceClassificationTask:
                                                             trace=face_message.trace)
                 self.publisher_to_web.publish(encode(detected_face_message))
                 if is_match:
-                    self.publisher_to_summarizer.publish(encode(detected_face_message))
+                    matched_face_message = MatchedFaceMessage(face_id=str(face.id), trace=face_message.trace)
+                    self.publisher_to_warden.publish(encode(matched_face_message))
 
         logger.info("Finished - %s, found: %s with prob: %.2f", face_message, name, classification_probability)

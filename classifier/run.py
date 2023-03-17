@@ -28,7 +28,7 @@ if __name__ == "__main__":
             face_classifier_configuration=configuration[FACE_CLASSIFIER_KEY],
             face_embedder_configuration=configuration[FACE_EMBEDDER_KEY],
             publisher_to_web_configuration=configuration[PUBLISHER_WEB_KEY],
-            publisher_to_summarizer_configuration=configuration[PUBLISHER_SUMMARIZER_KEY],
+            publisher_to_warden_configuration=configuration[PUBLISHER_SUMMARIZER_KEY],
             storage_configuration=configuration[STORAGE_KEY],
             tracer_configuration=configuration[TRACER_KEY])
 

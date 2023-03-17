@@ -34,7 +34,7 @@ publisher_summarizer:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: summarize_detected_faces
+  routing_key: face_rule_check
 
 logging:
   level: DEBUG
