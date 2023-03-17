@@ -14,8 +14,10 @@ async function createRestrictionRow(){
     return await fetchHTMLElement('components/table_rows/restriction.html');
 }
 
+export const RESTRICTION_SEVERITY_TYPES = [{'id':0, 'name':'info'}, {'id':1, 'name':'warning'}, {'id':2, 'name':'danger'}];
+
 export async function createRestrictionsHeader() {
-    return createTableHeader(await createRestrictionRow(), "Id", "Role", "Area", "Start", "End", "Save", "Delete");
+    return createTableHeader(await createRestrictionRow(), "Id", "Role", "Area", "Severity", "Start", "End", "Save", "Delete");
 }
 
 function _delete(row){
@@ -36,10 +38,11 @@ function _save(row){
     let id = row.querySelector('.restriction-id').innerHTML;
     let role = row.querySelector('.restriction-role').querySelector('select#restriction_role_input').value;
     let area = row.querySelector('.restriction-area').querySelector('select#restriction_area_input').value;
+    let severity = row.querySelector('.restriction-severity').querySelector('select#restriction_severity_input').value;
     let start_time = row.querySelector('.restriction-time-start').querySelector('input#restriction_start_input').value;
     let end_time = row.querySelector('.restriction-time-end').querySelector('input#restriction_end_input').value;
     //console.log("save: ", id, name, type);
-    fetch(`${API_URL}/restrictions/${id}/${role}/${area}/${start_time}/${end_time}`, { method: 'POST' }).then((response) => {
+    fetch(`${API_URL}/restrictions/${id}/${role}/${area}/${severity}/${start_time}/${end_time}`, { method: 'POST' }).then((response) => {
         response.json().then(async (body) => {
             if (response.ok && id === '-1') {
                 window.location.reload()
@@ -54,6 +57,8 @@ export async function createRestrictionsItem(restriction, roles, area_types) {
         createTextNode(restriction['id']),
         createInputDropdownNode("restriction_role_input", roles, restriction['role']),
         createInputDropdownNode("restriction_area_input", area_types, restriction['area']),
+        createInputDropdownNode("restriction_severity_input", RESTRICTION_SEVERITY_TYPES,
+            RESTRICTION_SEVERITY_TYPES[restriction['severity']]["name"]),
         createInputTextNode('restriction_start_input', '', restriction['start time']),
         createInputTextNode('restriction_end_input', '', restriction['end time']),
         await createSaveButton(row, _save),
@@ -66,6 +71,7 @@ export async function createNewRestrictionItem(roles, area_types) {
         createTextNode('-1'),
         createInputDropdownNode("restriction_role_input", roles),
         createInputDropdownNode("restriction_area_input", area_types),
+        createInputDropdownNode("restriction_severity_input", RESTRICTION_SEVERITY_TYPES),
         createInputTextNode('restriction_start_input', '*start time*'),
         createInputTextNode('restriction_end_input', '*end time*'),
         await createSaveButton(row, _save),
