@@ -1,0 +1,19 @@
+consumer:
+  host: argus
+  username: argus
+  password: panoptes
+  queue: face_rule_check
+
+logging:
+  level: DEBUG
+
+tracer:
+  host: argus
+  port: 6831
+
+db:
+  database: argus
+  host: argus
+  port: 5432
+  user: argus
+  password: panoptes
