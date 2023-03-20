@@ -17,3 +17,10 @@ db:
   port: 5432
   user: argus
   password: panoptes
+
+publisher:
+  host: argus
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: broken_faces

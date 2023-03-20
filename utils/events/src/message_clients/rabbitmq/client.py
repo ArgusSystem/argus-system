@@ -15,6 +15,9 @@ class Client:
 
     def _connect(self):
         self._connection = BlockingConnection(parameters=self._parameters)
+        self._new_channel()
+
+    def _new_channel(self):
         self._channel = self._connection.channel()
         self._channel.basic_qos(prefetch_count=10)
 
@@ -23,8 +26,11 @@ class Client:
         try:
             self._connection.sleep(0.001)
         except StreamLostError:
-            # print("client: connection is dead, reconnecting")
             self._connect()
+
+        if self._channel.is_closed:
+            self._new_channel()
+
         yield self._channel
 
     def close(self):
