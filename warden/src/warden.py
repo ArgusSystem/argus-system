@@ -1,12 +1,12 @@
 from logging import getLogger
 
 from utils.events.src.message_clients.rabbitmq import Publisher
-from utils.events.src.messages.broken_rule_message import BrokenRuleMessage
+from utils.events.src.messages.broken_rule_message import BrokenRestrictionMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.orm.src.database import connect
 from utils.orm.src.models import BrokenRestriction
-from utils.tracing.src.tracer import get_context, get_tracer
+from utils.tracing.src.tracer import get_context, get_trace_parent, get_tracer
 
 logger = getLogger(__name__)
 
@@ -36,12 +36,18 @@ class Warden:
                 'WHERE is_match = TRUE AND restriction.id IS NOT NULL AND face.id = ' + matched_face_message.face_id + ';'
             )
 
+            warden_trace = get_trace_parent()
+
             for broken_restriction_result in broken_restrictions:
                 face_id = broken_restriction_result[0]
                 restriction_id = broken_restriction_result[1]
 
-                BrokenRestriction(face_id=face_id, restriction_id=restriction_id).save()
+                broken_restriction = BrokenRestriction(face_id=face_id, restriction_id=restriction_id)
+                broken_restriction.save()
 
-                self.publisher.publish(encode(BrokenRuleMessage(face_id=face_id, restriction_id=restriction_id)))
+                self.publisher.publish(encode(BrokenRestrictionMessage(broken_restriction_id=broken_restriction.id,
+                                                                       face_id=face_id,
+                                                                       restriction_id=restriction_id,
+                                                                       trace_id=warden_trace)))
 
         logger.info("Finished - %s", matched_face_message)

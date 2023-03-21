@@ -8,6 +8,7 @@ window.addEventListener('load', () => {
 
         const data = event.target;
 
+        // TODO: Validate if it works
         authorizeUser(data.username.value, data.password.value)
             .then(username => {
                 signIn(username);
