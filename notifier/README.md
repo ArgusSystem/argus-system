@@ -1,6 +1,7 @@
 # Notifier application
 
 - Send notifications to users
+- Throttle notifications
 
 ### Install
 

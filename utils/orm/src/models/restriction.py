@@ -5,11 +5,12 @@ from ..database import db
 
 
 class Restriction(Model):
-    role = ForeignKeyField(PersonRole)
+    offender_role = ForeignKeyField(PersonRole)
     area_type = ForeignKeyField(AreaType)
     severity = IntegerField()
     time_start = TimeField()
     time_end = TimeField()
+    warden_role = ForeignKeyField(PersonRole)
 
     class Meta:
         database = db

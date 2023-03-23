@@ -2,12 +2,12 @@ from utils.orm.src import Restriction
 from flask import jsonify
 from peewee import IntegrityError
 
-
+# TODO: Change from here onwards
 def _get_restrictions():
     restrictions = Restriction.select().order_by(Restriction.role, Restriction.area_type).execute()
     result = list(map(lambda restriction: {
         'id': restriction.id,
-        'role': restriction.role.name,
+        'role': restriction.offender_role.name,
         'area': restriction.area_type.name,
         'severity': restriction.severity,
         'start time': str(restriction.time_start),
