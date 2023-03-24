@@ -25,6 +25,6 @@ class ControllersFactory:
             RolesController(),
             AreaTypesController(),
             AreasController(),
-            RestrictionsController(),
+            RestrictionsController,
             UsersControllers
         ]

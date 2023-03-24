@@ -1,30 +1,46 @@
 from utils.orm.src import Restriction
-from flask import jsonify
+from flask import jsonify, request
 from peewee import IntegrityError
 
-# TODO: Change from here onwards
+
 def _get_restrictions():
-    restrictions = Restriction.select().order_by(Restriction.role, Restriction.area_type).execute()
-    result = list(map(lambda restriction: {
+    return list(map(lambda restriction: {
         'id': restriction.id,
-        'role': restriction.offender_role.name,
+        'offender_role': restriction.offender_role.name,
+        'warden_role': restriction.warden_role.name,
         'area': restriction.area_type.name,
         'severity': restriction.severity,
         'start time': str(restriction.time_start),
         'end time': str(restriction.time_end)
-    }, restrictions))
-    return result
+    }, Restriction.select().order_by(Restriction.role, Restriction.area_type).execute()))
 
 
-def _update_restriction(restriction_id, role, area, severity, start_time, end_time):
-    if restriction_id == "-1":
-        restriction_id = Restriction.insert(role=role, area_type=area, severity=severity, time_start=start_time, time_end=end_time).execute()
-    else:
-        Restriction.update(role=role, area_type_id=area, severity=severity, time_start=start_time, time_end=end_time)\
-            .where(Restriction.id == restriction_id).execute()
-    # Return OK
-    resp = jsonify(restriction_id=restriction_id)
-    return resp
+def _insert_restriction():
+    data = request.json
+
+    restriction_id = Restriction.insert(offender_role=data['offender_role'],
+                                        warden_role=data['warden_role'],
+                                        area_type=data['area'],
+                                        severity=data['severity'],
+                                        time_start=data['start_time'],
+                                        time_end=data['end_time']).execute()
+
+    return str(restriction_id)
+
+
+def _update_restriction():
+    data = request.json
+
+    Restriction.insert(offender_role=data['offender_role'],
+                       warden_role=data['warden_role'],
+                       area_type=data['area'],
+                       severity=data['severity'],
+                       time_start=data['start_time'],
+                       time_end=data['end_time']) \
+        .where(Restriction.id == data['restriction_id']) \
+        .execute()
+
+    return jsonify(success=True)
 
 
 def _delete_restriction(restriction_id):
@@ -40,10 +56,9 @@ def _delete_restriction(restriction_id):
 
 class RestrictionsController:
 
-    def __init__(self):
-        pass
-
-    def make_routes(self, app):
-        app.route('/restrictions')(_get_restrictions)
-        app.route('/restrictions/<restriction_id>/<role>/<area>/<severity>/<start_time>/<end_time>', methods=["POST"])(_update_restriction)
+    @staticmethod
+    def make_routes(app):
+        app.route('/restrictions', methods=['GET'])(_get_restrictions)
+        app.route('/restrictions', methods=['POST'])(_insert_restriction)
+        app.route('/restrictions/<restriction_id>', methods=["POST"])(_update_restriction)
         app.route('/restrictions/<restriction_id>', methods=["DELETE"])(_delete_restriction)
