@@ -7,6 +7,9 @@ export async function authorizeUser(username, password) {
     return fetch(endpoint).then(async (response) => {
         const text = await response.text();
 
-        return (response.ok) ? text : new Error(text);
+        if (response.ok)
+            return text;
+
+        throw new Error(text);
     });
 }
