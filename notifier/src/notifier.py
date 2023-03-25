@@ -1,6 +1,7 @@
 from utils.events.src.messages.broken_rule_message import BrokenRestrictionMessage
 from utils.events.src.messages.marshalling import decode
-from utils.orm.src.models import Notification, Restriction, UserPerson
+from utils.orm.src.models import Notification, PersonRole, Restriction, RestrictionWarden, UserPerson
+from utils.orm.src.models.restriction_warden import RestrictionWarden
 from utils.tracing.src.tracer import get_context
 
 
@@ -18,6 +19,8 @@ def _get_offenders(offender_id):
 def _get_wardens(broken_restriction_id):
     return UserPerson \
         .select(UserPerson.user) \
+        .join(PersonRole)\
+        .join(RestrictionWarden)\
         .join(Restriction) \
         .where(Restriction.id == broken_restriction_id) \
         .get()
@@ -28,7 +31,7 @@ class Notifier:
     def __init__(self, tracer):
         self.tracer = tracer
 
-    # TODO: Watch out for too many notifications
+    # TODO: Watch out for too many notifications, use sightings to check if already checked
     def on_broken_rule(self, message):
         broken_restriction_message: BrokenRestrictionMessage = decode(BrokenRestrictionMessage, message)
 

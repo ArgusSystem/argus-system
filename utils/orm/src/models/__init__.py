@@ -10,3 +10,4 @@ from .user import User
 from .broken_restriction import BrokenRestriction
 from .notification import Notification
 from .user_person import UserPerson
+from .restriction_warden import RestrictionWarden

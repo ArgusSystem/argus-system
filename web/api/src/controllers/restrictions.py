@@ -4,10 +4,10 @@ from peewee import IntegrityError
 
 
 def _get_restrictions():
+    # TODO: Add wardens
     return list(map(lambda restriction: {
         'id': restriction.id,
-        'offender_role': restriction.offender_role.name,
-        'warden_role': restriction.warden_role.name,
+        'role': restriction.role.name,
         'area': restriction.area_type.name,
         'severity': restriction.severity,
         'start time': str(restriction.time_start),
@@ -16,28 +16,14 @@ def _get_restrictions():
 
 
 def _insert_restriction():
-    data = request.json
-
-    restriction_id = Restriction.insert(offender_role=data['offender_role'],
-                                        warden_role=data['warden_role'],
-                                        area_type=data['area'],
-                                        severity=data['severity'],
-                                        time_start=data['start_time'],
-                                        time_end=data['end_time']).execute()
-
-    return str(restriction_id)
+    return str(Restriction.insert(**request.json).execute())
 
 
 def _update_restriction():
-    data = request.json
+    restriction_id = request.json.pop('restriction_id', None)
 
-    Restriction.insert(offender_role=data['offender_role'],
-                       warden_role=data['warden_role'],
-                       area_type=data['area'],
-                       severity=data['severity'],
-                       time_start=data['start_time'],
-                       time_end=data['end_time']) \
-        .where(Restriction.id == data['restriction_id']) \
+    Restriction.insert(**request.json) \
+        .where(Restriction.id == restriction_id) \
         .execute()
 
     return jsonify(success=True)
