@@ -1,7 +1,7 @@
 from logging import getLogger
 
 from utils.events.src.message_clients.rabbitmq import Publisher
-from utils.events.src.messages.broken_rule_message import BrokenRestrictionMessage
+from utils.events.src.messages.broken_restriction_message import BrokenRestrictionMessage
 from utils.events.src.messages.marshalling import decode, encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.orm.src.database import connect

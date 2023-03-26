@@ -2,7 +2,7 @@ from random import uniform
 from os import listdir, path
 
 from utils.orm.src.database import connect
-from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionWarden
+from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionWarden, UserPerson
 from utils.orm.src.models.user import create as create_user
 from utils.video_storage import StorageFactory, StorageType
 from scripts.train_classifier_minio.train_classifier_minio import train_model
@@ -22,22 +22,26 @@ user_id = create_user('argus', 'panoptes', 'argus')
 # Setup person roles table
 
 friend_role_id = PersonRole.insert(name='friend').execute()
-warden_role_id = PersonRole.insert(name='friend').execute()
+warden_role_id = PersonRole.insert(name='warden').execute()
 
 # Setup people table
 
 PEOPLE_DIR = 'people'
+person_id = 0
 
-for i, person_name in enumerate(sorted(listdir(PEOPLE_DIR))):
+for person_name in sorted(listdir(PEOPLE_DIR)):
     photos = []
 
     for photo in listdir(path.join(PEOPLE_DIR, person_name)):
         people_storage.store(name=photo, filepath=path.join(PEOPLE_DIR, person_name, photo))
         photos.append(photo)
 
-    person_id = Person.insert(id=i, name=person_name, photos=photos, role=friend_role_id) \
-        .on_conflict(action='IGNORE') \
-        .execute()
+    Person.insert(id=person_id, name=person_name, photos=photos, role=friend_role_id).execute()
+
+    person_id += 1
+
+Person.insert(id=person_id, name='warden', role=warden_role_id).execute()
+UserPerson.insert(user_id=user_id, person_id=person_id).execute()
 
 # Setup area types table
 

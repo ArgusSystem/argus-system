@@ -23,4 +23,4 @@ publisher:
   username: argus
   password: panoptes
   exchange: argus
-  routing_key: broken_faces
+  routing_key: broken_rules
