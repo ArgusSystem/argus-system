@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from .src.notifier import Notifier
+from src.notifier import Notifier
 from utils.application import run
 from utils.events.src.message_clients.rabbitmq import Consumer
 from utils.orm.src.database import connect as db_connect
