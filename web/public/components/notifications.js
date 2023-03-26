@@ -1,7 +1,5 @@
-async function fetchNotifications () {
-    // TODO:  Actually fetch notifications
-    return ['Notification 1', 'Notification 2', 'Notification 3'];
-}
+import { fetchNotifications } from '../modules/api/notifications.js';
+import { getUsername } from '../modules/session.js';
 
 function createNotificationNode (text) {
     const li = document.createElement('li');
@@ -39,9 +37,13 @@ function createBadge(notificationsCount) {
     return span;
 }
 
+function format_notification(notification) {
+    return ''
+}
+
 export async function createNotificationDropdown () {
     const list = document.getElementById('notificationList');
-    const notifications = await fetchNotifications();
+    const notifications = (await fetchNotifications(getUsername())).map(format_notification);
 
     for (let i = 0; i < notifications.length; i++) {
         if (i > 0)

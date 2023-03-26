@@ -30,24 +30,24 @@ function getValues(row) {
         role: row.querySelector('.restriction-role').querySelector('select#restriction_role_input').value,
         area: row.querySelector('.restriction-area').querySelector('select#restriction_area_input').value,
         severity: row.querySelector('.restriction-severity').querySelector('select#restriction_severity_input').value,
-        start_time: row.querySelector('.restriction-time-start').querySelector('input#restriction_start_input').value,
-        end_time: row.querySelector('.restriction-time-end').querySelector('input#restriction_end_input').value
+        time_start: row.querySelector('.restriction-time-start').querySelector('input#restriction_start_input').value,
+        time_end: row.querySelector('.restriction-time-end').querySelector('input#restriction_end_input').value
     }
 }
 
 async function insert(row){
-    const {role, area, severity, start_time, end_time} = getValues(row);
+    const {role, area, severity, time_start, time_end} = getValues(row);
 
-    return insertRestriction(role, area, severity, start_time, end_time).then(response => {
+    return insertRestriction(role, area, severity, time_start, time_end).then(response => {
         if (response.ok)
             window.location.reload();
     });
 }
 
 async function update(row) {
-    const {id, role, area, severity, start_time, end_time} = getValues(row);
+    const {id, role, area, severity, time_start, time_end} = getValues(row);
 
-    return updateRestriction(id, role, area, severity, start_time, end_time);
+    return updateRestriction(id, role, area, severity, time_start, time_end);
 }
 
 

@@ -20,9 +20,10 @@ def _get_wardens(broken_restriction_id):
     return UserPerson \
         .select(UserPerson.user) \
         .join(PersonRole)\
-        .join(RestrictionWarden)\
-        .join(Restriction) \
+        .join(RestrictionWarden, on=(PersonRole.id == RestrictionWarden.role_id))\
+        .join(Restriction, on=(RestrictionWarden.restriction_id == Restriction.id)) \
         .where(Restriction.id == broken_restriction_id) \
+        .distinct() \
         .get()
 
 

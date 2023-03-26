@@ -19,10 +19,8 @@ def _insert_restriction():
     return str(Restriction.insert(**request.json).execute())
 
 
-def _update_restriction():
-    restriction_id = request.json.pop('restriction_id', None)
-
-    Restriction.insert(**request.json) \
+def _update_restriction(restriction_id):
+    Restriction.update(**request.json) \
         .where(Restriction.id == restriction_id) \
         .execute()
 

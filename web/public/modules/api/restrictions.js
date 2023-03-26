@@ -13,13 +13,13 @@ export function fetchRestrictions() {
 		.catch(error => console.error('Failed to fetch restriction!', error));
 }
 
-export function insertRestriction(role, area, severity, start_time, end_time) {
-    return post(BASE_URL, {role, area, severity, start_time, end_time})
+export function insertRestriction(role, area_type, severity, time_start, time_end) {
+    return post(BASE_URL, {role, area_type, severity, time_start, time_end})
 		.catch(error => console.error('Failed to create restrictions!', error));
 }
 
-export function updateRestriction(id, role, area, severity, start_time, end_time) {
-	return post(restriction_url(id), {role, area, severity, start_time, end_time})
+export function updateRestriction(id, role, area_type, severity, time_start, time_end) {
+	return post(restriction_url(id), {role, area_type, severity, time_start, time_end})
 		.catch(error => console.error('Failed to update restriction!', error));
 }
 

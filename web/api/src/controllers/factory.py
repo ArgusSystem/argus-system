@@ -3,12 +3,13 @@ from utils.video_storage import StorageFactory, StorageType
 
 from .camera import CameraController
 from .history import HistoryController
+from .notifications import NotificationsController
 from .people import PeopleController
 from .roles import RolesController
 from .area_types import AreaTypesController
 from .areas import AreasController
 from .restrictions import RestrictionsController
-from .users import UsersControllers
+from .users import UsersController
 
 
 class ControllersFactory:
@@ -25,6 +26,7 @@ class ControllersFactory:
             RolesController(),
             AreaTypesController(),
             AreasController(),
+            NotificationsController,
             RestrictionsController,
-            UsersControllers
+            UsersController
         ]
