@@ -1,5 +1,7 @@
-import { fetchNotifications } from '../modules/api/notifications.js';
+import { fetchNotifications, fetchNotificationsCount } from '../modules/api/notifications.js';
 import { getUsername } from '../modules/session.js';
+
+const NOTIFICATIONS_TO_LOAD = 10;
 
 function createNotificationNode (text) {
     const li = document.createElement('li');
@@ -23,6 +25,9 @@ function createDivider () {
 function createBadge(notificationsCount) {
     const span = document.createElement('span');
 
+    // Resizing depending on notifications count
+    const fontSize = 0.9 * ((2/3) ** (Math.floor(Math.log10(notificationsCount))))
+
     span.setAttribute('style', 'position: absolute;' +
         ' top: -8px;' +
         ' right: 12px;' +
@@ -30,20 +35,28 @@ function createBadge(notificationsCount) {
         ' border-radius: 50%;' +
         ' background: red;' +
         ' color: white;' +
-        ' font-size: 0.9em;');
+        ` font-size: ${fontSize.toPrecision(2)}em;`);
 
-    span.innerText = `${notificationsCount}`;
+    span.innerText = notificationsCount;
 
     return span;
 }
 
 function format_notification(notification) {
-    return ''
+    return `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
 }
 
 export async function createNotificationDropdown () {
+    const username = getUsername();
+
     const list = document.getElementById('notificationList');
-    const notifications = (await fetchNotifications(getUsername())).map(format_notification);
+
+    const notificationsCount = await fetchNotificationsCount(username);
+
+    if (notificationsCount > 0)
+        document.getElementById('notificationIcon').appendChild(createBadge(notificationsCount));
+
+    const notifications = (await fetchNotifications(username, NOTIFICATIONS_TO_LOAD)).map(format_notification);
 
     for (let i = 0; i < notifications.length; i++) {
         if (i > 0)
@@ -51,9 +64,4 @@ export async function createNotificationDropdown () {
 
         list.appendChild(createNotificationNode(notifications[i]));
     }
-
-    if (notifications.length > 0)
-        document
-            .getElementById('notificationIcon')
-            .appendChild(createBadge(notifications.length));
 }
