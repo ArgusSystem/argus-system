@@ -1,5 +1,5 @@
 from .view import View
-from peewee import BigIntegerField, IntegerField, TextField, TimestampField
+from peewee import IntegerField, TextField, TimestampField
 
 
 class SightingReadable(View):

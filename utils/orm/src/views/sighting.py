@@ -11,8 +11,12 @@ class Sighting(View):
     start_time = BigIntegerField()
     end_time = BigIntegerField()
 
+    def interval(self):
+        return self.start_time, self.end_time
+
     @classmethod
     def create_view(cls):
+        # TODO: Chance severity for restriction_id, maybe
         return 'CREATE VIEW "sighting" AS ' \
                'SELECT id AS camera_id, person_id, severity, min(TIMESTAMP) AS start_time,  max(TIMESTAMP) AS end_time ' \
                 'FROM ( ' \
