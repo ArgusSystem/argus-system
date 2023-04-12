@@ -23,7 +23,7 @@ def _get_history():
 
     assert from_date < to_date
 
-    sightings = Sighting.select(Sighting.person_id, Sighting.camera_id, Sighting.severity, Sighting.start_time, Sighting.end_time) \
+    sightings = Sighting.select(Sighting.camera_id, Sighting.severity, Sighting.start_time, Sighting.end_time) \
         .where((Sighting.person_id == person_id) &
                (Sighting.start_time >= from_date) &
                (Sighting.end_time < to_date)) \

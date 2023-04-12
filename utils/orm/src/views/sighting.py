@@ -6,6 +6,7 @@ class Sighting(View):
     camera_id = IntegerField()
     person_id = IntegerField()
 
+    restriction_id = IntegerField()
     severity = IntegerField()
 
     start_time = BigIntegerField()
@@ -16,20 +17,19 @@ class Sighting(View):
 
     @classmethod
     def create_view(cls):
-        # TODO: Chance severity for restriction_id, maybe
         return 'CREATE VIEW "sighting" AS ' \
-               'SELECT id AS camera_id, person_id, severity, min(TIMESTAMP) AS start_time,  max(TIMESTAMP) AS end_time ' \
+               'SELECT id AS camera_id, person_id, severity, restriction_id, min(TIMESTAMP) AS start_time,  max(TIMESTAMP) AS end_time ' \
                 'FROM ( ' \
-                    'SELECT timestamp, id, cam_alias, person_id, severity, count(is_reset) OVER (ORDER BY person_id, timestamp) AS grp ' \
+                    'SELECT timestamp, id, person_id, restriction_id, severity, count(is_reset) OVER (ORDER BY person_id, timestamp) AS grp ' \
                     'FROM ( ' \
-                        'SELECT timestamp, id, cam_alias, person_id, severity, ' \
+                        'SELECT timestamp, id, person_id, restriction_id, severity,' \
                         'CASE WHEN lag(id) OVER (ORDER BY person_id, timestamp) <> id ' \
                         'OR lag(person_id) OVER (ORDER BY person_id, TIMESTAMP) <> person_id ' \
                         'OR lag(severity) OVER (ORDER BY person_id, TIMESTAMP) <> severity ' \
                         'THEN 1 END AS is_reset ' \
                         'FROM ( ' \
-                            'SELECT camera.id, camera.alias AS cam_alias, face.person_id,  ' \
-                            'face.timestamp AS TIMESTAMP, coalesce(restriction.severity, -1) AS severity ' \
+                            'SELECT camera.id, face.person_id,  ' \
+                            'face.timestamp AS TIMESTAMP, restriction.id as restriction_id, coalesce(restriction.severity, -1) AS severity ' \
                             'FROM face ' \
                             'LEFT JOIN videochunk ON video_chunk_id = videochunk.id ' \
                             'LEFT JOIN camera ON camera_id = camera.id ' \
@@ -39,7 +39,7 @@ class Sighting(View):
                             'ORDER BY person_id, TIMESTAMP) AS tmp ' \
                         ') AS t ' \
                     ') AS G ' \
-                'GROUP BY id, cam_alias, person_id, severity, grp ' \
+                'GROUP BY id, person_id, restriction_id, severity, grp ' \
                 'ORDER BY MIN(TIMESTAMP) ASC;'
 
     @classmethod

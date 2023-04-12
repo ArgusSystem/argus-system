@@ -12,7 +12,7 @@ TRACER_KEY = 'tracer'
 
 
 if __name__ == "__main__":
-    with run('argus-warden') as application:
+    with run('argus-notifier') as application:
         db_connect(**application.configuration[DB_KEY])
 
         notifier = Notifier(tracer=get_tracer(**application.configuration[TRACER_KEY], service_name=application.name))
