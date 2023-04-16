@@ -1,6 +1,7 @@
 import { isSignedIn, signIn } from './session.js'
 import { authorizeUser } from './api/users.js'
-import { redirectToTab, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToTab } from './routing.js';
 
 window.addEventListener('load', () => {
     document.getElementById('log-in').onsubmit = (event) => {
@@ -8,7 +9,6 @@ window.addEventListener('load', () => {
 
         const data = event.target;
 
-        // TODO: Validate if it works
         authorizeUser(data.username.value, data.password.value)
             .then(username => {
                 signIn(username);

@@ -1,5 +1,7 @@
 import { fetchNotifications, fetchNotificationsCount } from '../modules/api/notifications.js';
 import { getUsername } from '../modules/session.js';
+import { redirect } from '../modules/routing.js';
+import { Page } from '../modules/page.js';
 
 const NOTIFICATIONS_TO_LOAD = 10;
 
@@ -7,6 +9,7 @@ function createNotificationNode (text) {
     const li = document.createElement('li');
 
     li.setAttribute('class', 'dropdown-item fw-bold');
+    li.onclick = () => redirect(Page.NOTIFICATION);
     li.innerText = text;
 
     return li;
