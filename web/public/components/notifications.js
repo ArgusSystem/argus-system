@@ -1,8 +1,8 @@
-import { fetchNotifications, fetchNotificationsCount, markNotificationRead } from '../modules/api/notifications.js';
+import { fetchNotifications, fetchNotificationsCount } from '../modules/api/notifications.js';
 import { getUsername } from '../modules/session.js';
-import { redirect, redirectToTab } from '../modules/routing.js';
-import { Page } from '../modules/page.js';
+import { redirectToTab } from '../modules/routing.js';
 import { Tab } from '../modules/tab.js';
+import { redirectToNotification } from '../modules/notifications/utils.js';
 
 const NOTIFICATIONS_TO_LOAD = 10;
 
@@ -29,11 +29,7 @@ function createNotificationNode (notification) {
 
     li.appendChild(createWarningIcon(notification.severity));
 
-    li.onclick = async () => {
-        if (!notification.read)
-            await markNotificationRead(notification.id);
-        redirect(Page.NOTIFICATION, {notificationId: notification.id});
-    }
+    li.onclick = async () => redirectToNotification(notification);
 
     const p = document.createElement('p');
     p.innerText = notification.text;
@@ -93,7 +89,7 @@ function toNotificationInformation(notification) {
 export async function createNotificationDropdown () {
     const username = getUsername();
 
-    const list = document.getElementById('notificationList');
+    const list = document.getElementById('notificationDropdown');
 
     const notificationsCount = await fetchNotificationsCount(username);
 
