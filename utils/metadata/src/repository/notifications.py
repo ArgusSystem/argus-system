@@ -58,6 +58,7 @@ def get_notifications(username, count):
                           .select(Notification, User, BrokenRestriction, Face, Person, Restriction, AreaType)
                           .join(User)) \
         .where(User.username == username) \
+        .order_by(Face.timestamp.desc()) \
         .limit(count)
 
 
