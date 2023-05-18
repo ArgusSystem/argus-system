@@ -5,19 +5,35 @@ import { Page } from '../modules/page.js';
 
 const NOTIFICATIONS_TO_LOAD = 10;
 
+const SEVERITY_TO_COLOR = ['text-primary', 'text-warning', 'text-danger']
+
+function createWarningIcon(severity) {
+    const icon = document.createElement('i');
+    icon.classList.add('fa', 'fa-exclamation-triangle', 'd-inline', SEVERITY_TO_COLOR[severity]);
+    icon.setAttribute('aria-hidden', 'true');
+    return icon;
+}
+
 function createNotificationNode (notification) {
     const li = document.createElement('li');
 
-    li.setAttribute('class', 'dropdown-item');
+    li.setAttribute('class', `dropdown-item`);
 
     if (!notification.read)
-        li.classList.add('fw-bold')
+        li.classList.add('fw-bold');
+
+    li.appendChild(createWarningIcon(notification.severity));
 
     li.onclick = async () => {
-        await markNotificationRead(notification.id);
+        if (!notification.read)
+            await markNotificationRead(notification.id);
         redirect(Page.NOTIFICATION, {notificationId: notification.id});
     }
-    li.innerText = notification.text;
+
+    const p = document.createElement('p');
+    p.innerText = notification.text;
+    p.classList.add('d-inline', 'px-2')
+    li.appendChild(p);
 
     return li;
 }
@@ -56,6 +72,7 @@ function format_notification(notification) {
     return {
         id: notification['id'],
         read: notification.read,
+        severity: notification.restriction.severity,
         text: `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
     }
 }

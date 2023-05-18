@@ -7,6 +7,9 @@ from ..database import db
 class Restriction(Model):
     role = ForeignKeyField(PersonRole)
     area_type = ForeignKeyField(AreaType)
+    #  0 -> Info
+    #  1 -> Warning
+    #  2 -> Danger
     severity = IntegerField()
     time_start = TimeField()
     time_end = TimeField()
