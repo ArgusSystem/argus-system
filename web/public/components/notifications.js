@@ -5,12 +5,12 @@ import { Page } from '../modules/page.js';
 
 const NOTIFICATIONS_TO_LOAD = 10;
 
-function createNotificationNode (text) {
+function createNotificationNode (notification) {
     const li = document.createElement('li');
 
     li.setAttribute('class', 'dropdown-item fw-bold');
-    li.onclick = () => redirect(Page.NOTIFICATION);
-    li.innerText = text;
+    li.onclick = () => redirect(Page.NOTIFICATION, {notificationId: notification.id});
+    li.innerText = notification.text;
 
     return li;
 }
@@ -46,7 +46,10 @@ function createBadge(notificationsCount) {
 }
 
 function format_notification(notification) {
-    return `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
+    return {
+        id: notification['id'],
+        text: `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
+    }
 }
 
 export async function createNotificationDropdown () {

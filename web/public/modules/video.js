@@ -4,7 +4,8 @@ import { fetchCamera } from './api/cameras.js'
 import { createVideo } from './video/video_source.js'
 import { createFooter } from '../components/footer.js'
 import { isSignedIn } from './session.js'
-import { redirectToIndex, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToIndex } from './routing.js';
 
 
 window.addEventListener('load', async () => {

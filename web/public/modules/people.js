@@ -3,7 +3,8 @@ import { createRolesList } from './people/roles_list.js'
 import { createPeopleList } from './people/people_list.js'
 import { train_model_button } from '../components/person.js'
 import { isSignedIn } from './session.js'
-import { redirectToIndex, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToIndex } from './routing.js';
 
 window.addEventListener('load', async () => {
     if (!isSignedIn())

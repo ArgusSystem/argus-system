@@ -1,14 +1,15 @@
 from flask import request
-from peewee import JOIN
 
-from utils.orm.src.models import AreaType, BrokenRestriction, Face, Notification, Person, Restriction, User
+from utils.metadata.src.repository.notifications import count_notifications, get_notification, get_notifications
 
 
-def _format_notifications(notification):
+def _format_notification(notification):
     return {
         'id': notification.id,
         'read': notification.read,
         'person': notification.broken_restriction.face.person.name,
+        'timestamp': notification.broken_restriction.face.timestamp,
+        'place': notification.broken_restriction.face.video_chunk.camera.alias,
         'restriction': {
             'area_type': notification.broken_restriction.restriction.area_type.name,
             'severity': notification.broken_restriction.restriction.severity
@@ -17,32 +18,24 @@ def _format_notifications(notification):
 
 
 def _count_notifications(username):
-    count = Notification.select().join(User).where((User.username == username) & (Notification.read == False)).count()
-    return str(count)
+    return str(count_notifications(username))
 
 
-# TODO: Add time of notification using sighting information
+def _get_notification(notification_id):
+    return _format_notification(get_notification(notification_id))
+
+
 def _get_notifications(username):
     notifications_count = request.args.get('count')
     assert notifications_count
 
-    notifications_query = Notification \
-        .select(Notification, User, BrokenRestriction, Face, Person, Restriction, AreaType) \
-        .join(User) \
-        .join(BrokenRestriction, on=(Notification.broken_restriction_id == BrokenRestriction.id)) \
-        .join(Face, on=(BrokenRestriction.face_id == Face.id)) \
-        .join(Person, JOIN.LEFT_OUTER, on=(Face.person_id == Person.id)) \
-        .join(Restriction, on=(BrokenRestriction.restriction_id == Restriction.id)) \
-        .join(AreaType, on=(Restriction.area_type_id == AreaType.id)) \
-        .where(User.username == username) \
-        .limit(notifications_count)
-
-    return list(map(_format_notifications, notifications_query))
+    return list(map(_format_notification, get_notifications(username, notifications_count)))
 
 
 class NotificationsController:
 
     @staticmethod
     def make_routes(app):
-        app.route('/notifications/<username>')(_get_notifications)
-        app.route('/notifications/<username>/count')(_count_notifications)
+        app.route('/notifications/id/<notification_id>')(_get_notification)
+        app.route('/notifications/user/<username>')(_get_notifications)
+        app.route('/notifications/user/<username>/count')(_count_notifications)
