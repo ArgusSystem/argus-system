@@ -1,4 +1,4 @@
-import { fetchNotifications, fetchNotificationsCount } from '../modules/api/notifications.js';
+import { fetchNotifications, fetchNotificationsCount, markNotificationRead } from '../modules/api/notifications.js';
 import { getUsername } from '../modules/session.js';
 import { redirect } from '../modules/routing.js';
 import { Page } from '../modules/page.js';
@@ -8,8 +8,15 @@ const NOTIFICATIONS_TO_LOAD = 10;
 function createNotificationNode (notification) {
     const li = document.createElement('li');
 
-    li.setAttribute('class', 'dropdown-item fw-bold');
-    li.onclick = () => redirect(Page.NOTIFICATION, {notificationId: notification.id});
+    li.setAttribute('class', 'dropdown-item');
+
+    if (!notification.read)
+        li.classList.add('fw-bold')
+
+    li.onclick = async () => {
+        await markNotificationRead(notification.id);
+        redirect(Page.NOTIFICATION, {notificationId: notification.id});
+    }
     li.innerText = notification.text;
 
     return li;
@@ -48,6 +55,7 @@ function createBadge(notificationsCount) {
 function format_notification(notification) {
     return {
         id: notification['id'],
+        read: notification.read,
         text: `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
     }
 }

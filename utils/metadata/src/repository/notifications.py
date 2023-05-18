@@ -66,3 +66,10 @@ def count_notifications(username):
         .join(User) \
         .where((User.username == username) & (~Notification.read)) \
         .count()
+
+
+def mark_notification_read(notification_id):
+    Notification \
+        .update(read=True) \
+        .where(Notification.id == notification_id) \
+        .execute()

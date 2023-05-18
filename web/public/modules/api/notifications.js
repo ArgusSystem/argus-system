@@ -16,6 +16,11 @@ export function fetchNotification(id) {
 			.catch(error => console.error('Failed to fetch notification!', error));
 }
 
+export function markNotificationRead(id) {
+	return fetch(`${id_url(id)}/read`, {method:'POST'})
+			.catch(error => console.error('Failed to mark notification as read!', error));
+}
+
 export function fetchNotifications(username, count) {
     return fetch(with_params(username_url(username), {count}))
 		.then(response => response.json())
