@@ -1,7 +1,8 @@
 import { fetchNotifications, fetchNotificationsCount, markNotificationRead } from '../modules/api/notifications.js';
 import { getUsername } from '../modules/session.js';
-import { redirect } from '../modules/routing.js';
+import { redirect, redirectToTab } from '../modules/routing.js';
 import { Page } from '../modules/page.js';
+import { Tab } from '../modules/tab.js';
 
 const NOTIFICATIONS_TO_LOAD = 10;
 
@@ -14,10 +15,14 @@ function createWarningIcon(severity) {
     return icon;
 }
 
-function createNotificationNode (notification) {
+function createListNode() {
     const li = document.createElement('li');
-
     li.setAttribute('class', `dropdown-item`);
+    return li;
+}
+
+function createNotificationNode (notification) {
+    const li = createListNode();
 
     if (!notification.read)
         li.classList.add('fw-bold');
@@ -68,7 +73,15 @@ function createBadge(notificationsCount) {
     return span;
 }
 
-function format_notification(notification) {
+function createSeeAll() {
+    const li = createListNode();
+    li.classList.add('text-center');
+    li.innerText = 'All Notifications';
+    li.onclick = () => redirectToTab(Tab.NOTIFICATIONS);
+    return li;
+}
+
+function toNotificationInformation(notification) {
     return {
         id: notification['id'],
         read: notification.read,
@@ -87,7 +100,7 @@ export async function createNotificationDropdown () {
     if (notificationsCount > 0)
         document.getElementById('notificationIcon').appendChild(createBadge(notificationsCount));
 
-    const notifications = (await fetchNotifications(username, NOTIFICATIONS_TO_LOAD)).map(format_notification);
+    const notifications = (await fetchNotifications(username, NOTIFICATIONS_TO_LOAD)).map(toNotificationInformation);
 
     for (let i = 0; i < notifications.length; i++) {
         if (i > 0)
@@ -95,4 +108,7 @@ export async function createNotificationDropdown () {
 
         list.appendChild(createNotificationNode(notifications[i]));
     }
+
+    list.appendChild(createDivider());
+    list.appendChild(createSeeAll());
 }
