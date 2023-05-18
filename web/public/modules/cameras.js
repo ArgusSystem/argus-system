@@ -2,7 +2,8 @@ import { createNavigationBar } from '../components/navbar.js'
 import { createCameras } from './cameras/camera_list.js'
 import { createFooter } from '../components/footer.js'
 import { isSignedIn } from './session.js'
-import { redirectToIndex, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToIndex } from './routing.js';
 
 window.addEventListener('load', async () => {
     if (!isSignedIn())

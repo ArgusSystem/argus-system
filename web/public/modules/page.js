@@ -1,0 +1,24 @@
+import { createNavigationBar } from '../components/navbar.js';
+import { createFooter } from '../components/footer.js';
+import { isSignedIn } from './session.js';
+import { redirectToIndex } from './routing.js';
+
+const NOOP_FUNCTION = () => {};
+export class Page {
+    static NOTIFICATION = 'notification.html';
+}
+
+export function loadPage(tab, callback = NOOP_FUNCTION) {
+    window.addEventListener('load', async () => {
+        if (!isSignedIn())
+            redirectToIndex();
+
+        await createNavigationBar(tab);
+        await createFooter();
+
+        await callback();
+
+        document.getElementById('cover').hidden = false;
+    });
+}
+

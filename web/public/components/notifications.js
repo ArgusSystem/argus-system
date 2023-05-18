@@ -1,13 +1,40 @@
-async function fetchNotifications () {
-    // TODO:  Actually fetch notifications
-    return ['Notification 1', 'Notification 2', 'Notification 3'];
+import { fetchNotifications, fetchNotificationsCount } from '../modules/api/notifications.js';
+import { getUsername } from '../modules/session.js';
+import { redirectToTab } from '../modules/routing.js';
+import { Tab } from '../modules/tab.js';
+import { redirectToNotification } from '../modules/notifications/utils.js';
+
+const NOTIFICATIONS_TO_LOAD = 10;
+
+const SEVERITY_TO_COLOR = ['text-primary', 'text-warning', 'text-danger']
+
+function createWarningIcon(severity) {
+    const icon = document.createElement('i');
+    icon.classList.add('fa', 'fa-exclamation-triangle', 'd-inline', SEVERITY_TO_COLOR[severity]);
+    icon.setAttribute('aria-hidden', 'true');
+    return icon;
 }
 
-function createNotificationNode (text) {
+function createListNode() {
     const li = document.createElement('li');
+    li.setAttribute('class', `dropdown-item`);
+    return li;
+}
 
-    li.setAttribute('class', 'dropdown-item fw-bold');
-    li.innerText = text;
+function createNotificationNode (notification) {
+    const li = createListNode();
+
+    if (!notification.read)
+        li.classList.add('fw-bold');
+
+    li.appendChild(createWarningIcon(notification.severity));
+
+    li.onclick = async () => redirectToNotification(notification);
+
+    const p = document.createElement('p');
+    p.innerText = notification.text;
+    p.classList.add('d-inline', 'px-2')
+    li.appendChild(p);
 
     return li;
 }
@@ -25,6 +52,9 @@ function createDivider () {
 function createBadge(notificationsCount) {
     const span = document.createElement('span');
 
+    // Resizing depending on notifications count
+    const fontSize = 0.9 * ((2/3) ** (Math.floor(Math.log10(notificationsCount))))
+
     span.setAttribute('style', 'position: absolute;' +
         ' top: -8px;' +
         ' right: 12px;' +
@@ -32,16 +62,41 @@ function createBadge(notificationsCount) {
         ' border-radius: 50%;' +
         ' background: red;' +
         ' color: white;' +
-        ' font-size: 0.9em;');
+        ` font-size: ${fontSize.toPrecision(2)}em;`);
 
-    span.innerText = `${notificationsCount}`;
+    span.innerText = notificationsCount;
 
     return span;
 }
 
+function createSeeAll() {
+    const li = createListNode();
+    li.classList.add('text-center');
+    li.innerText = 'All Notifications';
+    li.onclick = () => redirectToTab(Tab.NOTIFICATIONS);
+    return li;
+}
+
+function toNotificationInformation(notification) {
+    return {
+        id: notification['id'],
+        read: notification.read,
+        severity: notification.restriction.severity,
+        text: `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
+    }
+}
+
 export async function createNotificationDropdown () {
-    const list = document.getElementById('notificationList');
-    const notifications = await fetchNotifications();
+    const username = getUsername();
+
+    const list = document.getElementById('notificationDropdown');
+
+    const notificationsCount = await fetchNotificationsCount(username);
+
+    if (notificationsCount > 0)
+        document.getElementById('notificationIcon').appendChild(createBadge(notificationsCount));
+
+    const notifications = (await fetchNotifications(username, NOTIFICATIONS_TO_LOAD)).map(toNotificationInformation);
 
     for (let i = 0; i < notifications.length; i++) {
         if (i > 0)
@@ -50,8 +105,6 @@ export async function createNotificationDropdown () {
         list.appendChild(createNotificationNode(notifications[i]));
     }
 
-    if (notifications.length > 0)
-        document
-            .getElementById('notificationIcon')
-            .appendChild(createBadge(notifications.length));
+    list.appendChild(createDivider());
+    list.appendChild(createSeeAll());
 }

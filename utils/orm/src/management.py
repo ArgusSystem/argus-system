@@ -1,6 +1,7 @@
 from peewee import Model
 from utils.orm.src import View
 
+
 def create_tables(database):
     assert database.is_connection_usable()
     database.create_tables(Model.__subclasses__())

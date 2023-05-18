@@ -2,18 +2,13 @@ consumer:
   host: argus
   username: argus
   password: panoptes
-  queue: summarize_detected_faces
-
-logging:
-  level: DEBUG
-
-tracer:
-  host: argus
-  port: 6831
-
+  queue: broken_rules
 db:
   database: argus
   host: argus
   port: 5432
   user: argus
   password: panoptes
+tracer:
+  host: argus
+  port: 6831

@@ -1,5 +1,6 @@
 from utils.events.src.message_clients.rabbitmq.client import Client
-from utils.events.src.message_clients.rabbitmq.management import queue_bind, queue_purge, setup_exchange, setup_queue
+from utils.events.src.message_clients.rabbitmq.management import queue_bind, queue_exists, queue_purge, setup_exchange, \
+    setup_queue
 
 
 class RabbitMQService:
@@ -13,8 +14,8 @@ class RabbitMQService:
                 'frames',
                 'faces',
                 'published_detected_faces',
-                # 'summarize_detected_faces'
-                'face_rule_check'
+                'face_rule_check',
+                'broken_rules'
             ]
         }
 
@@ -31,4 +32,5 @@ class RabbitMQService:
         with self.client.channel() as channel:
             for exchange, queues in self.queues_by_exchange.items():
                 for queue in queues:
-                    queue_purge(channel, queue)
+                    if queue_exists(channel, queue):
+                        queue_purge(channel, queue)

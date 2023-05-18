@@ -1,7 +1,5 @@
 import os
-import random
 import tempfile
-from queue import Queue
 from threading import Event
 from time import time_ns
 
@@ -12,8 +10,6 @@ from utils.application.src.signal_handler import SignalHandler
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from utils.orm.src.database import connect
-from utils.orm.src.models import Camera
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
 from utils.video_storage import StorageFactory, StorageType
 

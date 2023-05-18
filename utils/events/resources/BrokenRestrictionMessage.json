@@ -1,0 +1,23 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "broken_rule",
+  "fields": [
+    {
+      "name": "broken_restriction_id",
+      "type": "int"
+    },
+    {
+      "name": "face_id",
+      "type": "int"
+    },
+    {
+      "name": "restriction_id",
+      "type": "int"
+    },
+    {
+      "name": "trace_id",
+      "type": "string"
+    }
+  ]
+}

@@ -5,8 +5,8 @@ from ..database import db
 
 
 class BrokenRestriction(Model):
-    face_id = ForeignKeyField(Face)
-    restriction_id = ForeignKeyField(Restriction)
+    face = ForeignKeyField(Face)
+    restriction = ForeignKeyField(Restriction)
 
     class Meta:
         database = db

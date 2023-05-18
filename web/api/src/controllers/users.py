@@ -21,7 +21,7 @@ def _log_in(username):
     return 'Invalid username or password', 401
 
 
-class UsersControllers:
+class UsersController:
 
     @staticmethod
     def make_routes(app):

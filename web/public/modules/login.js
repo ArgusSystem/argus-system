@@ -1,6 +1,7 @@
 import { isSignedIn, signIn } from './session.js'
 import { authorizeUser } from './api/users.js'
-import { redirectToTab, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToTab } from './routing.js';
 
 window.addEventListener('load', () => {
     document.getElementById('log-in').onsubmit = (event) => {

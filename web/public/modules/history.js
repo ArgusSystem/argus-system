@@ -5,7 +5,8 @@ import { loadSearchSubmit } from './history/search.js';
 import { createNavigationBar } from '../components/navbar.js'
 import { createFooter } from '../components/footer.js'
 import { isSignedIn } from './session.js'
-import { redirectToIndex, Tab } from './tab.js'
+import { Tab } from './tab.js'
+import { redirectToIndex } from './routing.js';
 
 
 window.addEventListener('load', async () => {

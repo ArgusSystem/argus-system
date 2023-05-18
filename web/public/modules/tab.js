@@ -1,6 +1,7 @@
 export class Tab {
     static HOME = new Tab('Home', 'home.html');
     static LIVE_FEED = new Tab('Live Feed', 'cameras.html');
+    static NOTIFICATIONS = new Tab('Notifications', 'notifications.html');
     static HISTORY = new Tab('History', 'history.html');
     static PEOPLE = new Tab('People', 'people.html');
     static AREAS = new Tab('Areas', 'areas.html');
@@ -14,15 +15,4 @@ export class Tab {
     static values() {
         return Object.keys(Tab).map(attribute => Tab[attribute]);
     }
-}
-
-function redirect(relativeUrl) {
-   window.location.href = `/${relativeUrl}`;
-}
-export function redirectToTab(tab) {
-    redirect(tab.page);
-}
-
-export function redirectToIndex() {
-    redirect('');
 }
