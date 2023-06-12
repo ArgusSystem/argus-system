@@ -7,11 +7,14 @@ from utils.orm.src.models import AreaType, \
     Notification, \
     Person, \
     Restriction, \
+    RestrictionSeverity, \
     RestrictionWarden, \
     User, \
     UserPerson, \
     VideoChunk
 
+
+# TODO: Fix with new Restriction
 
 def create_notification(user_id, broken_restriction_id):
     Notification(user=user_id, broken_restriction_id=broken_restriction_id).save()
@@ -43,7 +46,7 @@ def _join_metadata(query):
         .join(Camera, on=(VideoChunk.camera_id == Camera.id)) \
         .join(Person, JOIN.LEFT_OUTER, on=(Face.person_id == Person.id)) \
         .join(Restriction, on=(BrokenRestriction.restriction_id == Restriction.id)) \
-        .join(AreaType, on=(Restriction.area_type_id == AreaType.id))
+        .join(RestrictionSeverity, on=(Restriction.severity.id == RestrictionSeverity.id))
 
 
 def get_notification(notification_id):
@@ -55,7 +58,7 @@ def get_notification(notification_id):
 
 def get_notifications(username, count):
     return _join_metadata(Notification
-                          .select(Notification, User, BrokenRestriction, Face, Person, Restriction, AreaType)
+                          .select(Notification, User, BrokenRestriction, Face, Person, Restriction, RestrictionSeverity)
                           .join(User)) \
         .where(User.username == username) \
         .order_by(Face.timestamp.desc()) \

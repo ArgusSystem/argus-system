@@ -3,7 +3,7 @@ import { Tab } from './tab.js';
 import { createTableHeader, createTextNode, fetchHTMLElement, mapChildrenToRow } from '../components/utils.js';
 import { fetchNotifications } from './api/notifications.js';
 import { getUsername } from './session.js';
-import { timestampToDate } from './format.js';
+import { timestampToString } from './format.js';
 import { redirectToNotification } from './notifications/utils.js';
 
 const NOTIFICATIONS_TO_LOAD = 18;
@@ -20,7 +20,7 @@ async function createNotificationItemRow(notification) {
     return mapChildrenToRow(await createNotificationRow(),
             createTextNode(notification.person),
             createTextNode(notification.place),
-            createTextNode(timestampToDate(notification.timestamp)),
+            createTextNode(timestampToString(notification.timestamp)),
             createTextNode('')
         );
 }

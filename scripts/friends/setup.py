@@ -2,7 +2,8 @@ from random import uniform
 from os import listdir, path
 
 from utils.orm.src.database import connect
-from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionWarden, UserPerson
+from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionSeverity, \
+    RestrictionWarden, UserPerson
 from utils.orm.src.models.user import create as create_user
 from utils.video_storage import StorageFactory, StorageType
 from scripts.train_classifier_minio.train_classifier_minio import train_model
@@ -79,6 +80,11 @@ for i, area in enumerate(areas_ids):
 
 # Setup restrictions table
 
+
+severities = [
+    RestrictionSeverity.insert(name=name, value=i).execute() for i, name in enumerate(['info', 'warning', 'danger'])
+]
+
 restrictions_time = [
     ['10:38', '10:39'],
     ['10:51', '10:52'],
@@ -112,7 +118,7 @@ for i, restriction_time in enumerate(restrictions_time):
             }
         },
         # Only 3 possible severities
-        severity=i % 3) \
+        severity=severities[i % len(severities)]) \
         .execute()
 
     RestrictionWarden.insert(restriction_id=restriction_id, role_id=warden_role_id).execute()

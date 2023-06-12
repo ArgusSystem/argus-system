@@ -29,12 +29,13 @@ class Sighting(View):
                         'THEN 1 END AS is_reset ' \
                         'FROM ( ' \
                             'SELECT camera.id, face.person_id,  ' \
-                            'face.timestamp AS TIMESTAMP, restriction.id as restriction_id, coalesce(restriction.severity, -1) AS severity ' \
+                            'face.timestamp AS TIMESTAMP, restriction.id as restriction_id, restrictionseverity.value AS severity ' \
                             'FROM face ' \
                             'LEFT JOIN videochunk ON video_chunk_id = videochunk.id ' \
                             'LEFT JOIN camera ON camera_id = camera.id ' \
                             'LEFT JOIN brokenrestriction ON brokenrestriction.face_id = face.id ' \
                             'LEFT JOIN restriction ON brokenrestriction.restriction_id = restriction.id ' \
+                            'LEFT JOIN restrictionseverity ON restriction.severity_id = restrictionseverity.id ' \
                             'WHERE is_match = TRUE ' \
                             'ORDER BY person_id, TIMESTAMP) AS tmp ' \
                         ') AS t ' \

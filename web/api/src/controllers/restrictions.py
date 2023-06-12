@@ -1,18 +1,18 @@
-from utils.orm.src import Restriction
+from utils.orm.src.models import Restriction, RestrictionSeverity
 from flask import jsonify, request
 from peewee import IntegrityError
 
 
 def _get_restrictions():
-    # TODO: Add wardens
-    return list(map(lambda restriction: {
-        'id': restriction.id,
-        'role': restriction.role.name,
-        'area': restriction.area_type.name,
-        'severity': restriction.severity,
-        'start time': str(restriction.time_start),
-        'end time': str(restriction.time_end)
-    }, Restriction.select().order_by(Restriction.role, Restriction.area_type).execute()))
+    return [{
+                'id': restriction.id,
+                'rule': restriction.rule,
+                'severity': {
+                    'name': restriction.severity.name,
+                    'value': restriction.severity.value
+                },
+                'last_update': str(restriction.last_update)
+            } for restriction in Restriction.select().join(RestrictionSeverity).order_by(Restriction.last_update.desc())]
 
 
 def _insert_restriction():
