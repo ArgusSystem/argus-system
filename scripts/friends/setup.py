@@ -85,12 +85,34 @@ restrictions_time = [
     ['10:58', '11:02']
 ]
 
+
+def time_to_seconds(time):
+    hours, minutes = time.split(':')
+    return int(hours) * 3600 + int(minutes) * 60
+
+
 for i, restriction_time in enumerate(restrictions_time):
-    restriction_id = Restriction.insert(role=friend_role_id,
-                                        area_type=area_type_id,
-                                        severity=i,
-                                        time_start=restriction_time[0],
-                                        time_end=restriction_time[1]) \
+    restriction_id = Restriction.insert(
+        rule={
+            'who': {
+                'type': 'role',
+                'value': [friend_role_id]
+            },
+            'where': {
+                'type': 'area_type',
+                'value': [area_type_id]
+            },
+            'when': {
+                'type': 'repeated',
+                'value': {
+                    'start_time': time_to_seconds(restriction_time[0]),
+                    'end_time': time_to_seconds(restriction_time[1]),
+                    'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                }
+            }
+        },
+        # Only 3 possible severities
+        severity=i % 3) \
         .execute()
 
     RestrictionWarden.insert(restriction_id=restriction_id, role_id=warden_role_id).execute()
