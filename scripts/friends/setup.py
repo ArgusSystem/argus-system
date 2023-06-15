@@ -100,22 +100,28 @@ def time_to_seconds(time):
 for i, restriction_time in enumerate(restrictions_time):
     restriction_id = Restriction.insert(
         rule={
-            'who': {
-                'type': 'role',
-                'value': [friend_role_id]
-            },
-            'where': {
-                'type': 'area_type',
-                'value': [area_type_id]
-            },
-            'when': {
-                'type': 'repeated',
-                'value': {
-                    'start_time': time_to_seconds(restriction_time[0]),
-                    'end_time': time_to_seconds(restriction_time[1]),
-                    'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            'who': [
+                {
+                    'type': 'role',
+                    'value': [friend_role_id]
                 }
-            }
+            ],
+            'where': [
+                {
+                    'type': 'area_type',
+                    'value': [area_type_id]
+                }
+            ],
+            'when': [
+                {
+                    'type': 'repeated',
+                    'value': {
+                        'start_time': time_to_seconds(restriction_time[0]),
+                        'end_time': time_to_seconds(restriction_time[1]),
+                        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                    }
+                }
+            ]
         },
         # Only 3 possible severities
         severity=severities[i % len(severities)]) \
