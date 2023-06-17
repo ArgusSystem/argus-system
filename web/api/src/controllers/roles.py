@@ -4,12 +4,7 @@ from peewee import IntegrityError
 
 
 def _get_roles():
-    roles = PersonRole.select().order_by(PersonRole.name).execute()
-    result = list(map(lambda role: {
-        'id': role.id,
-        'name': role.name
-    }, roles))
-    return result
+    return [{'id': role.id, 'name': role.name} for role in PersonRole.select().order_by(PersonRole.name)]
 
 
 def _update_role(role_id, name):

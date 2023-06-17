@@ -7,6 +7,7 @@ import {
     fetchHTMLElement,
 } from "./utils.js";
 import { daytimeToString, timestampToString } from '../modules/format.js';
+import { redirect } from '../modules/routing.js';
 
 async function createRestrictionRow(){
     return await fetchHTMLElement('components/table_rows/restriction.html');
@@ -75,4 +76,7 @@ export async function loadRestrictions(restrictions, people, roles, cameras, are
     for (const restriction of restrictions) {
         list.appendChild(await createRestrictionsItem(restriction, people, roles, cameras, areas, areaTypes));
     }
+
+    const newRule = document.getElementById('new-rule');
+    newRule.onclick = () => redirect('restriction.html');
 }
