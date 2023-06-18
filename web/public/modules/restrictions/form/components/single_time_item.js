@@ -1,4 +1,4 @@
-import { createInput, createLabel, createListItem, FROM, TO, toTimestamp } from './utils.js';
+import { createInput, createLabel, createListItem, createRemoveButton, FROM, TO, toTimestamp } from './utils.js';
 
 
 const START_DATE = 'start-date';
@@ -8,14 +8,16 @@ const DATETIME_LOCAL = 'datetime-local';
 const LABEL_CLASS = 'h6 px-3';
 const ID_CLASS = 'single-time-item';
 
-export function createSingleTimeItem(id_salt) {
+export function createSingleTimeItem(idSalt, parentNode) {
     const li = createListItem(ID_CLASS);
 
-    const startDateId = `${START_DATE}-${id_salt}`;
+    li.appendChild(createRemoveButton(parentNode, li));
+
+    const startDateId = `${START_DATE}-${idSalt}`;
     li.appendChild(createLabel(startDateId, FROM, LABEL_CLASS));
     li.appendChild(createInput(startDateId, DATETIME_LOCAL));
 
-    const endDateId = `${END_DATE}-${id_salt}`;
+    const endDateId = `${END_DATE}-${idSalt}`;
     li.appendChild(createLabel(endDateId, TO, LABEL_CLASS));
     li.appendChild(createInput(endDateId, DATETIME_LOCAL));
 

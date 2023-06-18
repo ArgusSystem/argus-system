@@ -26,3 +26,17 @@ export function createListItem(klass) {
 export function toTimestamp(dateString) {
     return Date.parse(dateString);
 }
+
+export function createRemoveButton(parentNode, childNode) {
+    const button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('class', 'btn btn-sm btn-danger');
+    button.onclick = () => parentNode.removeChild(childNode);
+
+    const i = document.createElement('i');
+    i.setAttribute('class', 'fa fa-trash')
+
+    button.appendChild(i);
+
+    return button;
+}

@@ -10,13 +10,11 @@ function getList() {
     return document.getElementById('when-list');
 }
 
-function newSingleItem() {
-    getList().appendChild(createSingleTimeItem(getRandomInt()));
+function newItem(createCallback) {
+    const list = getList();
+    list.appendChild(createCallback(getRandomInt(), list));
 }
 
-function newRepeatedItem() {
-    getList().appendChild(createRepeatedTimeItem(getRandomInt()));
-}
 
 export function fetchWhen() {
     const when = [...fetchSingleTimeItem(), ...fetchRepeatedTimeItem()];
@@ -27,8 +25,7 @@ export function fetchWhen() {
     return when;
 }
 
-
 export async function loadWhen() {
-    document.getElementById('new-single-time-item').onclick = newSingleItem;
-    document.getElementById('new-repeated-time-item').onclick = newRepeatedItem;
+    document.getElementById('new-single-time-item').onclick = () => newItem(createSingleTimeItem);
+    document.getElementById('new-repeated-time-item').onclick = () => newItem(createRepeatedTimeItem);
 }

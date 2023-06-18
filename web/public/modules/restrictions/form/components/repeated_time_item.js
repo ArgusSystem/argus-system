@@ -1,4 +1,4 @@
-import { createInput, createLabel, createListItem, FROM, TO, toTimestamp } from './utils.js';
+import { createInput, createLabel, createListItem, createRemoveButton, FROM, TO, toTimestamp } from './utils.js';
 
 const TIME = 'time';
 const CHECKBOX = 'checkbox';
@@ -22,21 +22,23 @@ function createCheckboxInput(id, type) {
     return input;
 }
 
-export function createRepeatedTimeItem(id_salt) {
+export function createRepeatedTimeItem(idSalt, parentNode) {
     const li = createListItem(ID_CLASS);
 
-    const startTimeId = `start-time-${id_salt}`;
+    li.appendChild(createRemoveButton(parentNode, li));
+
+    const startTimeId = `start-time-${idSalt}`;
     li.appendChild(createLabel(startTimeId, FROM, LABEL_CLASS));
     li.appendChild(createInput(startTimeId, TIME));
 
-    const endTimeId = `end-time-${id_salt}`;
+    const endTimeId = `end-time-${idSalt}`;
     li.appendChild(createLabel(endTimeId, TO, LABEL_CLASS));
     li.appendChild(createInput(endTimeId, TIME));
 
     li.appendChild(createSpace());
 
     for (const day of SHORT_DAYS) {
-        const dayId = `${day}-${id_salt}`;
+        const dayId = `${day}-${idSalt}`;
         li.appendChild(createCheckboxInput(dayId, CHECKBOX));
         li.appendChild(createLabel(dayId, day, CHECKBOX_LABEL_CLASS));
     }
