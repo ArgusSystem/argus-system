@@ -3,7 +3,7 @@ import { fetchRestrictionSeverities } from '../api/restriction_severities.js';
 import { Tab } from '../tab.js';
 import { fetchWho, loadWho } from './form/who.js';
 import { fetchWhere, loadWhere } from './form/where.js';
-import { loadWhen } from './form/when.js';
+import { fetchWhen, loadWhen } from './form/when.js';
 
 function getSeverityElement() {
     return document.getElementById('select-severity');
@@ -23,7 +23,8 @@ function save() {
         const params = {
             rule: {
                 who: fetchWho(),
-                where: fetchWhere()
+                where: fetchWhere(),
+                when: fetchWhen()
             },
             severity: fetchSeverity()
         };

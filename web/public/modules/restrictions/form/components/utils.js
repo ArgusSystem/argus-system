@@ -17,8 +17,12 @@ export function createInput(id, type) {
   return input;
 }
 
-export function createListItem() {
+export function createListItem(klass) {
   const li = document.createElement('li');
-  li.setAttribute('class', 'list-group-item');
+  li.setAttribute('class', `list-group-item ${klass}`);
   return li;
+}
+
+export function toTimestamp(dateString) {
+    return Date.parse(dateString);
 }

@@ -1,5 +1,5 @@
-import { createSingleTimeItem } from './components/single_time_item.js';
-import { createRepeatedTimeItem } from './components/repeated_time_item.js';
+import { createSingleTimeItem, fetchSingleTimeItem } from './components/single_time_item.js';
+import { createRepeatedTimeItem, fetchRepeatedTimeItem } from './components/repeated_time_item.js';
 
 const RANDOM_CEIL = 1_000_000;
 function getRandomInt() {
@@ -16,6 +16,15 @@ function newSingleItem() {
 
 function newRepeatedItem() {
     getList().appendChild(createRepeatedTimeItem(getRandomInt()));
+}
+
+export function fetchWhen() {
+    const when = [...fetchSingleTimeItem(), ...fetchRepeatedTimeItem()];
+
+    if (when.length === 0)
+        throw new Error('Must select WHEN to target!');
+
+    return when;
 }
 
 
