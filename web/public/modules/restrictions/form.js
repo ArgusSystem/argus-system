@@ -36,14 +36,17 @@ async function save() {
     }
 }
 
-export async function loadForm() {
-    await loadWho();
-    await loadWhere();
-    await loadWhen();
+export async function loadForm(restriction) {
+    await loadWho(restriction ? restriction.rule.who : null);
+    await loadWhere(restriction ? restriction.rule.where : null);
+    await loadWhen(restriction ? restriction.rule.when : null);
 
     await fetchRestrictionSeverities().then(data => {
         const selectSeverity = getSeverityElement();
-        data.forEach(severity => selectSeverity.appendChild(new Option(severity.name, severity.id)));
+        data.forEach(severity => {
+            const selected = restriction && restriction.severity.name === severity.name;
+            selectSeverity.appendChild(new Option(severity.name, severity.id, false, selected));
+        });
     });
 
     document.getElementById('cancel-button').onclick = () => redirectToTab(Tab.RESTRICTIONS);

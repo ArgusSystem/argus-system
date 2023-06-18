@@ -1,6 +1,7 @@
 import { fetchPeople } from '../../api/people.js';
 import { fetchRoles } from '../../api/roles.js';
 import { extractFromSelect, toSelect } from '../../../components/select2.js';
+import { select } from './utils.js';
 
 
 function getPeopleElement() {
@@ -44,7 +45,15 @@ export function fetchWho() {
     return who;
 }
 
-export async function loadWho() {
+export async function loadWho(restrictions) {
     await fetchPeople().then(data => getPeopleElement().select2({placeholder: 'Person', data: toSelect(data)}));
-    await fetchRoles().then(data => getRolesElement().select2({placeholder: 'Role', data: toSelect(data)}));
+    await fetchRoles().then(data => getRolesElement().select2({placeholder: 'Roles', data: toSelect(data)}));
+
+    if (restrictions) {
+        select(restrictions, getPeopleElement(), 'person');
+        select(restrictions, getRolesElement(), 'role');
+
+        getUnknownElement().checked = restrictions.some(restriction => restriction.type === 'unknown');
+        getAllElement().checked = restrictions.some(restriction => restriction.type === 'all');
+    }
  }

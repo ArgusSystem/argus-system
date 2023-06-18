@@ -11,6 +11,12 @@ function restriction_url(id) {
 export function fetchRestrictions() {
     return fetch(BASE_URL)
 		.then(response => response.json())
+		.catch(error => console.error('Failed to fetch restrictions!', error));
+}
+
+export function fetchRestriction(id) {
+    return fetch(restriction_url(id))
+		.then(response => response.json())
 		.catch(error => console.error('Failed to fetch restriction!', error));
 }
 

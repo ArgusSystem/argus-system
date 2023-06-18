@@ -25,7 +25,7 @@ export function fetchWhen() {
     return when;
 }
 
-export async function loadWhen() {
+export async function loadWhen(restrictions) {
     document.getElementById('new-single-time-item').onclick = () => newItem(createSingleTimeItem);
     document.getElementById('new-repeated-time-item').onclick = () => newItem(createRepeatedTimeItem);
 }

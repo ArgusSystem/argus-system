@@ -4,21 +4,32 @@ from flask import jsonify, request
 from peewee import IntegrityError
 
 
+def map_restriction(restriction):
+    return {
+        'id': restriction.id,
+        'rule': restriction.rule,
+        'severity': {
+            'name': restriction.severity.name,
+            'value': restriction.severity.value
+        },
+        'last_update': str(restriction.last_update)
+    }
+
+
+def _get_restriction(restriction_id):
+    return map_restriction(Restriction.select(Restriction, RestrictionSeverity)
+                           .join(RestrictionSeverity)
+                           .where(Restriction.id == restriction_id)
+                           .get())
+
+
 def _get_restrictions():
-    restrictions = Restriction.select() \
+    restrictions = Restriction.select(Restriction, RestrictionSeverity) \
         .where(~Restriction.deleted) \
         .join(RestrictionSeverity) \
         .order_by(Restriction.last_update.desc())
 
-    return [{
-                'id': restriction.id,
-                'rule': restriction.rule,
-                'severity': {
-                    'name': restriction.severity.name,
-                    'value': restriction.severity.value
-                },
-                'last_update': str(restriction.last_update)
-            } for restriction in restrictions]
+    return [map_restriction(restriction) for restriction in restrictions]
 
 
 def _insert_restriction():
@@ -62,5 +73,6 @@ class RestrictionsController:
     def make_routes(app):
         app.route('/restrictions', methods=['GET'])(_get_restrictions)
         app.route('/restrictions', methods=['POST'])(_insert_restriction)
-        app.route('/restrictions/<restriction_id>', methods=["POST"])(_update_restriction)
-        app.route('/restrictions/<restriction_id>', methods=["DELETE"])(_delete_restriction)
+        app.route('/restrictions/<restriction_id>', methods=['GET'])(_get_restriction)
+        app.route('/restrictions/<restriction_id>', methods=['POST'])(_update_restriction)
+        app.route('/restrictions/<restriction_id>', methods=['DELETE'])(_delete_restriction)
