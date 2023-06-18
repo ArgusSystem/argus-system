@@ -4,7 +4,7 @@ import { Tab } from '../tab.js';
 import { fetchWho, loadWho } from './form/who.js';
 import { fetchWhere, loadWhere } from './form/where.js';
 import { fetchWhen, loadWhen } from './form/when.js';
-import { insertRestriction } from '../api/restrictions.js';
+import { insertRestriction, updateRestriction } from '../api/restrictions.js';
 
 function getSeverityElement() {
     return document.getElementById('select-severity');
@@ -19,21 +19,39 @@ function fetchSeverity() {
     return selectValue;
 }
 
-async function save() {
-    try {
-        await insertRestriction({
-            rule: {
-                who: fetchWho(),
-                where: fetchWhere(),
-                when: fetchWhen()
-            },
-            severity: fetchSeverity()
-        });
+function fetchData() {
+    const data = {
+        rule: {
+            who: fetchWho(),
+            where: fetchWhere(),
+            when: fetchWhen()
+        },
+        severity: fetchSeverity()
+    };
+    console.log(data);
+    return data;
+}
 
+async function insert() {
+    await with_error_closure(async () => await insertRestriction(fetchData()));
+}
+
+async function update(id) {
+    await with_error_closure(async () => await updateRestriction(id, fetchData()));
+}
+
+
+async function with_error_closure(callback) {
+    try {
+        await callback();
         redirectToTab(Tab.RESTRICTIONS);
     } catch (e) {
         alert(e.message);
     }
+}
+
+async function onSave(restriction) {
+    await (restriction ? update(restriction.id) : insert());
 }
 
 export async function loadForm(restriction) {
@@ -50,5 +68,5 @@ export async function loadForm(restriction) {
     });
 
     document.getElementById('cancel-button').onclick = () => redirectToTab(Tab.RESTRICTIONS);
-    document.getElementById('save-button').onclick = save;
+    document.getElementById('save-button').onclick = async () => await onSave(restriction);
 }

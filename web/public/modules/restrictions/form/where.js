@@ -22,7 +22,7 @@ export function fetchWhere() {
     for (const [type, element] of Object.entries({
         camera: getCamerasElement(),
         area: getAreasElement(),
-        area_types: getAreaTypesElement()
+        area_type: getAreaTypesElement()
     })) {
         const node = extractFromSelect(element, type);
 

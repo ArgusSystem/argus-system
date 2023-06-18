@@ -40,7 +40,7 @@ function format_time(node) {
         if (n.type === 'repeated') {
             const day = n.value.days.length === 7 ?
                 'Everyday' :
-                n.value.days.map(d => d.substring(0, 2)).join(',');
+                n.value.days.map(d => d.substring(0, 2)).join(', ');
 
             return `${day} ${daytimeToString(n.value['start_time'])} - ${daytimeToString(n.value['end_time'])}`;
         } else {

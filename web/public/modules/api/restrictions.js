@@ -22,11 +22,11 @@ export function fetchRestriction(id) {
 
 export function insertRestriction(data) {
     return post(BASE_URL, { warden: getUsername(), restriction: data })
-		.catch(error => console.error('Failed to create restrictions!', error));
+		.catch(error => console.error('Failed to create restriction!', error));
 }
 
-export function updateRestriction(id, role, area_type, severity, time_start, time_end) {
-	return post(restriction_url(id), {role, area_type, severity, time_start, time_end})
+export function updateRestriction(id, data) {
+	return post(restriction_url(id), data)
 		.catch(error => console.error('Failed to update restriction!', error));
 }
 
