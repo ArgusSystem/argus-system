@@ -30,7 +30,7 @@ export function fetchWhere() {
     }
 
     if (where.length === 0)
-        throw new Error('Must select WHERE to target!')
+        throw new Error('Must select WHERE to target!');
 
     return where;
 }

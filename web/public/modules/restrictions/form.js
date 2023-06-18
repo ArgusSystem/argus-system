@@ -3,6 +3,7 @@ import { fetchRestrictionSeverities } from '../api/restriction_severities.js';
 import { Tab } from '../tab.js';
 import { fetchWho, loadWho } from './form/who.js';
 import { fetchWhere, loadWhere } from './form/where.js';
+import { loadWhen } from './form/when.js';
 
 function getSeverityElement() {
     return document.getElementById('select-severity');
@@ -36,6 +37,7 @@ function save() {
 export async function loadForm() {
     await loadWho();
     await loadWhere();
+    await loadWhen();
 
     await fetchRestrictionSeverities().then(data => {
         const selectSeverity = getSeverityElement();

@@ -87,39 +87,20 @@
           </select>
         </div>
 
-        <h3 class="card-header">When</h3>
+        <div class="card-header d-flex justify-content-between">
+          <h3>When</h3>
+          <div class="dropdown">
+            <button class="btn btn-secondary-outline dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li id="new-single-time-item" class="dropdown-item">Single</li>
+              <li id="new-repeated-time-item" class="dropdown-item">Repeated</li>
+            </ul>
+          </div>
+        </div>
         <div class="card-body">
-          <ul class="list-group">
-            <li class="list-group-item">
-              <label class="h6" for="start-date">From: </label>
-              <input type="datetime-local" id="start-date" name="start-date">
-              <label class="h6" for="end-date">To: </label>
-              <input type="datetime-local" id="end-date" name="end-date">
-            </li>
-
-            <li class="list-group-item">
-              <label class="h6" for="start-time">From: </label>
-              <input type="time" id="start-time" name="start-time">
-              <label class="h6" for="end-time">To: </label>
-              <input type="time" id="end-time" name="end-time">
-
-              <input type="checkbox" class="btn-check" id="btn-check-mo" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-mo">Mo</label>
-              <input type="checkbox" class="btn-check" id="btn-check-tu" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-tu">Tu</label>
-              <input type="checkbox" class="btn-check" id="btn-check-we" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-we">We</label>
-              <input type="checkbox" class="btn-check" id="btn-check-th" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-th">Th</label>
-              <input type="checkbox" class="btn-check" id="btn-check-fr" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-fr">Fr</label>
-              <input type="checkbox" class="btn-check" id="btn-check-sa" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-sa">Sa</label>
-              <input type="checkbox" class="btn-check" id="btn-check-su" autocomplete="off">
-              <label class="btn btn-outline-primary" for="btn-check-su">Su</label>
-
-            </li>
-          </ul>
+          <ul id='when-list' class="list-group"></ul>
         </div>
 
         <div class="card-footer">
