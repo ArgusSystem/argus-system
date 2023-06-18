@@ -1,0 +1,47 @@
+import { redirectToTab } from '../routing.js';
+import { fetchRestrictionSeverities } from '../api/restriction_severities.js';
+import { Tab } from '../tab.js';
+import { fetchWho, loadWho } from './form/who.js';
+import { fetchWhere, loadWhere } from './form/where.js';
+
+function getSeverityElement() {
+    return document.getElementById('select-severity');
+}
+
+function fetchSeverity() {
+    const selectValue = parseInt(getSeverityElement().value);
+
+    if (isNaN(selectValue))
+        throw new Error('Must select a SEVERITY!');
+
+    return selectValue;
+}
+
+function save() {
+    try {
+        const params = {
+            rule: {
+                who: fetchWho(),
+                where: fetchWhere()
+            },
+            severity: fetchSeverity()
+        };
+
+        console.log(params);
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+export async function loadForm() {
+    await loadWho();
+    await loadWhere();
+
+    await fetchRestrictionSeverities().then(data => {
+        const selectSeverity = getSeverityElement();
+        data.forEach(severity => selectSeverity.appendChild(new Option(severity.name, severity.id)));
+    });
+
+    document.getElementById('cancel-button').onclick = () => redirectToTab(Tab.RESTRICTIONS);
+    document.getElementById('save-button').onclick = save;
+}
