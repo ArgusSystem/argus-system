@@ -9,6 +9,7 @@ from .roles import RolesController
 from .area_types import AreaTypesController
 from .areas import AreasController
 from .restrictions import RestrictionsController
+from .restriction_severity import RestrictionSeveritiesController
 from .users import UsersController
 
 
@@ -28,5 +29,6 @@ class ControllersFactory:
             AreasController(),
             NotificationsController,
             RestrictionsController,
+            RestrictionSeveritiesController,
             UsersController
         ]
