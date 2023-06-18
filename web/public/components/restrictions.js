@@ -6,7 +6,7 @@ import {
 } from "./utils.js";
 import { daytimeToString, timestampToString } from '../modules/format.js';
 import { redirect, reload } from '../modules/routing.js';
-import { createRemoveButton } from './management.js';
+import { createRemoveButton, createUpdateButton } from './management.js';
 import { deleteRestriction } from '../modules/api/restrictions.js';
 
 async function createRestrictionRow(){
@@ -49,8 +49,19 @@ function format_time(node) {
     }).join(', ');
 }
 
+function redirectToRestriction(params={}) {
+    redirect('restriction.html', params);
+}
+
 function _deleteRestriction(id) {
     return deleteRestriction(id).then(reload);
+}
+
+function createManagement(restrictionId) {
+    const div = document.createElement('div');
+    div.appendChild(createUpdateButton(() => redirectToRestriction({ restrictionId })));
+    div.appendChild(createRemoveButton(async () => await _deleteRestriction(restrictionId)));
+    return div;
 }
 
 async function createRestrictionsItem(restriction, people, roles, cameras, areas, areaTypes) {
@@ -69,7 +80,7 @@ async function createRestrictionsItem(restriction, people, roles, cameras, areas
         createTextNode(format_with(restriction['rule']['where'], mapping)),
         createTextNode(format_time(restriction['rule']['when'])),
         createTextNode(restriction['severity']['name']),
-        createRemoveButton(async () => await _deleteRestriction(restriction.id))
+        createManagement(restriction.id)
     );
 }
 
@@ -83,5 +94,5 @@ export async function loadRestrictions(restrictions, people, roles, cameras, are
     }
 
     const newRule = document.getElementById('new-rule');
-    newRule.onclick = () => redirect('restriction.html');
+    newRule.onclick = redirectToRestriction;
 }
