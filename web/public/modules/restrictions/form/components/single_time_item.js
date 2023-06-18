@@ -1,4 +1,5 @@
-import { createInput, createLabel, createListItem, createRemoveButton, FROM, TO, toTimestamp } from './utils.js';
+import { createInput, createLabel, createListItem, FROM, TO, toTimestamp } from './utils.js';
+import { createRemoveButton } from '../../../../components/management.js';
 
 
 const START_DATE = 'start-date';
@@ -11,7 +12,7 @@ const ID_CLASS = 'single-time-item';
 export function createSingleTimeItem(idSalt, parentNode) {
     const li = createListItem(ID_CLASS);
 
-    li.appendChild(createRemoveButton(parentNode, li));
+    li.appendChild(createRemoveButton(() => parentNode.removeChild(li)));
 
     const startDateId = `${START_DATE}-${idSalt}`;
     li.appendChild(createLabel(startDateId, FROM, LABEL_CLASS));

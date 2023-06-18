@@ -1,20 +1,20 @@
 import {
     createTextNode,
-    createDeleteButton,
-    createSaveButton,
     mapChildrenToRow,
     createTableHeader,
     fetchHTMLElement,
 } from "./utils.js";
 import { daytimeToString, timestampToString } from '../modules/format.js';
-import { redirect } from '../modules/routing.js';
+import { redirect, reload } from '../modules/routing.js';
+import { createRemoveButton } from './management.js';
+import { deleteRestriction } from '../modules/api/restrictions.js';
 
 async function createRestrictionRow(){
     return await fetchHTMLElement('components/table_rows/restriction.html');
 }
 
-export async function createRestrictionsHeader() {
-    return createTableHeader(await createRestrictionRow(), "Id", "Who", "Where", "When", "Severity", "Save", "Delete");
+async function createRestrictionsHeader() {
+    return createTableHeader(await createRestrictionRow(), "Who", "Where", "When", "Severity", "");
 }
 
 function to_dict(array) {
@@ -49,7 +49,11 @@ function format_time(node) {
     }).join(', ');
 }
 
-export async function createRestrictionsItem(restriction, people, roles, cameras, areas, areaTypes) {
+function _deleteRestriction(id) {
+    return deleteRestriction(id).then(reload);
+}
+
+async function createRestrictionsItem(restriction, people, roles, cameras, areas, areaTypes) {
     const row = await createRestrictionRow();
 
     const mapping = {
@@ -61,13 +65,11 @@ export async function createRestrictionsItem(restriction, people, roles, cameras
     };
 
     return mapChildrenToRow(row,
-        createTextNode(restriction['id']),
         createTextNode(format_with(restriction['rule']['who'], mapping)),
         createTextNode(format_with(restriction['rule']['where'], mapping)),
         createTextNode(format_time(restriction['rule']['when'])),
         createTextNode(restriction['severity']['name']),
-        await createSaveButton(row, () => {}),
-        await createDeleteButton(row, () => {})
+        createRemoveButton(async () => await _deleteRestriction(restriction.id))
     );
 }
 

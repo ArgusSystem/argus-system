@@ -1,4 +1,5 @@
-import { createInput, createLabel, createListItem, createRemoveButton, FROM, TO, toTimestamp } from './utils.js';
+import { createInput, createLabel, createListItem, FROM, TO } from './utils.js';
+import { createRemoveButton } from '../../../../components/management.js';
 
 const TIME = 'time';
 const CHECKBOX = 'checkbox';
@@ -25,7 +26,7 @@ function createCheckboxInput(id, type) {
 export function createRepeatedTimeItem(idSalt, parentNode) {
     const li = createListItem(ID_CLASS);
 
-    li.appendChild(createRemoveButton(parentNode, li));
+    li.appendChild(createRemoveButton(() => parentNode.removeChild(li)));
 
     const startTimeId = `start-time-${idSalt}`;
     li.appendChild(createLabel(startTimeId, FROM, LABEL_CLASS));

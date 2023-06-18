@@ -1,5 +1,6 @@
 import { API_URL } from './url.js';
 import { post, remove } from './utils.js';
+import { getUsername } from '../session.js';
 
 const BASE_URL = `${API_URL}/restrictions`;
 
@@ -14,7 +15,7 @@ export function fetchRestrictions() {
 }
 
 export function insertRestriction(data) {
-    return post(BASE_URL, data)
+    return post(BASE_URL, { warden: getUsername(), restriction: data })
 		.catch(error => console.error('Failed to create restrictions!', error));
 }
 
