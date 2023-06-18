@@ -37,7 +37,7 @@ def _get_people():
     people = Person.select().order_by(Person.name).execute()
     result = list(map(lambda person: {
         'id': person.id,
-        'text': person.name,
+        'name': person.name,
         'photos': person.photos,
         'created_at': _local_time(person.created_at),
         'last_seen': _last_seen(person.id),

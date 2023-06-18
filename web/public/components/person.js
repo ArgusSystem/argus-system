@@ -158,7 +158,7 @@ export async function createPersonItem(person, roles) {
 
     mapChildrenToRow(row,
         createTextNode(person['id']),
-        createInputTextNode("person_name_input", "", person['text']),
+        createInputTextNode("person_name_input", "", person['name']),
         createInputDropdownNode("person_role_input", roles, person['role']),
         createTextNode(person['created_at']),
         createTextNode(person['last_seen'] || '-'),

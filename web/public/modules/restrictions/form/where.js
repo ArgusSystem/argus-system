@@ -1,7 +1,7 @@
-import { extractFromSelect, toSelect } from './utils.js';
 import { fetchAreas } from '../../api/areas.js';
 import { fetchAreaTypes } from '../../api/area_types.js';
 import { fetchCameras } from '../../api/cameras.js';
+import { extractFromSelect, toSelect } from '../../../components/select2.js';
 
 function getCamerasElement() {
     return $('.select-cameras');

@@ -1,6 +1,7 @@
 import { fetchPeople } from '../../api/people.js';
 import { fetchRoles } from '../../api/roles.js';
-import { extractFromSelect, toSelect } from './utils.js';
+import { extractFromSelect, toSelect } from '../../../components/select2.js';
+
 
 function getPeopleElement() {
     return $('.select-people');
@@ -44,6 +45,6 @@ export function fetchWho() {
 }
 
 export async function loadWho() {
-    await fetchPeople().then(data => getPeopleElement().select2({placeholder: 'Person', data: data}));
+    await fetchPeople().then(data => getPeopleElement().select2({placeholder: 'Person', data: toSelect(data)}));
     await fetchRoles().then(data => getRolesElement().select2({placeholder: 'Role', data: toSelect(data)}));
  }

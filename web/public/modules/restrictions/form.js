@@ -4,6 +4,7 @@ import { Tab } from '../tab.js';
 import { fetchWho, loadWho } from './form/who.js';
 import { fetchWhere, loadWhere } from './form/where.js';
 import { fetchWhen, loadWhen } from './form/when.js';
+import { insertRestriction } from '../api/restrictions.js';
 
 function getSeverityElement() {
     return document.getElementById('select-severity');
@@ -18,18 +19,18 @@ function fetchSeverity() {
     return selectValue;
 }
 
-function save() {
+async function save() {
     try {
-        const params = {
+        await insertRestriction({
             rule: {
                 who: fetchWho(),
                 where: fetchWhere(),
                 when: fetchWhen()
             },
             severity: fetchSeverity()
-        };
+        });
 
-        console.log(params);
+        redirectToTab(Tab.RESTRICTIONS);
     } catch (e) {
         alert(e.message);
     }

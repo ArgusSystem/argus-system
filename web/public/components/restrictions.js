@@ -26,8 +26,11 @@ function to_dict(array) {
 
 function format_with(node, mapping) {
     return node.map(n => {
+        if (!(n.type in mapping))
+            return n.type.toUpperCase();
+
         const type = mapping[n.type];
-        return `${type[0]}: [${n.value.map(v => type[1][v]).join(', ')}]`
+        return `${type[0]}: [${n.value.map(v => type[1][v]).join(', ')}]`;
     }).join(', ');
 }
 

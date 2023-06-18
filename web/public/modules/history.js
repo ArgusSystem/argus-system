@@ -7,6 +7,8 @@ import { createFooter } from '../components/footer.js'
 import { isSignedIn } from './session.js'
 import { Tab } from './tab.js'
 import { redirectToIndex } from './routing.js';
+import { toSelect } from '../components/select2.js';
+
 
 
 window.addEventListener('load', async () => {
@@ -20,7 +22,7 @@ window.addEventListener('load', async () => {
 		.then(data => data.forEach(camera => cameras[camera.id] = camera));
 
 	await fetchPeople()
-		.then(data => $('.select-person').select2({placeholder: "Person's name", data: data}));
+		.then(data => $('.select-person').select2({placeholder: "Person's name", data: toSelect(data)}));
 
 	loadTimeRange();
 
