@@ -1,5 +1,6 @@
 import { createInput, createLabel, createListItem, FROM, TO, toTimestamp } from './utils.js';
 import { createRemoveButton } from '../../../../components/management.js';
+import { timestampToISOString } from '../../../format.js';
 
 
 const START_DATE = 'start-date';
@@ -9,18 +10,25 @@ const DATETIME_LOCAL = 'datetime-local';
 const LABEL_CLASS = 'h6 px-3';
 const ID_CLASS = 'single-time-item';
 
-export function createSingleTimeItem(idSalt, parentNode) {
+export function createSingleTimeItem(idSalt, parentNode, restriction) {
     const li = createListItem(ID_CLASS);
 
     li.appendChild(createRemoveButton(() => parentNode.removeChild(li)));
 
     const startDateId = `${START_DATE}-${idSalt}`;
     li.appendChild(createLabel(startDateId, FROM, LABEL_CLASS));
-    li.appendChild(createInput(startDateId, DATETIME_LOCAL));
+    const inputStartDate = createInput(startDateId, DATETIME_LOCAL);
+    li.appendChild(inputStartDate);
 
     const endDateId = `${END_DATE}-${idSalt}`;
     li.appendChild(createLabel(endDateId, TO, LABEL_CLASS));
-    li.appendChild(createInput(endDateId, DATETIME_LOCAL));
+    const inputEndDate = createInput(endDateId, DATETIME_LOCAL);
+    li.appendChild(inputEndDate);
+
+    if (restriction) {
+        inputStartDate.value = timestampToISOString(restriction.start_time);
+        inputEndDate.value = timestampToISOString(restriction.end_time);
+    }
 
     return li;
 }

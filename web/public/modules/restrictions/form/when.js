@@ -28,4 +28,14 @@ export function fetchWhen() {
 export async function loadWhen(restrictions) {
     document.getElementById('new-single-time-item').onclick = () => newItem(createSingleTimeItem);
     document.getElementById('new-repeated-time-item').onclick = () => newItem(createRepeatedTimeItem);
+
+    if (restrictions) {
+        const list = getList();
+
+        restrictions.filter(restriction => restriction.type === 'single')
+            .forEach(restriction => list.appendChild(createSingleTimeItem(getRandomInt(), list, restriction.value)));
+
+        restrictions.filter(restriction => restriction.type === 'repeated')
+            .forEach(restriction => list.appendChild(createRepeatedTimeItem(getRandomInt(), list, restriction.value)));
+    }
 }

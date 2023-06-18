@@ -1,5 +1,6 @@
 import { createInput, createLabel, createListItem, FROM, TO } from './utils.js';
 import { createRemoveButton } from '../../../../components/management.js';
+import { daytimeToString } from '../../../format.js';
 
 const TIME = 'time';
 const CHECKBOX = 'checkbox';
@@ -23,25 +24,34 @@ function createCheckboxInput(id, type) {
     return input;
 }
 
-export function createRepeatedTimeItem(idSalt, parentNode) {
+export function createRepeatedTimeItem(idSalt, parentNode, restriction) {
     const li = createListItem(ID_CLASS);
 
     li.appendChild(createRemoveButton(() => parentNode.removeChild(li)));
 
     const startTimeId = `start-time-${idSalt}`;
     li.appendChild(createLabel(startTimeId, FROM, LABEL_CLASS));
-    li.appendChild(createInput(startTimeId, TIME));
+    const inputStartTime = createInput(startTimeId, TIME);
+    li.appendChild(inputStartTime);
 
     const endTimeId = `end-time-${idSalt}`;
     li.appendChild(createLabel(endTimeId, TO, LABEL_CLASS));
-    li.appendChild(createInput(endTimeId, TIME));
+    const inputEndTime = createInput(endTimeId, TIME);
+    li.appendChild(inputEndTime);
+
+    if (restriction) {
+        inputStartTime.value = daytimeToString(restriction.start_time);
+        inputEndTime.value = daytimeToString(restriction.end_time);
+    }
 
     li.appendChild(createSpace());
 
-    for (const day of SHORT_DAYS) {
+    for (const [i, day] of SHORT_DAYS.entries()) {
         const dayId = `${day}-${idSalt}`;
-        li.appendChild(createCheckboxInput(dayId, CHECKBOX));
+        const inputDay = createCheckboxInput(dayId, CHECKBOX);
+        li.appendChild(inputDay);
         li.appendChild(createLabel(dayId, day, CHECKBOX_LABEL_CLASS));
+        inputDay.checked = restriction.days.some(d => d === LONG_DAYS[i]);
     }
 
     return li;
