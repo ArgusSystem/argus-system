@@ -17,7 +17,7 @@ class Warden:
         matched_face_message: MatchedFaceMessage = decode(MatchedFaceMessage, message)
 
         with self.tracer.start_as_current_span('warden', context=get_context(matched_face_message.trace)):
-            face_id = matched_face_message.face_id
+            face_id = int(matched_face_message.face_id)
 
             warden_trace = get_trace_parent()
 

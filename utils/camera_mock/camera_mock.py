@@ -96,6 +96,7 @@ if __name__ == "__main__":
 
     # Camera loop
     frame = None
+    final_frame = 60 # float('inf')
 
     # Decimation
     i_d = 0
@@ -162,6 +163,9 @@ if __name__ == "__main__":
             i_d += 1
 
             current_cam_alias = new_cam_alias
+
+            if i_d > final_frame:
+                break
 
             if frame is None:
                 break

@@ -1,10 +1,20 @@
-from datetime import date
-
+from utils.time.src.timestamp import from_timestamp_ms
 from .factory import create
 
 START_TIME = 'start_time'
 END_TIME = 'end_time'
 DAYS = 'days'
+
+ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+
+def days_to_mask(days):
+    num = 0
+
+    for d in days:
+        num |= 1 << ALL_DAYS.index(d)
+
+    return num
 
 
 class Single:
@@ -22,14 +32,14 @@ class Repeated:
     def __init__(self, configuration):
         self.start_time = configuration[START_TIME]
         self.end_time = configuration[END_TIME]
-        self.days = configuration[DAYS]
+        self.days_mask = days_to_mask(configuration[DAYS])
 
     def match(self, timestamp):
-        datetime = date.fromtimestamp(timestamp)
-        time_tuple = datetime.timetuple()
-        time = time_tuple.tm_hour * 3600 + time_tuple.tm_min * 60 + time_tuple.tm_sec
+        dt = from_timestamp_ms(timestamp)
+        tt = dt.utctimetuple()
+        time = tt.tm_hour * 3600 + tt.tm_min * 60 + tt.tm_sec
 
-        return datetime.strftime('%A') in self.days and self.start_time <= time <= self.end_time
+        return ((1 << tt.tm_wday) & self.days_mask) > 0 and self.start_time <= time <= self.end_time
 
 
 TYPES = {

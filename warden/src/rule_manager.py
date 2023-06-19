@@ -3,7 +3,8 @@ from utils.orm.src.models import Area, Camera, Face, Person, Restriction, VideoC
 
 
 def _fetch_rules():
-    return [Rule(restriction.id, restriction.rule, restriction.last_update) for restriction in Restriction.select()]
+    return [Rule(restriction.id, restriction.rule, restriction.last_update)
+            for restriction in Restriction.select().where(~Restriction.deleted)]
 
 
 def _get_face(face_id):
