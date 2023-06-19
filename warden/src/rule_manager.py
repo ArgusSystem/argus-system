@@ -1,5 +1,9 @@
+from threading import Event, Timer
+
 from utils.metadata.src.rules import Rule
 from utils.orm.src.models import Area, Camera, Face, Person, Restriction, VideoChunk
+
+REFRESH_TIME = 10.0
 
 
 def _fetch_rules():
@@ -14,12 +18,26 @@ def _get_face(face_id):
         .get()
 
 
+def _create_timer(callback):
+    return Timer(REFRESH_TIME, callback)
+
+
 class RuleManager:
 
     def __init__(self):
         self.rules = _fetch_rules()
+        self.refresh_event = Event()
+        self._start_refresh_timer()
+
+    def _start_refresh_timer(self):
+        Timer(REFRESH_TIME, lambda: self.refresh_event.set()).start()
 
     def execute(self, face_id):
+        if self.refresh_event.is_set():
+            self.rules = _fetch_rules()
+            self.refresh_event.clear()
+            self._start_refresh_timer()
+
         face = _get_face(face_id)
 
         return map(lambda rule: rule.id,
