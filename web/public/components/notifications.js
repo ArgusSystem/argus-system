@@ -82,7 +82,7 @@ function toNotificationInformation(notification) {
         id: notification['id'],
         read: notification.read,
         severity: notification.restriction.severity,
-        text: `Persona no autorizada en ${notification['restriction']['area_type']} : ${notification['person']}`
+        text: `Persona no autorizada en ${notification['place']} : ${notification['person']}`
     }
 }
 

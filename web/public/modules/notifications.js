@@ -13,7 +13,7 @@ async function createNotificationRow(){
 }
 
 async function createNotificationHeader() {
-    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Time', 'Rule');
+    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Time', 'Restriction');
 }
 
 async function createNotificationItemRow(notification) {
