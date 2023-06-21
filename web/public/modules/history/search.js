@@ -27,12 +27,10 @@ function search(endpoint) {
 }
 
 export function loadSearchSubmit(cameras) {
-    $("#filter-form").submit(function(e) {
-        e.preventDefault();
-
+    document.getElementById('submit-filter').onclick = () => {
         const endpoint = buildURL();
         search(endpoint).then(data => {
             onSightings(cameras, data);
         });
-    });
+    };
 }

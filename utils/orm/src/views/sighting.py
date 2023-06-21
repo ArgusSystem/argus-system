@@ -1,5 +1,5 @@
 from .view import View
-from peewee import BigIntegerField, IntegerField
+from peewee import BigIntegerField, CharField, IntegerField
 
 
 class Sighting(View):
@@ -7,7 +7,7 @@ class Sighting(View):
     person_id = IntegerField()
 
     restriction_id = IntegerField()
-    severity = IntegerField()
+    severity = CharField()
 
     start_time = BigIntegerField()
     end_time = BigIntegerField()
@@ -29,7 +29,7 @@ class Sighting(View):
                         'THEN 1 END AS is_reset ' \
                         'FROM ( ' \
                             'SELECT camera.id, face.person_id,  ' \
-                            'face.timestamp AS TIMESTAMP, restriction.id as restriction_id, restrictionseverity.value AS severity ' \
+                            'face.timestamp AS TIMESTAMP, restriction.id as restriction_id, restrictionseverity.name AS severity ' \
                             'FROM face ' \
                             'LEFT JOIN videochunk ON video_chunk_id = videochunk.id ' \
                             'LEFT JOIN camera ON camera_id = camera.id ' \
