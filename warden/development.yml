@@ -5,7 +5,7 @@ consumer:
   queue: face_rule_check
 
 logging:
-  level: DEBUG
+  level: INFO
 
 tracer:
   host: argus

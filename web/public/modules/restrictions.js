@@ -1,16 +1,19 @@
-import { createNavigationBar } from '../components/navbar.js'
-import { createRestrictionsList } from './restrictions/restrictions.js'
-import { isSignedIn } from './session.js'
 import { Tab } from './tab.js'
-import { redirectToIndex } from './routing.js';
+import { loadPage } from './page.js';
+import { loadRestrictions } from '../components/restrictions.js';
+import { fetchRestrictions } from './api/restrictions.js';
+import { fetchRoles } from './api/roles.js';
+import { fetchPeople } from './api/people.js';
+import { fetchCameras } from './api/cameras.js';
+import { fetchAreas } from './api/areas.js';
+import { fetchAreaTypes } from './api/area_types.js';
 
-window.addEventListener('load', async () => {
-    if (!isSignedIn())
-        redirectToIndex();
-
-	await createNavigationBar(Tab.RESTRICTIONS);
-
-    await createRestrictionsList();
-
-    document.getElementById('cover').hidden = false;
+loadPage(Tab.RESTRICTIONS, async () => {
+    await loadRestrictions(
+        await fetchRestrictions(),
+        await fetchPeople(),
+        await fetchRoles(),
+        await fetchCameras(),
+        await fetchAreas(),
+        await fetchAreaTypes());
 });

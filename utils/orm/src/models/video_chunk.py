@@ -6,6 +6,7 @@ from ..database import db
 
 class VideoChunk(Model):
     camera = ForeignKeyField(Camera)
+    # EPOCH UTC IN MS
     timestamp = BigIntegerField()
 
     duration = DecimalField(decimal_places=3)

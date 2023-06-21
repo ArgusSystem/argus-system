@@ -1,12 +1,12 @@
 from peewee import JOIN
 
-from utils.orm.src.models import AreaType, \
-    BrokenRestriction, \
+from utils.orm.src.models import BrokenRestriction, \
     Camera, \
     Face, \
     Notification, \
     Person, \
     Restriction, \
+    RestrictionSeverity, \
     RestrictionWarden, \
     User, \
     UserPerson, \
@@ -43,19 +43,19 @@ def _join_metadata(query):
         .join(Camera, on=(VideoChunk.camera_id == Camera.id)) \
         .join(Person, JOIN.LEFT_OUTER, on=(Face.person_id == Person.id)) \
         .join(Restriction, on=(BrokenRestriction.restriction_id == Restriction.id)) \
-        .join(AreaType, on=(Restriction.area_type_id == AreaType.id))
+        .join(RestrictionSeverity, on=(Restriction.severity_id == RestrictionSeverity.id))
 
 
 def get_notification(notification_id):
     return _join_metadata(Notification
-                          .select(Notification, BrokenRestriction, Face, Person, Restriction, AreaType)) \
+                          .select(Notification, BrokenRestriction, Face, Person, Restriction)) \
         .where(Notification.id == notification_id) \
         .get()
 
 
 def get_notifications(username, count):
     return _join_metadata(Notification
-                          .select(Notification, User, BrokenRestriction, Face, Person, Restriction, AreaType)
+                          .select(Notification, User, BrokenRestriction, Face, Person, Restriction, RestrictionSeverity)
                           .join(User)) \
         .where(User.username == username) \
         .order_by(Face.timestamp.desc()) \

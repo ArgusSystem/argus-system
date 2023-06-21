@@ -1,10 +1,9 @@
 from flask import request
-from datetime import datetime
 
 from utils.orm.src import Sighting
 
 
-# Example: http://localhost:5000/history?person_id=0&from_date=31%2F10%2F2022&to_date=31%2F10%2F2022
+# Example: http://localhost:5000/history?person_id=0&from_date=1684810800000to_date=1684810800999
 def _get_history():
     person_id = request.args.get('person_id')
     from_date = request.args.get('from_date')
@@ -13,13 +12,6 @@ def _get_history():
     assert person_id
     assert from_date
     assert to_date
-
-    # Convert to epoch dates
-    day, month, year = [int(x) for x in from_date.split('/')]
-    from_date = int(datetime(year, month, day, 0, 0).timestamp()) * 1000
-
-    day, month, year = [int(x) for x in to_date.split('/')]
-    to_date = (int(datetime(year, month, day, 23, 59).timestamp()) + 60) * 1000
 
     assert from_date < to_date
 

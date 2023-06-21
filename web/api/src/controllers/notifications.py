@@ -12,8 +12,8 @@ def _format_notification(notification):
         'timestamp': notification.broken_restriction.face.timestamp,
         'place': notification.broken_restriction.face.video_chunk.camera.alias,
         'restriction': {
-            'area_type': notification.broken_restriction.restriction.area_type.name,
-            'severity': notification.broken_restriction.restriction.severity
+            'rule': notification.broken_restriction.restriction.rule,
+            'severity': notification.broken_restriction.restriction.severity.value
         }
     }
 

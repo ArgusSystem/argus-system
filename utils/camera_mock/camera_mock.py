@@ -88,14 +88,12 @@ if __name__ == "__main__":
     new_cam_alias = cam_alias[0]
     total_frames = 0
 
-    # Timestamp to Sunday, November 13, 2022 9:00:18.810 PM
-    # timestamp_start = 1668373218810
-    # Timestamp to Wednesday, February 15, 2023 4:24:31 AM
-    # timestamp_start = 1676435071000
+    # Timestamp Friday, February 24, 2023 10:37:51 AM UTC
     timestamp_start = 1677235071000
 
     # Camera loop
     frame = None
+    final_frame = 60  # float('inf')
 
     # Decimation
     i_d = 0
@@ -162,6 +160,9 @@ if __name__ == "__main__":
             i_d += 1
 
             current_cam_alias = new_cam_alias
+
+            if i_d > final_frame:
+                break
 
             if frame is None:
                 break

@@ -1,5 +1,4 @@
 import {Map} from './map.js'
-import {RESTRICTION_SEVERITY_TYPES} from '../../components/restrictions.js'
 
 
 class SightingsList {
@@ -28,20 +27,9 @@ class SightingsList {
 
         const item = document.createElement('button');
         item.setAttribute('type', 'button');
-        switch (sighting.severity) {
-            case 0:
-                item.setAttribute('class', 'list-group-item-action list-group-item-'  + RESTRICTION_SEVERITY_TYPES[0]['name']);
-                break;
-            case 1:
-                item.setAttribute('class', 'list-group-item-action list-group-item-' + RESTRICTION_SEVERITY_TYPES[1]['name']);
-                break;
-            case 2:
-                item.setAttribute('class', 'list-group-item-action list-group-item-' + RESTRICTION_SEVERITY_TYPES[2]['name']);
-                break;
-            default:
-                item.setAttribute('class', 'list-group-item-action list-group-item-light');
-        }
 
+        const color = sighting.severity ?? 'light';
+        item.setAttribute('class', `list-group-item-action list-group-item-${color}`);
 
         // Only on first item added
         if (this.activeItem === null) {

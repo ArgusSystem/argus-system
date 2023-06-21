@@ -10,3 +10,7 @@ export function redirectToTab(tab) {
 export function redirectToIndex() {
     redirect('');
 }
+
+export function reload() {
+    window.location.reload();
+}
