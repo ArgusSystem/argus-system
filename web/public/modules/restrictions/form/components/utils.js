@@ -22,7 +22,3 @@ export function createListItem(klass) {
   li.setAttribute('class', `list-group-item ${klass}`);
   return li;
 }
-
-export function toTimestamp(dateString) {
-    return Date.parse(dateString);
-}

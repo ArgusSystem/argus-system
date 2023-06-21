@@ -1,8 +1,4 @@
-from datetime import datetime
-from pytz import timezone
-
-
-TZ_ARG = timezone('America/Argentina/Buenos_Aires');
+from datetime import datetime, timezone
 
 
 def from_timestamp_ms(timestamp):
@@ -10,4 +6,4 @@ def from_timestamp_ms(timestamp):
 
 
 def from_timestamp(timestamp):
-    return datetime.fromtimestamp(timestamp, tz=TZ_ARG)
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc)

@@ -1,6 +1,6 @@
-import { createInput, createLabel, createListItem, FROM, TO, toTimestamp } from './utils.js';
+import { createInput, createLabel, createListItem, FROM, TO } from './utils.js';
 import { createRemoveButton } from '../../../../components/management.js';
-import { timestampToISOString } from '../../../format.js';
+import { timestampToISOString, toTimestamp } from '../../../format.js';
 
 
 const START_DATE = 'start-date';

@@ -88,10 +88,7 @@ if __name__ == "__main__":
     new_cam_alias = cam_alias[0]
     total_frames = 0
 
-    # Timestamp to Sunday, November 13, 2022 9:00:18.810 PM
-    # timestamp_start = 1668373218810
-    # Timestamp to Wednesday, February 15, 2023 4:24:31 AM
-    # timestamp_start = 1676435071000
+    # Timestamp Friday, February 24, 2023 10:37:51 AM UTC
     timestamp_start = 1677235071000
 
     # Camera loop

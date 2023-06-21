@@ -10,7 +10,7 @@ class VideoMetadata:
 
     def __init__(self, camera_id, duration, filepath=get_filepath):
         self.camera_id = camera_id
-        self.timestamp = time_ns() // 1_000_000
+        self.timestamp = time_ns() // 1_000_000  # EPOCH UTC IN MS
         self.filename = filepath(self.timestamp, ENCODING)
         self.encoding = ENCODING
         self.duration = duration

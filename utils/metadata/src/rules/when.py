@@ -36,7 +36,7 @@ class Repeated:
 
     def match(self, timestamp):
         dt = from_timestamp_ms(timestamp)
-        tt = dt.utctimetuple()
+        tt = dt.timetuple()
         time = tt.tm_hour * 3600 + tt.tm_min * 60 + tt.tm_sec
 
         return ((1 << tt.tm_wday) & self.days_mask) > 0 and self.start_time <= time <= self.end_time

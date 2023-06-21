@@ -6,6 +6,10 @@ export function timestampToISOString(timestamp) {
     return new Date(timestamp).toISOString().slice(0,16);
 }
 
+export function toTimestamp(dateString) {
+    return Date.parse(dateString);
+}
+
 function formatIntTwoDigits(number) {
     return number.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})
 }
