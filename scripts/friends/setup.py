@@ -1,6 +1,8 @@
 from random import uniform
 from os import listdir, path
 
+import pytz
+
 from utils.orm.src.database import connect
 from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionSeverity, \
     RestrictionWarden, UserPerson
@@ -86,9 +88,9 @@ severities = [
 ]
 
 restrictions_time = [
-    ['10:38', '10:39'],
-    ['10:51', '10:52'],
-    ['10:58', '11:02']
+    ['7:38', '7:39'],
+    ['7:51', '7:52'],
+    ['7:58', '8:02']
 ]
 
 
@@ -118,7 +120,8 @@ for i, restriction_time in enumerate(restrictions_time):
                     'value': {
                         'start_time': time_to_seconds(restriction_time[0]),
                         'end_time': time_to_seconds(restriction_time[1]),
-                        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                        'time_zone': 'America/Buenos_Aires'
                     }
                 }
             ]

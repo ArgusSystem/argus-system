@@ -13,8 +13,6 @@ from utils.orm.src.models import BrokenRestriction, \
     VideoChunk
 
 
-# TODO: Fix with new Restriction
-
 def create_notification(user_id, broken_restriction_id):
     Notification(user=user_id, broken_restriction_id=broken_restriction_id).save()
 

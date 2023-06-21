@@ -88,7 +88,8 @@ export function fetchRepeatedTimeItem() {
             value: {
                 start_time: toDaytime(times.item(0).value),
                 end_time: toDaytime(times.item(1).value),
-                days: toDayList(days)
+                days: toDayList(days),
+                time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
             }
         });
     });

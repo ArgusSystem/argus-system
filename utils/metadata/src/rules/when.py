@@ -1,8 +1,11 @@
+import pytz
+
 from utils.time.src.timestamp import from_timestamp_ms
 from .factory import create
 
 START_TIME = 'start_time'
 END_TIME = 'end_time'
+TIME_ZONE = 'time_zone'
 DAYS = 'days'
 
 ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -33,9 +36,10 @@ class Repeated:
         self.start_time = configuration[START_TIME]
         self.end_time = configuration[END_TIME]
         self.days_mask = days_to_mask(configuration[DAYS])
+        self.time_zone = pytz.timezone(configuration[TIME_ZONE])
 
     def match(self, timestamp):
-        dt = from_timestamp_ms(timestamp)
+        dt = from_timestamp_ms(timestamp, self.time_zone)
         tt = dt.timetuple()
         time = tt.tm_hour * 3600 + tt.tm_min * 60 + tt.tm_sec
 
