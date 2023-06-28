@@ -16,7 +16,7 @@ async function createPersonRow(){
 }
 
 export async function createPersonHeader() {
-    return createTableHeader(await createPersonRow(), "Id", "Name", "Role", "Created At", "Last seen",
+    return createTableHeader(await createPersonRow(), "Id", "Name", "Role", "Created At",
         "Photos", "Add Photos", "Save", "Delete");
 }
 
@@ -161,7 +161,6 @@ export async function createPersonItem(person, roles) {
         createInputTextNode("person_name_input", "", person['name']),
         createInputDropdownNode("person_role_input", roles, person['role']),
         createTextNode(person['created_at']),
-        createTextNode(person['last_seen'] || '-'),
         createAlbumButton(person, albumIcon),
         createUploadPhotoButton(person.id, addIcon),
         await createSaveButton(row, _save),
@@ -179,7 +178,6 @@ export async function createNewPersonItem(roles) {
         createTextNode('-1'),
         createInputTextNode("person_name_input", '*new person name*'),
         createInputDropdownNode("person_role_input", roles),
-        createTextNode('-'),
         createTextNode('-'),
         createTextNode('-'),
         // createUploadPhotoButton(-1, addIcon),

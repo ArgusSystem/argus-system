@@ -5,45 +5,39 @@ from zoneinfo import ZoneInfo
 from flask import send_file, request, jsonify
 import datetime
 
-from utils.orm.src import Person, Face
+from utils.orm.src import Camera, Face, Person, VideoChunk
 from scripts.train_classifier_minio.train_classifier_minio import train_model
 from peewee import IntegrityError
 
 LOCAL_DIR = gettempdir()
 
-TIME_FORMAT = '%d %b %Y %H:%M:%S'
-UTC = ZoneInfo('UTC')
-LOCAL_TIME = ZoneInfo('America/Argentina/Buenos_Aires')
-
-
-def _local_time(date):
-    return date \
-        .replace(tzinfo=UTC) \
-        .astimezone(LOCAL_TIME) \
-        .strftime(TIME_FORMAT)
-
 
 def _last_seen(person_id):
-    face = Face.select(Face.timestamp) \
+    face = Face.select(Face.timestamp, Camera.alias) \
+        .join(VideoChunk) \
+        .join(Camera) \
         .where(Face.person_id == person_id) \
         .order_by(Face.timestamp.desc()) \
         .first()
+
     if face:
-        return _local_time(datetime.datetime.fromtimestamp(face.timestamp / 1e3))
+        return {
+            'place': face.video_chunk.camera.alias,
+            'time': face.timestamp
+        }
+
     return None
 
 
 def _get_people():
-    people = Person.select().order_by(Person.name).execute()
-    result = list(map(lambda person: {
+    return [{
         'id': person.id,
         'name': person.name,
         'photos': person.photos,
-        'created_at': _local_time(person.created_at),
+        'created_at': person.created_at,
         'last_seen': _last_seen(person.id),
         'role': person.role.name
-    }, people))
-    return result
+    } for person in Person.select().order_by(Person.name)]
 
 
 def _update_person(person_id, name, role_id):
