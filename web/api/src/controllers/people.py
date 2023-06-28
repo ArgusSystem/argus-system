@@ -43,6 +43,7 @@ def _get_people():
         'last_seen': _last_seen(person.id),
         'role': person.role.name
     }, people))
+    print(result)
     return result
 
 
