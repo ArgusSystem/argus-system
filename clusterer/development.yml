@@ -1,0 +1,18 @@
+consumer:
+  host: argus
+  username: argus
+  password: panoptes
+  queue: unknown_faces
+db:
+  database: argus
+  host: argus
+  port: 5432
+  user: argus
+  password: panoptes
+tracer:
+  host: argus
+  port: 6831
+faces_batch_size: 50
+skip_outliers: True
+logging:
+  level: INFO

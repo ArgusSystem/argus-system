@@ -26,7 +26,7 @@ export function setUpDisplay(camera, videoInterpolator) {
             let name = face_data.name;
             if (!face_data.is_match) {
                 color = 'red';
-                name = 'unknown';
+                //name = 'unknown';
             }
 
             // Define rectangle points, width and height

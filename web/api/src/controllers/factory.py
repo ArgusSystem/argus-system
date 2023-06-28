@@ -11,6 +11,8 @@ from .areas import AreasController
 from .restrictions import RestrictionsController
 from .restriction_severity import RestrictionSeveritiesController
 from .users import UsersController
+from .unknown_clusters import UnknownClustersController
+from .faces import FacesController
 
 
 class ControllersFactory:
@@ -30,5 +32,7 @@ class ControllersFactory:
             NotificationsController,
             RestrictionsController,
             RestrictionSeveritiesController,
-            UsersController
+            UsersController,
+            UnknownClustersController,
+            FacesController(self.storage_factory.new(StorageType.FRAME_FACES))
         ]

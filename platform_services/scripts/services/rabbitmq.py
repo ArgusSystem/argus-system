@@ -13,6 +13,7 @@ class RabbitMQService:
                 'published_video_chunks',
                 'frames',
                 'faces',
+                'unknown_faces',
                 'published_detected_faces',
                 'face_rule_check',
                 'broken_rules'
