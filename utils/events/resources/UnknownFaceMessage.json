@@ -1,0 +1,22 @@
+{
+  "namespace": "argus",
+  "type": "record",
+  "name": "unknown_face",
+  "fields": [
+    {
+      "name": "face_id",
+      "type": "string"
+    },
+    {
+      "name": "embedding",
+      "type": {
+        "type": "array",
+        "items": "float"
+      }
+    },
+    {
+      "name": "trace",
+      "type": "string"
+    }
+  ]
+}
