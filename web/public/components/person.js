@@ -10,6 +10,7 @@ import {
     createSaveButton,
     fetchHTMLElement
 } from "./utils.js";
+import { getPersonPhotoURL } from '../modules/api/people.js';
 
 async function createPersonRow(){
     return await fetchHTMLElement('components/table_rows/person.html');
@@ -25,7 +26,7 @@ function createSlideshowItem(person, photo) {
     item.setAttribute('class', 'carousel-item');
 
     const img = document.createElement('img');
-    img.setAttribute('src', `${API_URL}/people/${person.id}/photos/${photo}`);
+    img.setAttribute('src', getPersonPhotoURL(person.id, photo));
     img.setAttribute('alt', person.text);
     img.setAttribute('class', 'm-auto w-auto d-block');
 

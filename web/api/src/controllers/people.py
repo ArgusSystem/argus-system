@@ -1,19 +1,17 @@
 from os import path
 from tempfile import gettempdir
-from zoneinfo import ZoneInfo
 
-from flask import send_file, request, jsonify
-import datetime
-
-from utils.orm.src import Camera, Face, Person, VideoChunk
-from scripts.train_classifier_minio.train_classifier_minio import train_model
+from flask import jsonify, request, send_file
 from peewee import IntegrityError
+
+from scripts.train_classifier_minio.train_classifier_minio import train_model
+from utils.orm.src import Camera, Face, Person, VideoChunk
 
 LOCAL_DIR = gettempdir()
 
 
 def _last_seen(person_id):
-    face = Face.select(Face.timestamp, Camera.alias) \
+    face = Face.select(Face.id, Face.offset, Face.timestamp, VideoChunk.timestamp, Camera.alias) \
         .join(VideoChunk) \
         .join(Camera) \
         .where(Face.person_id == person_id) \
@@ -23,7 +21,8 @@ def _last_seen(person_id):
     if face:
         return {
             'place': face.video_chunk.camera.alias,
-            'time': face.timestamp
+            'time': face.timestamp,
+            'url': f'{face.video_chunk.camera.alias}-{face.video_chunk.timestamp}-{face.offset}'
         }
 
     return None
@@ -63,12 +62,14 @@ def _delete_person(person_id):
 
 class PeopleController:
 
-    def __init__(self, people_storage):
+    def __init__(self, people_storage, frames_storage):
         self.people_storage = people_storage
+        self.frames_storage = frames_storage
 
     def make_routes(self, app):
         app.route('/people')(_get_people)
         app.route('/people/<person_id>/photos/<photo>')(self._get_photo)
+        app.route('/people/last_seen/<photo_id>')(self._get_last_seen_photo)
         app.route('/people/<person_id>/<name>/<role_id>', methods=["POST"])(_update_person)
         app.route('/people/<person_id>/photos', methods=["POST"])(self._add_person_photo)
         app.route('/people/<person_id>', methods=["DELETE"])(_delete_person)
@@ -81,6 +82,12 @@ class PeopleController:
         self.people_storage.fetch(photo, filepath)
 
         return send_file(filepath, mimetype=f'image/{mime}')
+
+    def _get_last_seen_photo(self, photo_id):
+        filepath = path.join(LOCAL_DIR, photo_id)
+        self.frames_storage.fetch(photo_id, filepath)
+
+        return send_file(filepath, mimetype=f'image/jpg')
 
     def _add_person_photo(self, person_id):
         # If person id is -1, create new person
