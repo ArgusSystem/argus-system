@@ -25,7 +25,8 @@ class ControllersFactory:
         return [
             CameraController(self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             HistoryController,
-            PeopleController(self.storage_factory.new(StorageType.PEOPLE)),
+            PeopleController(self.storage_factory.new(StorageType.PEOPLE),
+                             self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             RolesController(),
             AreaTypesController(),
             AreasController(),

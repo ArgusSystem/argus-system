@@ -10,13 +10,14 @@ import {
     createSaveButton,
     fetchHTMLElement
 } from "./utils.js";
+import { getPersonPhotoURL } from '../modules/api/people.js';
 
 async function createPersonRow(){
     return await fetchHTMLElement('components/table_rows/person.html');
 }
 
 export async function createPersonHeader() {
-    return createTableHeader(await createPersonRow(), "Id", "Name", "Role", "Created At", "Last seen",
+    return createTableHeader(await createPersonRow(), "Id", "Name", "Role", "Created At",
         "Photos", "Add Photos", "Save", "Delete");
 }
 
@@ -25,7 +26,7 @@ function createSlideshowItem(person, photo) {
     item.setAttribute('class', 'carousel-item');
 
     const img = document.createElement('img');
-    img.setAttribute('src', `${API_URL}/people/${person.id}/photos/${photo}`);
+    img.setAttribute('src', getPersonPhotoURL(person.id, photo));
     img.setAttribute('alt', person.text);
     img.setAttribute('class', 'm-auto w-auto d-block');
 
@@ -161,7 +162,6 @@ export async function createPersonItem(person, roles) {
         createInputTextNode("person_name_input", "", person['name']),
         createInputDropdownNode("person_role_input", roles, person['role']),
         createTextNode(person['created_at']),
-        createTextNode(person['last_seen'] || '-'),
         createAlbumButton(person, albumIcon),
         createUploadPhotoButton(person.id, addIcon),
         await createSaveButton(row, _save),
@@ -179,7 +179,6 @@ export async function createNewPersonItem(roles) {
         createTextNode('-1'),
         createInputTextNode("person_name_input", '*new person name*'),
         createInputDropdownNode("person_role_input", roles),
-        createTextNode('-'),
         createTextNode('-'),
         createTextNode('-'),
         // createUploadPhotoButton(-1, addIcon),
