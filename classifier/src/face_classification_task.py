@@ -3,6 +3,7 @@ from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.face_message import FaceMessage
 from utils.events.src.messages.detected_face_message import DetectedFaceMessage
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
+from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from utils.events.src.messages.helper import get_camera_id, get_timestamp
 from .face_classifier_factory import FaceClassifierFactory
@@ -26,6 +27,7 @@ class FaceClassificationTask:
                  face_embedder_configuration,
                  publisher_to_web_configuration,
                  publisher_to_warden_configuration,
+                 publisher_to_clusterer_configuration,
                  storage_configuration,
                  tracer_configuration):
 
@@ -39,6 +41,7 @@ class FaceClassificationTask:
 
         self.publisher_to_web = Publisher.new(**publisher_to_web_configuration)
         self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
+        self.publisher_to_clusterer = Publisher.new(**publisher_to_clusterer_configuration)
         self.face_storage = StorageFactory(**storage_configuration).new(StorageType.FRAME_FACES)
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-classifier')
 
@@ -80,6 +83,7 @@ class FaceClassificationTask:
                                                        int(get_timestamp(face_message.video_chunk_id))),
                             offset=face_message.offset,
                             timestamp=face_message.timestamp,
+                            face_num=face_message.face_num,
                             person=face_id,
                             bounding_box=face_message.bounding_box,
                             probability=classification_probability,
@@ -99,8 +103,16 @@ class FaceClassificationTask:
                                                             is_match=is_match,
                                                             trace=face_message.trace)
                 self.publisher_to_web.publish(encode(detected_face_message))
+
+                # Queue face data for warden rules processing
                 if is_match:
                     matched_face_message = MatchedFaceMessage(face_id=str(face.id), trace=face_message.trace)
                     self.publisher_to_warden.publish(encode(matched_face_message))
+
+                # Queue face data for unknown face clustering
+                else:
+                    unknown_face_message = UnknownFaceMessage(face_id=str(face.id), embedding=embedding,
+                                                              trace=face_message.trace)
+                    self.publisher_to_clusterer.publish(encode(unknown_face_message))
 
         logger.info("Finished - %s, found: %s with prob: %.2f", face_message, name, classification_probability)

@@ -1,0 +1,7 @@
+-r ../utils/application/requirements.txt
+-r ../utils/events/requirements.txt
+-r ../utils/tracing/requirements.txt
+-r ../utils/orm/requirements.txt
+numpy
+hdbscan
+

@@ -36,6 +36,13 @@ publisher_summarizer:
   exchange: argus
   routing_key: face_rule_check
 
+publisher_clusterer:
+  host: argus
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: unknown_faces
+
 logging:
   level: DEBUG
 

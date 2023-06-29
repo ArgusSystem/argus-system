@@ -10,6 +10,7 @@ class Face(Model):
     video_chunk = ForeignKeyField(VideoChunk, backref='faces')
     offset = IntegerField()
     timestamp = BigIntegerField()
+    face_num = IntegerField()
 
     person = ForeignKeyField(Person, null=True)
     bounding_box = ArrayField(IntegerField, default=[])
