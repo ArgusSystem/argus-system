@@ -1,20 +1,20 @@
-from flask import jsonify
+from peewee import fn
 
-from utils.orm.src import UnknownClusterWithFaces
+from utils.orm.src.models import UnknownFace
 
 
 def _get_unknown_clusters():
-    unknown_clusters = UnknownClusterWithFaces.select().execute()
-    result = list(map(lambda cluster: {
-        'id': cluster.id,
-        'faces': cluster.faces
-    }, unknown_clusters))
-    print(result)
-    return result
+    return [{
+        'id': face.cluster_id,
+        'faces_count': face.faces_count
+    } for face in UnknownFace
+        .select(UnknownFace.cluster_id, fn.COUNT(UnknownFace.face_id).alias('faces_count'))
+        .group_by(UnknownFace.cluster_id)
+        .order_by(UnknownFace.cluster_id.desc())]
 
 
 class UnknownClustersController:
 
     @staticmethod
     def make_routes(app):
-        app.route('/unknownclusters')(_get_unknown_clusters)
+        app.route('/unknown_clusters')(_get_unknown_clusters)
