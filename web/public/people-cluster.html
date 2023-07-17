@@ -18,14 +18,51 @@
   <div hidden id="cover">
     <div id="navigation-bar"></div>
 
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-detail" aria-labelledby="offcanvas-label">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvas-label"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="d-flex justify-content-center">
+          <img id="face-image" src="data:," alt="detail-face">
+        </div>
+
+        <div class="my-3">
+          <h6 > Location </h6>
+          <span id="face-location"></span>
+        </div>
+
+
+        <div class="my-3">
+          <h6> Time </h6>
+          <span id="face-time"> </span>
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar bg-light">
       <div class="container-fluid">
         <span id="clusterId" class="navbar-brand mb-0 h1"></span>
       </div>
     </nav>
 
+    <div class="container-fluid my-4">
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary btn-lg">Select all</button>
+
+        <div class="dropdown">
+          <button class="btn btn-primary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Re-tag as
+          </button>
+          <ul id="tagging-options" class="dropdown-menu">
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="container-fluid py-2">
-      <div id="face-grid" class="row row-cols-auto">
+      <div id="face-grid" class="row row-cols-auto g-2">
       </div>
     </div>
 

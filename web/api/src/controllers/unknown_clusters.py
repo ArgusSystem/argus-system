@@ -22,7 +22,9 @@ def _get_unknown_clusters():
 
 def _get_cluster_faces(cluster_id):
     return [{
-        'face_id': unknown_face.face.id,
+        'id': unknown_face.face.id,
+        'camera': unknown_face.face.video_chunk.camera.alias,
+        'timestamp': unknown_face.face.video_chunk.timestamp,
         'url': '-'.join([unknown_face.face.video_chunk.camera.alias,
                          str(unknown_face.face.video_chunk.timestamp),
                          str(unknown_face.face.offset),
