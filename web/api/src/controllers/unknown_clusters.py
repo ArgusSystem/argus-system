@@ -39,9 +39,21 @@ def _get_cluster_faces(cluster_id):
     .where(UnknownCluster.id == cluster_id)]
 
 
+def _re_tag(cluster_id):
+    data = request.json
+
+
+
+    print(cluster_id)
+    print(data['person'])
+    print(data['faces'])
+
+    return "Success"
+
 class UnknownClustersController:
 
     @staticmethod
     def make_routes(app):
         app.route('/unknown_clusters')(_get_unknown_clusters)
         app.route('/unknown_clusters/<cluster_id>/faces')(_get_cluster_faces)
+        app.route('/unknown_clusters/<cluster_id>/re_tag', methods=['POST'])(_re_tag)

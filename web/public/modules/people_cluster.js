@@ -3,31 +3,15 @@ import { Tab } from './tab.js';
 import { params } from './api/params.js';
 import { createFaces } from '../components/unknown_faces.js';
 import { fetchClusterFaces } from './api/unknown_clusters.js';
-import { fetchPeople } from './api/people.js';
+import { loadReTaggingOptions } from './unknown_clusters/re_tagging.js';
 
-function createDropdownOption(element, person) {
-    const li = document.createElement('li');
-    li.classList.add('dropdown-item')
-    li.innerText = person.name;
-    element.appendChild(li);
-}
-
-function getFaceGridCheckboxes() {
-    return document.getElementById('face-grid').querySelectorAll('input[type=checkbox]');
-}
 
 loadPage(Tab.PEOPLE, async () => {
     const clusterId = params.id;
 
     document.getElementById('clusterId').innerText = `Clusters >> ${clusterId}`;
 
-    const optionList = document.getElementById('tagging-options');
-    (await fetchPeople()).forEach(person => createDropdownOption(optionList, person));
     await createFaces(await fetchClusterFaces(clusterId));
 
-     document.getElementById('select-all-faces').onclick = () => getFaceGridCheckboxes()
-         .forEach(e => e.checked = true);
-
-     document.getElementById('clear-faces').onclick = () => getFaceGridCheckboxes()
-         .forEach(e => e.checked = false);
+    await loadReTaggingOptions(clusterId);
 });

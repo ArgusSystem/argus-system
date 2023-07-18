@@ -14,10 +14,15 @@ async function createUnknownFace(face){
     const url = `${API_URL}/faces/${face.url}`
 
     element.querySelector('img').src = url;
+
     const checkboxId = `checkbox-${face.id}`;
-    element.querySelector('input').id = checkboxId;
+    const checkbox = element.querySelector('input');
+    checkbox.id = checkboxId;
+    checkbox.value = face.id;
     element.querySelector('label').setAttribute('for', checkboxId);
+
     element.onclick = () => updateOffcanvas(face.id, url, face.camera, face.timestamp);
+
     return element;
 }
 
