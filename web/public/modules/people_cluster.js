@@ -12,6 +12,10 @@ function createDropdownOption(element, person) {
     element.appendChild(li);
 }
 
+function getFaceGridCheckboxes() {
+    return document.getElementById('face-grid').querySelectorAll('input[type=checkbox]');
+}
+
 loadPage(Tab.PEOPLE, async () => {
     const clusterId = params.id;
 
@@ -20,4 +24,10 @@ loadPage(Tab.PEOPLE, async () => {
     const optionList = document.getElementById('tagging-options');
     (await fetchPeople()).forEach(person => createDropdownOption(optionList, person));
     await createFaces(await fetchClusterFaces(clusterId));
+
+     document.getElementById('select-all-faces').onclick = () => getFaceGridCheckboxes()
+         .forEach(e => e.checked = true);
+
+     document.getElementById('clear-faces').onclick = () => getFaceGridCheckboxes()
+         .forEach(e => e.checked = false);
 });
