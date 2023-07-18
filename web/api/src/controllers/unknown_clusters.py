@@ -1,6 +1,7 @@
-from flask import request
+from flask import jsonify, request
 from peewee import fn
 
+from utils.orm.src.database import db
 from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace
 
 
@@ -42,13 +43,19 @@ def _get_cluster_faces(cluster_id):
 def _re_tag(cluster_id):
     data = request.json
 
+    with db.atomic() as txn:
+        Face.update(person_id=data['person']) \
+            .where(Face.id.in_(data['faces'])) \
+            .execute()
 
+        UnknownFace.delete() \
+            .where(UnknownFace.face_id.in_(data['faces'])) \
+            .execute()
 
-    print(cluster_id)
-    print(data['person'])
-    print(data['faces'])
+        txn.commit()
 
-    return "Success"
+    return jsonify(success=True)
+
 
 class UnknownClustersController:
 

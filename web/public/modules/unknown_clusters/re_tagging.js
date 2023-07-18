@@ -1,5 +1,6 @@
 import { fetchPeople } from '../api/people.js';
 import { reTagFaces } from '../api/unknown_clusters.js';
+import { reload } from '../routing.js';
 
 function getSelectedFaces() {
     const faces = [];
@@ -18,7 +19,10 @@ function createDropdownOption(element, clusterId, person) {
     const li = document.createElement('li');
     li.classList.add('dropdown-item')
     li.innerText = person.name;
-    li.onclick = async () => await reTag(clusterId, person);
+    li.onclick = async () => {
+        await reTag(clusterId, person);
+        reload()
+    };
     element.appendChild(li);
 }
 
