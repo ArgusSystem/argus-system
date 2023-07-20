@@ -7,6 +7,7 @@ const NOOP_FUNCTION = () => {};
 
 export class Page {
     static CLUSTER = 'people-cluster.html';
+    static CLUSTERS_LIST = 'people-unknown-faces.html';
     static NOTIFICATION = 'notification.html';
     static RESTRICTION = 'restriction.html';
 }

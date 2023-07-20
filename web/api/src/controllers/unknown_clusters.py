@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from peewee import fn
+from peewee import IntegrityError, fn
 
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
@@ -59,7 +59,7 @@ class UnknownClustersController:
         data = request.json
 
         # Update database
-        with db.atomic() as txn:
+        with db.transaction() as txn:
             Face.update(person_id=data['person']) \
                 .where(Face.id.in_(data['faces'])) \
                 .execute()
@@ -69,6 +69,13 @@ class UnknownClustersController:
                 .execute()
 
             txn.commit()
+
+            try:
+                UnknownCluster.delete() \
+                    .where(UnknownCluster.id == cluster_id) \
+                    .execute()
+            except IntegrityError:
+                txn.rollback()
 
         # Send faces to warden
         with self.tracer.start_as_current_span(f'cluster-{cluster_id}-re-tag'):
