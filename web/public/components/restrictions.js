@@ -4,11 +4,11 @@ import {
     createTableHeader,
     fetchHTMLElement,
 } from "./utils.js";
-import { daytimeToString, timestampToString } from '../modules/format.js';
 import { redirect, reload } from '../modules/routing.js';
 import { createRemoveButton, createUpdateButton } from './management.js';
 import { deleteRestriction } from '../modules/api/restrictions.js';
 import { RuleContext } from '../modules/rule.js';
+import { Page } from '../modules/page.js';
 
 async function createRestrictionRow(){
     return await fetchHTMLElement('components/table_rows/restriction.html');
@@ -19,7 +19,7 @@ async function createRestrictionsHeader() {
 }
 
 function redirectToRestriction(params={}) {
-    redirect('restriction.html', params);
+    redirect(Page.RESTRICTION, params);
 }
 
 function _deleteRestriction(id) {

@@ -17,9 +17,11 @@ from .faces import FacesController
 
 class ControllersFactory:
 
-    def __init__(self, db_configuration, storage_configuration):
+    def __init__(self, db_configuration, publisher_configuration, storage_configuration, tracer):
         connect(**db_configuration)
+        self.publisher_configuration = publisher_configuration
         self.storage_factory = StorageFactory(**storage_configuration)
+        self.tracer = tracer
 
     def all(self):
         return [
@@ -34,6 +36,6 @@ class ControllersFactory:
             RestrictionsController,
             RestrictionSeveritiesController,
             UsersController,
-            UnknownClustersController,
+            UnknownClustersController(self.publisher_configuration, self.tracer),
             FacesController(self.storage_factory.new(StorageType.FRAME_FACES))
         ]

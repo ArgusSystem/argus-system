@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang='en'>
+<meta charset="UTF-8">
+<head>
+  <title>Argus</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+  <!-- Font Awesome-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Load page -->
+  <script type='module' src="./modules/people_cluster.js"></script>
+</head>
+<body class="bg-dark">
+  <div hidden id="cover">
+    <div id="navigation-bar"></div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-detail" aria-labelledby="offcanvas-label">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvas-label"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="d-flex justify-content-center">
+          <img id="face-image" src="data:," alt="detail-face">
+        </div>
+
+        <div class="my-3">
+          <h6 > Location </h6>
+          <span id="face-location"></span>
+        </div>
+
+
+        <div class="my-3">
+          <h6> Time </h6>
+          <span id="face-time"> </span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="navbar bg-light">
+      <div class="container-fluid">
+        <span id="clusterId" class="navbar-brand mb-0 h1"></span>
+      </div>
+    </nav>
+
+    <div class="container-fluid my-4">
+      <div class="d-flex justify-content-between">
+        <div>
+          <button id="select-all-faces" type="button" class="btn btn-secondary btn-lg mx-2">Select all</button>
+          <button id="clear-faces" type="button" class="btn btn-danger btn-lg mx-2">Clear</button>
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-primary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Re-tag as
+          </button>
+          <ul id="tagging-options" class="dropdown-menu">
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid py-2">
+      <div id="face-grid" class="row row-cols-auto g-2">
+      </div>
+    </div>
+
+    <div id="footer"></div>
+  </div>
+</body>
+</html>

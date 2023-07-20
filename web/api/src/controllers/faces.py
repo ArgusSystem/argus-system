@@ -13,11 +13,10 @@ class FacesController:
 
     def _get_face(self, face):
         filepath = path.join(LOCAL_DIR, face)
-        mime = "jpg"
 
         self.faces_storage.fetch(face, filepath)
 
-        return send_file(filepath, mimetype=f'image/{mime}')
+        return send_file(filepath, mimetype=f'image/jpg')
 
     def make_routes(self, app):
         app.route('/faces/<face>')(self._get_face)
