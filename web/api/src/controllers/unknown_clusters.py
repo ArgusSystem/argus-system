@@ -1,8 +1,12 @@
 from flask import jsonify, request
 from peewee import fn
 
+from utils.events.src.message_clients.rabbitmq import Publisher
+from utils.events.src.messages.marshalling import encode
+from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.orm.src.database import db
 from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace
+from utils.tracing.src.tracer import get_trace_parent, set_span_in_context
 
 
 def _get_unknown_clusters():
@@ -40,27 +44,38 @@ def _get_cluster_faces(cluster_id):
     .where(UnknownCluster.id == cluster_id)]
 
 
-def _re_tag(cluster_id):
-    data = request.json
-
-    with db.atomic() as txn:
-        Face.update(person_id=data['person']) \
-            .where(Face.id.in_(data['faces'])) \
-            .execute()
-
-        UnknownFace.delete() \
-            .where(UnknownFace.face_id.in_(data['faces'])) \
-            .execute()
-
-        txn.commit()
-
-    return jsonify(success=True)
-
-
 class UnknownClustersController:
 
-    @staticmethod
-    def make_routes(app):
+    def __init__(self, publisher_configuration, tracer):
+        self.publisher = Publisher.new(**publisher_configuration)
+        self.tracer = tracer
+
+    def make_routes(self, app):
         app.route('/unknown_clusters')(_get_unknown_clusters)
         app.route('/unknown_clusters/<cluster_id>/faces')(_get_cluster_faces)
-        app.route('/unknown_clusters/<cluster_id>/re_tag', methods=['POST'])(_re_tag)
+        app.route('/unknown_clusters/<cluster_id>/re_tag', methods=['POST'])(self._re_tag)
+
+    def _re_tag(self, cluster_id):
+        data = request.json
+
+        # Update database
+        with db.atomic() as txn:
+            Face.update(person_id=data['person']) \
+                .where(Face.id.in_(data['faces'])) \
+                .execute()
+
+            UnknownFace.delete() \
+                .where(UnknownFace.face_id.in_(data['faces'])) \
+                .execute()
+
+            txn.commit()
+
+        # Send faces to warden
+        with self.tracer.start_as_current_span(f'cluster-{cluster_id}-re-tag'):
+            trace = get_trace_parent()
+
+            for face_id in data['faces']:
+                with self.tracer.start_as_current_span(face_id):
+                    self.publisher.publish(encode(MatchedFaceMessage(face_id=face_id, trace=trace)))
+
+        return jsonify(success=True)
