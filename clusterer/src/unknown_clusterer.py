@@ -1,8 +1,10 @@
 from logging import getLogger
 
+from utils.events.src.message_clients.rabbitmq import Publisher
+from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
-from utils.events.src.messages.marshalling import decode
-from utils.tracing.src.tracer import get_context, get_tracer
+from utils.events.src.messages.marshalling import decode, encode
+from utils.tracing.src.tracer import get_context, get_trace_parent, get_tracer
 import hdbscan
 import numpy as np
 from utils.orm.src.models import UnknownCluster, UnknownFace
@@ -12,9 +14,9 @@ logger = getLogger(__name__)
 
 class UnknownFacesClusterer:
 
-    def __init__(self, faces_batch_size, skip_outliers, tracer_configuration):
-
+    def __init__(self, faces_batch_size, skip_outliers, publisher_configuration, tracer_configuration):
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-clusterer')
+        self.publisher = Publisher.new(**publisher_configuration)
 
         self.faces_batch = []
         self.faces_batch_size = faces_batch_size
@@ -60,11 +62,16 @@ class UnknownFacesClusterer:
                         cluster = UnknownCluster()
                         cluster.save()
 
-                        # insert new unknown face record for each face in this cluster
                         for i in batch_idxs:
                             face_id = self.faces_batch[i].face_id
-                            unknown_face = UnknownFace(cluster=cluster.id, face=face_id)
-                            unknown_face.save()
+
+                            with self.tracer.start_as_current_span(face_id):
+                                # insert new unknown face record for each face in this cluster
+                                UnknownFace(cluster=cluster.id, face=face_id).save()
+
+                                # Send event to warden
+                                trace = get_trace_parent()
+                                self.publisher.publish(encode(MatchedFaceMessage(face_id=face_id, trace=trace)))
 
                 self.faces_batch.clear()
 
