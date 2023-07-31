@@ -51,7 +51,9 @@ export function createRepeatedTimeItem(idSalt, parentNode, restriction) {
         const inputDay = createCheckboxInput(dayId, CHECKBOX);
         li.appendChild(inputDay);
         li.appendChild(createLabel(dayId, day, CHECKBOX_LABEL_CLASS));
-        inputDay.checked = restriction.days.some(d => d === LONG_DAYS[i]);
+
+        if (restriction)
+            inputDay.checked = restriction.days.some(d => d === LONG_DAYS[i]);
     }
 
     return li;

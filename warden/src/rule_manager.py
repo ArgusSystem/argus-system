@@ -41,8 +41,8 @@ class RuleManager:
         face = _get_face(face_id)
 
         return map(lambda rule: rule.id,
-                   filter(lambda rule: rule.match(person=face.person.id,
-                                                  role=face.person.role_id,
+                   filter(lambda rule: rule.match(person=face.person.id if face.is_match else None,
+                                                  role=face.person.role_id if face.is_match else None,
                                                   camera=face.video_chunk.camera.id,
                                                   area=face.video_chunk.camera.area.id,
                                                   area_type=face.video_chunk.camera.area.type_id,

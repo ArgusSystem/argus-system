@@ -43,7 +43,7 @@ def _insert_restriction():
             .execute()
 
         for user_person in user_people:
-            RestrictionWarden.insert(restriction_id=restriction_id, role_id=user_person.person.role_id)
+            RestrictionWarden.insert(restriction_id=restriction_id, role_id=user_person.person.role_id).execute()
 
     return str(restriction_id)
 

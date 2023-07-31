@@ -12,7 +12,7 @@ def get_sighting_for(face_id, restriction_id):
                             Sighting.restriction,
                             Sighting.start_time,
                             Sighting.end_time)
-            .join(cte, on=((Sighting.person == cte.c.person) & (Sighting.matched == cte.c.matched)))
+            .join(cte, on=((Sighting.person == cte.c.person) & (Sighting.matched == cte.c.is_match)))
             .where((Sighting.restriction == restriction_id) &
                    (Sighting.start_time <= cte.c.timestamp) &
                    (Sighting.end_time >= cte.c.timestamp))
@@ -21,7 +21,8 @@ def get_sighting_for(face_id, restriction_id):
 
 
 def _get_person(face_id):
-    return (Face.select(fn.COALESCE(Face.person_id, UnknownFace.cluster_id), Face.timestamp, UnknownFace.id.is_null())
+    return (Face.select(fn.COALESCE(Face.person_id, UnknownFace.cluster_id).alias('person'),
+                        Face.timestamp, Face.is_match)
             .where(Face.id == face_id)
             .join(UnknownFace, JOIN.LEFT_OUTER)
-            .cte('target', columns=('person', 'timestamp', 'matched')))
+            .cte('target', columns=('person', 'timestamp', 'is_match')))

@@ -3,4 +3,5 @@ VALUE = 'value'
 
 
 def create(types, node):
-    return types[node[TYPE]](node[VALUE])
+    value = node[VALUE] if VALUE in node else None
+    return types[node[TYPE]](value)
