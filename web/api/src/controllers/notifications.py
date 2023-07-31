@@ -3,14 +3,18 @@ from flask import jsonify, request
 from utils.metadata.src.repository.notifications import count_notifications, get_notification, get_notifications, \
     mark_notification_read
 
+UNKNOWN = 'UNKNOWN'
+
 
 def _format_notification(notification):
+    face = notification.broken_restriction.face
+
     return {
         'id': notification.id,
         'read': notification.read,
-        'person': notification.broken_restriction.face.person.name,
-        'timestamp': notification.broken_restriction.face.timestamp,
-        'place': notification.broken_restriction.face.video_chunk.camera.alias,
+        'person': face.person.name if face.is_match else UNKNOWN,
+        'timestamp': face.timestamp,
+        'place': face.video_chunk.camera.alias,
         'restriction': {
             'rule': notification.broken_restriction.restriction.rule,
             'severity': notification.broken_restriction.restriction.severity.value

@@ -14,5 +14,11 @@ tracer:
   port: 6831
 faces_batch_size: 50
 skip_outliers: True
+publisher:
+  host: argus
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: face_rule_check
 logging:
   level: INFO

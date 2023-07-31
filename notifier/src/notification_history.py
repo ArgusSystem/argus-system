@@ -3,7 +3,7 @@ from math import inf
 
 
 def _get_key(sighting):
-    return sighting.person_id, sighting.restriction_id
+    return sighting.person, sighting.matched, sighting.restriction
 
 
 def intersect(a, b):

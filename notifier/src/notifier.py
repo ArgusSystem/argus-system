@@ -32,5 +32,7 @@ class Notifier:
         with self.tracer.start_as_current_span('notifier', context=get_context(broken_restriction_message.trace_id)):
             history_entry = self.notification_history.update(sighting)
 
-            _notify(get_offenders(face_id), history_entry, broken_restriction_id)
+            if sighting.matched:
+                _notify(get_offenders(sighting.person), history_entry, broken_restriction_id)
+
             _notify(get_wardens(restriction_id), history_entry, broken_restriction_id)
