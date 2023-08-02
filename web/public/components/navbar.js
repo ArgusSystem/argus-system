@@ -1,8 +1,8 @@
 import { createLink } from './link.js';
 import { fetchHTMLElement } from './utils.js';
-import { Tab } from '../modules/tab.js'
-import { getUsername, signOut } from '../modules/session.js'
-import { createNotificationDropdown } from './notifications.js'
+import { Tab } from '../modules/tab.js';
+import { getUsername, signOut } from '../modules/session.js';
+import { createNotificationDropdown } from './notifications.js';
 
 
 async function addTabs(activeTab) {
