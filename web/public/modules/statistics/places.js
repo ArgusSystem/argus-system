@@ -1,40 +1,28 @@
 import { fetchCameras } from '../api/cameras.js';
+import { createHeader, createRow, setActiveRow } from '../../components/table.js';
+import { Map } from '../../components/map.js';
 
-
-const HEADERS = ['Name', 'Area'];
-
-const COL = 'col';
-const ROW = 'row';
-
-function tr() {
-    return document.createElement('tr');
-}
-
-function th(text, scope) {
-    const th = document.createElement('th');
-    th.setAttribute('scope', scope);
-    th.innerText = text;
-    return th;
-}
-
-function td(text) {
-    const td = document.createElement('td');
-    td.innerText = text;
-    return td;
-}
+const HEADERS = ['Camera', 'Area'];
 
 export async function loadPlaces() {
-    const headerNode = document.querySelector('thead');
-    const headerTr = tr();
-    headerNode.appendChild(headerTr)
-    HEADERS.forEach(header => headerTr.appendChild(th(header, COL)));
+    const table = document.querySelector('table');
 
-    const bodyNode = document.querySelector('tbody');
+    createHeader(table, HEADERS);
+
     const cameras = await fetchCameras();
-    cameras.forEach(camera => {
-        const trNode = tr();
-        bodyNode.appendChild(trNode);
-        trNode.appendChild(th(camera.name, ROW));
-        trNode.appendChild(td(camera.area));
+    const map = new Map();
+    map.init();
+
+    cameras.forEach((camera, index) => {
+        map.addMarker(camera);
+
+        const row = createRow(table, camera.name, [camera.area]);
+        row.onclick = () => {
+            map.focus(camera.id);
+            setActiveRow(table, row);
+        };
+
+        if (index === 0)
+            setActiveRow(table, row);
     });
 }
