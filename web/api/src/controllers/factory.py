@@ -10,6 +10,7 @@ from .area_types import AreaTypesController
 from .areas import AreasController
 from .restrictions import RestrictionsController
 from .restriction_severity import RestrictionSeveritiesController
+from .statistics import StatisticsController
 from .users import UsersController
 from .unknown_clusters import UnknownClustersController
 from .faces import FacesController
@@ -29,7 +30,7 @@ class ControllersFactory:
             HistoryController,
             PeopleController(self.storage_factory.new(StorageType.PEOPLE),
                              self.storage_factory.new(StorageType.VIDEO_FRAMES)),
-            RolesController(),
+            RolesController,
             AreaTypesController(),
             AreasController(),
             NotificationsController,
@@ -37,5 +38,6 @@ class ControllersFactory:
             RestrictionSeveritiesController,
             UsersController,
             UnknownClustersController(self.publisher_configuration, self.tracer),
-            FacesController(self.storage_factory.new(StorageType.FRAME_FACES))
+            FacesController(self.storage_factory.new(StorageType.FRAME_FACES)),
+            StatisticsController
         ]

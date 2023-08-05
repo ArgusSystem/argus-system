@@ -30,10 +30,8 @@ def _delete_role(role_id):
 
 class RolesController:
 
-    def __init__(self):
-        pass
-
-    def make_routes(self, app):
+    @staticmethod
+    def make_routes(app):
         app.route('/roles')(_get_roles)
         app.route('/roles/<role_id>/<name>', methods=["POST"])(_update_role)
         app.route('/roles/<role_id>', methods=["DELETE"])(_delete_role)
