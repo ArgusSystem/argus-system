@@ -43,6 +43,10 @@ export function createRow(table, header, columns) {
     return row;
 }
 
+export function clearBody(table) {
+    table.querySelector('tbody').replaceChildren();
+}
+
 export function setActiveRow(table, row) {
     table.querySelectorAll(`.${ACTIVE}`).forEach(element => element.classList.remove(ACTIVE));
     row.classList.add(ACTIVE);

@@ -16,7 +16,7 @@ loadPage(Tab.HISTORY, async () => {
 	await fetchPeople()
 		.then(data => $('.select-person').select2({placeholder: "Person's name", data: toSelect(data)}));
 
-	loadTimeRange();
+	loadTimeRange('history-range');
 	loadSearchSubmit(cameras);
 });
 
