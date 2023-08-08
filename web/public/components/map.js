@@ -47,7 +47,6 @@ export class Map {
             this.map.addLayer(marker);
 
             this.markers[camera.id] = marker;
-            this.markersCount++;
         }
     }
 

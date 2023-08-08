@@ -1,11 +1,11 @@
-import { fetchCameras } from '../api/cameras.js';
-import { clearBody, createHeader, createRow, setActiveRow } from '../../components/table.js';
-import { Map } from '../../components/map.js';
-import { fetchVisits } from '../api/statistics.js';
+import { fetchCameras } from '../../api/cameras.js';
+import { clearBody, createHeader, createRow, setActiveRow } from '../../../components/table.js';
+import { Map } from '../../../components/map.js';
+import { fetchVisits } from '../../api/statistics.js';
 
 const HEADERS = ['Camera', 'Area', 'Visits'];
 
-export class PlacesStatistics {
+export class GeneralStatistics {
 
     constructor () {
         this._table = document.querySelector('table');
@@ -24,6 +24,8 @@ export class PlacesStatistics {
 
         cameras.sort((a, b) => (visits[b.id] | 0) - (visits[a.id] | 0));
 
+        let cameraId = null;
+
         cameras.forEach((camera, index) => {
             this._map.addMarker(camera);
 
@@ -33,8 +35,12 @@ export class PlacesStatistics {
                 setActiveRow(this._table, row);
             };
 
-            if (index === 0)
+            if (index === 0) {
                 setActiveRow(this._table, row);
+                cameraId = camera.id;
+            }
         });
+
+        return cameraId;
     }
 }

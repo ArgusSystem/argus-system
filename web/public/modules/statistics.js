@@ -1,9 +1,16 @@
 import { loadPage } from './page.js';
 import { Tab } from './tab.js';
-import { PlacesStatistics } from './statistics/places.js';
+import { GeneralStatistics } from './statistics/places/general_statistics.js';
 import { loadTimeRange } from './history/time-range.js';
+import { refreshWeekBarChart } from './statistics/places/detail_statistics.js';
 
 loadPage(Tab.STATISTICS, async () => {
-    const statistics = new PlacesStatistics();
-    loadTimeRange('statistics-range', statistics.refresh);
+    const generalStatistics = new GeneralStatistics();
+
+    async function refresh(range) {
+        const cameraId = await generalStatistics.refresh(range);
+        await refreshWeekBarChart(cameraId, range);
+    }
+
+    loadTimeRange('statistics-range', refresh);
 });
