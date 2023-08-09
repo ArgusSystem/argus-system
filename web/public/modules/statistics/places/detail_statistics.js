@@ -1,4 +1,4 @@
-import { fetchWeekDayHistogram } from '../../api/statistics.js';
+import { fetchAvgTimeSpent, fetchWeekDayHistogram } from '../../api/statistics.js';
 
 const PRIMARY_COLOR = 'rgba(13, 110, 253, 0.8)';
 
@@ -29,4 +29,10 @@ export async function refreshWeekBarChart(camera, range) {
             }
         }
     });
+}
+
+export async function refreshAvgTimeSpent(camera, range) {
+    const [start, end] = range;
+    const avgTimeSpent = await fetchAvgTimeSpent(camera, start, end);
+    document.getElementById('avg-time-spent').innerText = `Average Time Spent: ${avgTimeSpent}`;
 }

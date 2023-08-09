@@ -51,9 +51,24 @@ def _get_week_histogram(camera):
     return ['%.2f' % (h / total_visits) for h in histogram] if total_visits > 0 else histogram
 
 
+def _get_avg_time_spent(camera):
+    start_time = request.args.get('start', 0)
+    end_time = request.args.get('end', EPOCH_MAX_TIMESTAMP_MS)
+
+    total_time_spent = 0
+    visits_count = 0
+
+    for s in _get_sightings(start_time, end_time).where(Sighting.camera == camera):
+        total_time_spent += s.end_time - s.start_time
+        visits_count += 1
+
+    return '%.2f' % (total_time_spent / visits_count) if visits_count > 0 else '0.00'
+
+
 class StatisticsController:
 
     @staticmethod
     def make_routes(app):
         app.route('/statistics/place/visits')(_get_visits)
         app.route('/statistics/place/<camera>/week_histogram')(_get_week_histogram)
+        app.route('/statistics/place/<camera>/avg_time_spent')(_get_avg_time_spent)
