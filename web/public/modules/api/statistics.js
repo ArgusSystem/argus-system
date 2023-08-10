@@ -29,3 +29,9 @@ export function fetchTrespassers(camera, start, end) {
 			.then(response => response.json())
 			.catch(error => console.error('Failed to fetch trespassers count!', error));
 }
+
+export function fetchConcurrentVisits(camera, start, end) {
+		return fetch(with_params(`${detail_url(camera)}/concurrent_visits`, {start, end}))
+			.then(response => response.json())
+			.catch(error => console.error('Failed to fetch concurrent visits count!', error));
+}

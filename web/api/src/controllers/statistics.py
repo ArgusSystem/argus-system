@@ -1,3 +1,4 @@
+import functools
 from collections import defaultdict
 
 from flask import request
@@ -76,6 +77,33 @@ def _get_trespassers(camera):
     return str(_get_sightings_in_camera(camera, start_time, end_time).where(~Sighting.restriction.is_null()).count())
 
 
+def intersection(a, b):
+    start = max(a[0], b[0])
+    end = min(a[1], b[1])
+
+    if start <= end:
+        return start, end
+
+    return None
+
+
+def _get_concurrent_visits(camera):
+    start_time, end_time = _get_range()
+
+    intervals = []
+
+    for s in _get_sightings_in_camera(camera, start_time, end_time):
+        for start, end, people in intervals:
+            range_intersection = intersection(s.interval(), (start, end))
+
+            if range_intersection:
+                intervals.append((*range_intersection, people + 1))
+
+        intervals.append((s.start_time, s.end_time, 1))
+
+    return str(functools.reduce(max, map(lambda x: x[2], intervals), 0))
+
+
 class StatisticsController:
 
     @staticmethod
@@ -84,3 +112,4 @@ class StatisticsController:
         app.route('/statistics/place/<camera>/week_histogram')(_get_week_histogram)
         app.route('/statistics/place/<camera>/avg_time_spent')(_get_avg_time_spent)
         app.route('/statistics/place/<camera>/trespassers')(_get_trespassers)
+        app.route('/statistics/place/<camera>/concurrent_visits')(_get_concurrent_visits)

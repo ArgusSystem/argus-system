@@ -1,4 +1,9 @@
-import { fetchAvgTimeSpent, fetchTrespassers, fetchWeekDayHistogram } from '../../api/statistics.js';
+import {
+    fetchAvgTimeSpent,
+    fetchConcurrentVisits,
+    fetchTrespassers,
+    fetchWeekDayHistogram
+} from '../../api/statistics.js';
 
 const PRIMARY_COLOR = 'rgba(13, 110, 253, 0.8)';
 
@@ -39,6 +44,12 @@ export async function refreshAvgTimeSpent(camera, range) {
 
 export async function refreshTrespassers(camera, range) {
     const [start, end] = range;
-    const avgTimeSpent = await fetchTrespassers(camera, start, end);
-    document.getElementById('trespassers').innerText = `Trespassers: ${avgTimeSpent}`;
+    const trespassers = await fetchTrespassers(camera, start, end);
+    document.getElementById('trespassers').innerText = `Trespassers: ${trespassers}`;
+}
+
+export async function refreshConcurrentVisits(camera, range) {
+    const [start, end] = range;
+    const concurrentVisits = await fetchConcurrentVisits(camera, start, end);
+    document.getElementById('concurrent-visits').innerText = `Max concurrent visits: ${concurrentVisits}`;
 }
