@@ -13,15 +13,22 @@ def _to_weekday(timestamp):
     return tt.tm_wday
 
 
+def _get_range():
+    return request.args.get('start', 0), request.args.get('end', EPOCH_MAX_TIMESTAMP_MS)
+
+
 def _get_sightings(start_time, end_time):
     return (Sighting
             .select(Sighting.camera, Sighting.start_time, Sighting.end_time)
             .where((Sighting.start_time >= start_time) & (Sighting.end_time <= end_time)))
 
 
+def _get_sightings_in_camera(camera, start_time, end_time):
+    return _get_sightings(start_time, end_time).where(Sighting.camera == camera)
+
+
 def _get_visits():
-    start_time = request.args.get('start', 0)
-    end_time = request.args.get('end', EPOCH_MAX_TIMESTAMP_MS)
+    start_time, end_time = _get_range()
 
     visits = defaultdict(int)
 
@@ -32,12 +39,11 @@ def _get_visits():
 
 
 def _get_week_histogram(camera):
-    start_time = request.args.get('start', 0)
-    end_time = request.args.get('end', EPOCH_MAX_TIMESTAMP_MS)
+    start_time, end_time = _get_range()
 
     histogram = [0] * 7
 
-    for s in _get_sightings(start_time, end_time).where(Sighting.camera == camera):
+    for s in _get_sightings_in_camera(camera, start_time, end_time):
         start_day = _to_weekday(s.start_time)
         end_day = _to_weekday(s.end_time)
 
@@ -52,17 +58,22 @@ def _get_week_histogram(camera):
 
 
 def _get_avg_time_spent(camera):
-    start_time = request.args.get('start', 0)
-    end_time = request.args.get('end', EPOCH_MAX_TIMESTAMP_MS)
+    start_time, end_time = _get_range()
 
     total_time_spent = 0
     visits_count = 0
 
-    for s in _get_sightings(start_time, end_time).where(Sighting.camera == camera):
+    for s in _get_sightings_in_camera(camera, start_time, end_time):
         total_time_spent += s.end_time - s.start_time
         visits_count += 1
 
     return '%.2f' % (total_time_spent / visits_count) if visits_count > 0 else '0.00'
+
+
+def _get_trespassers(camera):
+    start_time, end_time = _get_range()
+
+    return str(_get_sightings_in_camera(camera, start_time, end_time).where(~Sighting.restriction.is_null()).count())
 
 
 class StatisticsController:
@@ -72,3 +83,4 @@ class StatisticsController:
         app.route('/statistics/place/visits')(_get_visits)
         app.route('/statistics/place/<camera>/week_histogram')(_get_week_histogram)
         app.route('/statistics/place/<camera>/avg_time_spent')(_get_avg_time_spent)
+        app.route('/statistics/place/<camera>/trespassers')(_get_trespassers)

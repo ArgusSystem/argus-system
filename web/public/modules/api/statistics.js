@@ -23,3 +23,9 @@ export function fetchAvgTimeSpent(camera, start, end) {
 			.then(response => response.json())
 			.catch(error => console.error('Failed to fetch average time spent!', error));
 }
+
+export function fetchTrespassers(camera, start, end) {
+		return fetch(with_params(`${detail_url(camera)}/trespassers`, {start, end}))
+			.then(response => response.json())
+			.catch(error => console.error('Failed to fetch trespassers count!', error));
+}
