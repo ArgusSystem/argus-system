@@ -6,6 +6,7 @@ export class Tab {
     static PEOPLE = new Tab('People', 'people.html');
     static AREAS = new Tab('Areas', 'areas.html');
     static RESTRICTIONS = new Tab('Restrictions', 'restrictions.html');
+    static STATISTICS = new Tab('Statistics', 'statistics.html');
 
     constructor (name, page) {
         this.name = name;
