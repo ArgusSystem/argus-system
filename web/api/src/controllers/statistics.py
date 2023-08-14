@@ -93,7 +93,9 @@ def _get_concurrent_visits(camera):
     intervals = []
 
     for s in _get_sightings_in_camera(camera, start_time, end_time):
-        for start, end, people in intervals:
+        for i in range(len(intervals)):
+            start, end, people = intervals[i]
+
             range_intersection = intersection(s.interval(), (start, end))
 
             if range_intersection:

@@ -7,7 +7,7 @@ import {
 
 const PRIMARY_COLOR = 'rgba(13, 110, 253, 0.8)';
 
-export async function refreshWeekBarChart(camera, range) {
+async function refreshWeekBarChart(camera, range) {
     const [start, end] = range;
 
     new Chart('week-bar-chart', {
@@ -36,20 +36,28 @@ export async function refreshWeekBarChart(camera, range) {
     });
 }
 
-export async function refreshAvgTimeSpent(camera, range) {
+async function refreshAvgTimeSpent(camera, range) {
     const [start, end] = range;
     const avgTimeSpent = await fetchAvgTimeSpent(camera, start, end);
-    document.getElementById('avg-time-spent').innerText = `Average Time Spent: ${avgTimeSpent}`;
+    const time = (avgTimeSpent / 1000).toFixed(2);
+    document.getElementById('avg-time-spent').innerText = `Average Time Spent: ${time}s`;
 }
 
-export async function refreshTrespassers(camera, range) {
+async function refreshTrespassers(camera, range) {
     const [start, end] = range;
     const trespassers = await fetchTrespassers(camera, start, end);
     document.getElementById('trespassers').innerText = `Trespassers: ${trespassers}`;
 }
 
-export async function refreshConcurrentVisits(camera, range) {
+async function refreshConcurrentVisits(camera, range) {
     const [start, end] = range;
     const concurrentVisits = await fetchConcurrentVisits(camera, start, end);
     document.getElementById('concurrent-visits').innerText = `Max concurrent visits: ${concurrentVisits}`;
+}
+
+export async function refreshDetailedStatistics(camera, range){
+    await refreshWeekBarChart(camera, range);
+    await refreshAvgTimeSpent(camera, range);
+    await refreshTrespassers(camera, range);
+    await refreshConcurrentVisits(camera, range);
 }
