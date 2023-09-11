@@ -30,9 +30,10 @@ class LocalVideoWriter:
         self.frames_written = 0
 
     def write(self, frame):
-        resized_frame = cv2.resize(frame, self.resolution, interpolation=cv2.INTER_CUBIC)
-        self.video_writer.write(resized_frame)
-        self.frames_written += 1
+        if not self.finished():
+            resized_frame = cv2.resize(frame, self.resolution, interpolation=cv2.INTER_CUBIC)
+            self.video_writer.write(resized_frame)
+            self.frames_written += 1
 
         return self.finished()
 

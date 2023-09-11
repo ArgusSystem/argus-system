@@ -1,10 +1,9 @@
 import os
-
-TMP = '/tmp'
+from tempfile import gettempdir
 
 
 def get_filepath(timestamp, encoding):
-    return os.path.join(TMP, f'{timestamp}.{encoding}')
+    return os.path.join(gettempdir(), f'{timestamp}.{encoding}')
 
 
 def delete_video(filepath):
