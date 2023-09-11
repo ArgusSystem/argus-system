@@ -1,7 +1,6 @@
 from picamera import PiCamera
 
 from utils.tracing.src.tracer import set_span_in_context
-from .local_video import create_local_storage
 from .processing_chunk import ProcessingChunk
 from .video_metadata import VideoMetadata, ENCODING
 
@@ -10,13 +9,11 @@ QUALITY = 25
 
 class VideoRecorder:
 
-    def __init__(self, camera_id, resolution, framerate, recording_time, tracer, output_queue):
+    def __init__(self, resolution, framerate, recording_split, tracer, output_queue):
         self.camera = PiCamera(resolution=resolution, framerate=framerate)
-        self.camera_id = camera_id
-        self.recording_time = recording_time
+        self.recording_split = recording_split
         self.output_queue = output_queue
         self.tracer = tracer
-        create_local_storage()
 
     def record(self, is_running):
         processing_chunk = None
@@ -27,7 +24,7 @@ class VideoRecorder:
             camera_context = set_span_in_context(camera_span)
             record_span = self.tracer.start_span('record', camera_context)
 
-            video_metadata = VideoMetadata(camera_id=self.camera_id, duration=self.recording_time)
+            video_metadata = VideoMetadata(duration=self.recording_split)
 
             if processing_chunk:
                 self.camera.split_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
@@ -36,7 +33,7 @@ class VideoRecorder:
             else:
                 self.camera.start_recording(video_metadata.filename, format=ENCODING, quality=QUALITY)
 
-            self.camera.wait_recording(self.recording_time)
+            self.camera.wait_recording(self.recording_split)
 
             processing_chunk = ProcessingChunk(video_metadata, camera_span, camera_context)
             previous_record_span = record_span

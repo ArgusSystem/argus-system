@@ -1,11 +1,6 @@
 import os
 
-TMP = 'tmp'
-
-
-def create_local_storage():
-    if not os.path.exists(TMP):
-        os.mkdir(TMP)
+TMP = '/tmp'
 
 
 def get_filepath(timestamp, encoding):

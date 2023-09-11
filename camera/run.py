@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 from utils.application import run
-from src.video_recorder import VideoRecorder
-from src.video_publisher import VideoPublisher
-from src.async_task import AsyncTask
-from src.inter_threading_queue import InterThreadingQueue
+from camera.src.video_publisher import VideoPublisher
+from camera.src.async_task import AsyncTask
+from camera.src.inter_threading_queue import InterThreadingQueue
 from utils.tracing.src.tracer import get_tracer
 
 ID_KEY = 'id'
@@ -14,8 +13,8 @@ TRACER_KEY = 'tracer'
 VIDEO_RECORDER_KEY = 'video_recorder'
 
 
-if __name__ == "__main__":
-    with run('argus-camera') as application:
+def with_recorder(application_name, create_recorder):
+    with run(application_name) as application:
         camera_id = application.configuration[ID_KEY]
 
         # Used as communication between threads
@@ -25,15 +24,15 @@ if __name__ == "__main__":
         tracer = get_tracer(**application.configuration[TRACER_KEY], service_name=application.name)
 
         # Create an asynchronous task to record video
-        video_recorder = VideoRecorder(**application.configuration[VIDEO_RECORDER_KEY],
-                                       camera_id=camera_id,
-                                       tracer=tracer,
-                                       output_queue=queue)
+        video_recorder = create_recorder(**application.configuration[VIDEO_RECORDER_KEY],
+                                         tracer=tracer,
+                                         output_queue=queue)
         recording_task = AsyncTask(video_recorder.record)
 
         # Create an asynchronous task to publish video
         video_publisher = VideoPublisher(input_queue=queue,
                                          tracer=tracer,
+                                         camera_id=camera_id,
                                          publisher_configuration=application.configuration[PUBLISHER_KEY],
                                          storage_configuration=application.configuration[STORAGE_KEY])
         publishing_task = AsyncTask(video_publisher.publish)
@@ -53,4 +52,9 @@ if __name__ == "__main__":
         recording_task.wait()
         publishing_task.wait()
 
-    print(f'[*] {application.name} stopped successfully!')
+    print(f'[*] {application_name} stopped successfully!')
+
+
+if __name__ == "__main__":
+    from camera.src.video_recorder import VideoRecorder
+    with_recorder('argus_camera', VideoRecorder)
