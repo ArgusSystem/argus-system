@@ -21,7 +21,7 @@ area_type_id = AreaType.insert(name='house').execute()
 
 # Setup areas
 
-areas = ['hall']
+areas = ['bath', 'bedroom', 'deck', 'hall', 'kitchen', 'living_room', 'study']
 areas_ids = [Area.insert(name=area, type=area_type_id).execute() for area in areas]
 
 
