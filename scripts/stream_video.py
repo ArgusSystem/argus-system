@@ -1,8 +1,8 @@
-import os.path
 from time import time_ns
 
 from camera.run import with_recorder
 from camera.src.processing_chunk import ProcessingChunk
+from scripts.signaller import signal_sigint
 from utils.tracing.src.tracer import set_span_in_context
 from scripts.local_video_capture import LocalVideoCapture
 from scripts.local_video_writer import LocalVideoWriterFactory
@@ -38,11 +38,14 @@ class LocalVideoStreamer:
 
                 video_writer.close()
 
-                self.output_queue.put(ProcessingChunk(video_writer.metadata, camera_span, camera_context))
+                if video_writer.frames_written > 0:
+                    self.output_queue.put(ProcessingChunk(video_writer.metadata, camera_span, camera_context))
 
-                timestamp += video_writer.written() * 1_000
+                    timestamp += video_writer.written() * 1_000
 
         self.video_capture.close()
+
+        signal_sigint()
 
 
 if __name__ == "__main__":
