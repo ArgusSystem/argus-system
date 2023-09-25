@@ -5,7 +5,7 @@ consumer:
   queue: frames
 
 face_detector:
-  type: 'tensorflow_mtcnn'
+  type: 'tensorflow_faceboxes'
 
 debug: False
 

@@ -18,7 +18,7 @@ class FaceDetectorTensorflowFaceboxes:
         img_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         result = self.detector(image)
         # TODO: revisar el 0.7 magico. en algun lado se podria configurar la probabilidad del detector
-        bboxes = [[int(p) for p in bbox[:4]] for bbox in result if bbox[4] > 0.7]
+        bboxes = [[int(p) for p in bbox[:4]] for bbox in result if bbox[4] > 0.0]
         # if len(bboxes) > 0:
         #     pad = int(max(bboxes[0][2] - bboxes[0][0], bboxes[0][3] - bboxes[0][1]) * 0.1)
         #     bboxes = [[bbox[0] - pad, bbox[1] - pad, bbox[2] + pad, bbox[3] + pad] for bbox in bboxes]
