@@ -5,7 +5,7 @@ consumer:
   queue: frames
 
 face_detector:
-  type: 'tensorflow_faceboxes'
+  type: 'tensorflow_mtcnn'
 
 debug: False
 
@@ -29,9 +29,16 @@ notifier:
       exchange: argus
       routing_key: published_detected_faces
 
+    db:
+      database: argus
+      host: argus
+      port: 5432
+      user: argus
+      password: panoptes
+
 
 logging:
-  level: DEBUG
+  level: INFO
 
 storage:
   host: argus

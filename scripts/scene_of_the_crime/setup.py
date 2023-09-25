@@ -70,11 +70,12 @@ for i, area in enumerate(areas_ids):
                               width=width,
                               height=height,
                               framerate=fps,
+                              encoding='mp4',
                               latitude=cam_latitude + uniform(-cam_lat_long_var, cam_lat_long_var),
                               longitude=cam_longitude + uniform(-cam_lat_long_var, cam_lat_long_var)) \
         .execute()
 
 
-print("Training classifier model...")
-train_model(True)
-print("Training done!")
+# print("Training classifier model...")
+# train_model(True)
+# print("Training done!")
