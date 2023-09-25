@@ -2,7 +2,7 @@ import os.path
 
 from utils.video_storage import StorageFactory, StorageType
 
-OUTPUT_DIR = '/tmp/scene_of_the_crime/study'
+OUTPUT_DIR = '/tmp/scene_of_the_crime/bathroom'
 
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
