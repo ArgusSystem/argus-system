@@ -49,7 +49,7 @@ area_type_id = AreaType.insert(name='house').execute()
 
 # Setup areas
 
-areas = ['bathroom', 'bedroom', 'deck', 'hall', 'kitchen', 'living_room', 'study']
+areas = ['all', 'bathroom', 'bedroom', 'deck', 'hall', 'kitchen', 'living_room', 'study']
 areas_ids = [Area.insert(name=area, type=area_type_id).execute() for area in areas]
 
 
