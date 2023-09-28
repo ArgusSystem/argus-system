@@ -23,24 +23,24 @@ user_id = create_user('argus', 'panoptes', 'argus')
 dweller_role_id = PersonRole.insert(name='dweller').execute()
 warden_role_id = PersonRole.insert(name='warden').execute()
 
-people_storage = StorageFactory('argus', 9500, 'argus', 'panoptes').new(StorageType.PEOPLE)
-
-PEOPLE_DIR = '../datasets/scene_of_the_crime/people'
-person_id = 0
-
-for person_name in sorted(listdir(PEOPLE_DIR)):
-    photos = []
-
-    for photo in listdir(path.join(PEOPLE_DIR, person_name)):
-        people_storage.store(name=photo, filepath=path.join(PEOPLE_DIR, person_name, photo))
-        photos.append(photo)
-
-    Person.insert(id=person_id, name=person_name, photos=photos, role=dweller_role_id).execute()
-
-    person_id += 1
-
-Person.insert(id=person_id, name='warden', role=warden_role_id).execute()
-UserPerson.insert(user_id=user_id, person_id=person_id).execute()
+# people_storage = StorageFactory('argus', 9500, 'argus', 'panoptes').new(StorageType.PEOPLE)
+#
+# PEOPLE_DIR = '../datasets/scene_of_the_crime/people'
+# person_id = 0
+#
+# for person_name in sorted(listdir(PEOPLE_DIR)):
+#     photos = []
+#
+#     for photo in listdir(path.join(PEOPLE_DIR, person_name)):
+#         people_storage.store(name=photo, filepath=path.join(PEOPLE_DIR, person_name, photo))
+#         photos.append(photo)
+#
+#     Person.insert(id=person_id, name=person_name, photos=photos, role=dweller_role_id).execute()
+#
+#     person_id += 1
+#
+# Person.insert(id=person_id, name='warden', role=warden_role_id).execute()
+# UserPerson.insert(user_id=user_id, person_id=person_id).execute()
 
 
 # Setup area types
