@@ -10,7 +10,7 @@ face_detector:
 debug: False
 
 notifier:
-  type: web
+  type: classification
 
   classification:
     publisher:

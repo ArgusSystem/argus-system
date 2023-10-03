@@ -20,6 +20,6 @@ face_detector:
 face_embedder:
   type: 'pytorch_facenet'
 
-classifier_type: 'sv_classifier'
+classifier_type: 'distance_classifier'
 
 user_interaction_on_multiple_faces: false

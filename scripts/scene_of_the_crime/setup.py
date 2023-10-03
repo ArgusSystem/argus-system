@@ -76,6 +76,6 @@ for i, area in enumerate(areas_ids):
         .execute()
 
 
-# print("Training classifier model...")
-# train_model(True)
-# print("Training done!")
+print("Training classifier model...")
+train_model(True)
+print("Training done!")

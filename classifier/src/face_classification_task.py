@@ -5,17 +5,20 @@ from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.events.src.messages.marshalling import encode, decode
 from utils.events.src.messages.helper import unwrap_video_chunk_id
+from utils.orm.src.models.person import get_person
 from .face_classifier_factory import FaceClassifierFactory
 from .face_embedder_factory import FaceEmbedderFactory
 from utils.video_storage import StorageFactory, StorageType
 from utils.tracing.src.tracer import get_context, get_tracer
 from utils.image_processing.src.image_serialization import bytestring_to_image
-from utils.orm.src.models import Camera, Face, Person, VideoChunk
+from utils.orm.src.models import Camera, Face, VideoChunk
 from logging import getLogger
 
 FACE_CLASSIFIER_MODEL_KEY = 'model'
 FACE_CLASSIFIER_THRESHOLD_KEY = 'threshold'
 FACE_CLASSIFIER_MINIO_KEY = 'minio'
+
+UNKNOWN = 'UNKNOWN'
 
 logger = getLogger(__name__)
 
@@ -46,7 +49,6 @@ class FaceClassificationTask:
 
     def close(self):
         self.face_embedder.close()
-        # self.db.close()
 
     def execute_with(self, message):
         face_message: FaceMessage = decode(FaceMessage, message)
@@ -60,9 +62,15 @@ class FaceClassificationTask:
 
             with self.tracer.start_as_current_span('face-classification'):
                 classification_index, classification_probability = self.face_classifier.predict(embedding)
-                face_id = int(self.face_classifier.get_name(classification_index))
+
                 is_match = classification_probability > self.threshold
-                name = Person.get(Person.id == face_id).name
+
+                if classification_index:
+                    person_id = int(self.face_classifier.get_name(classification_index))
+                    name = get_person(person_id).name
+                else:
+                    person_id = None
+                    name = UNKNOWN
 
             with self.tracer.start_as_current_span('insert-db-detected-face'):
                 camera_name, timestamp = unwrap_video_chunk_id(face_message.video_chunk_id)
@@ -70,14 +78,15 @@ class FaceClassificationTask:
                 cam_query = Camera.select(Camera.id).where(Camera.alias == camera_name)
                 video_chunk_id_query = (VideoChunk
                                         .select(VideoChunk.id)
-                                        .where(VideoChunk.camera_id == cam_query & VideoChunk.timestamp == timestamp))
+                                        .where((VideoChunk.camera_id == cam_query) &
+                                               (VideoChunk.timestamp == timestamp)))
 
                 face_id = Face(video_chunk_id=video_chunk_id_query,
                                offset=face_message.offset,
                                timestamp=face_message.timestamp,
                                face_num=face_message.face_num,
                                embedding=list(embedding.astype(float)),
-                               person=face_id,
+                               person_id=person_id,
                                bounding_box=face_message.bounding_box,
                                probability=classification_probability,
                                is_match=is_match).save()
