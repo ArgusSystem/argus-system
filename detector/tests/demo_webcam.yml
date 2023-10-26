@@ -3,3 +3,6 @@
 face_detector: tensorflow_faceboxes
 #face_detector: tensorflow_mtcnn
 #face_detector: paddle_mtcnn
+
+webcam_feed: False
+video_feed_filepath: ../chokepoint/videos/P1E_S1_C1.mp4

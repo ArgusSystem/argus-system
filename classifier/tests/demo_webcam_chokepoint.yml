@@ -1,0 +1,22 @@
+# ---- Face Detector Type
+face_detector: tensorflow_faceboxes
+#face_detector: 'none'
+#face_detector: tensorflow_mtcnn
+#face_detector: paddle_mtcnn
+
+# ---- Face Embedder Type
+#face_embedder: tensorflow_facenet
+#face_embedder: paddle_mobilefacenet
+face_embedder: pytorch_facenet
+
+# ---- Face Classifier Type
+face_classifier:
+  # ---- Face Classifier Model File
+  model: datasets/chokepoint/sv_chokepoint_pytorch_facenet.pkl
+
+# ---- Face Classification Prob Threshold
+threshold: 0.2
+
+video_feed_filepath: datasets/chokepoint/videos/P2L_S1_C1_2.mp4
+cam_id_change_frames: [1]
+cam_ids: ['hallway']
