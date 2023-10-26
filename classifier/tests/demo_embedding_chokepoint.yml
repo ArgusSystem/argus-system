@@ -1,0 +1,7 @@
+#face_embedder: tensorflow_facenet
+#face_embedder: paddle_mobilefacenet
+face_embedder: pytorch_facenet
+
+images_dir: datasets/chokepoint/faces/aligned
+
+output_embeddings_file: datasets/chokepoint

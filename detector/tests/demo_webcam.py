@@ -28,7 +28,13 @@ if __name__ == "__main__":
     faceDetectorObject = FaceDetectorFactory.build_by_type(face_detector_type)
 
     # Start webcam
-    camera = cv2.VideoCapture(0)
+    use_webcam_feed = configuration['webcam_feed']
+    if use_webcam_feed:
+        # first available webcam id
+        input_video = 0
+    else:
+        input_video = configuration['video_feed_filepath']
+    camera = cv2.VideoCapture(input_video)
     ret, image = camera.read()
     cv2.imshow('img', image)
 
@@ -45,6 +51,14 @@ if __name__ == "__main__":
 
         # Read frame from Webcam
         ret, image = camera.read()
+
+        if image is None:
+            break
+
+        width = int(image.shape[1])
+        height = int(image.shape[0])
+        dim = (width * 2, height * 2)
+        #image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
         if async_result is None:
             async_result = pool.apply_async(detect_faces, (faceDetectorObject, image))
