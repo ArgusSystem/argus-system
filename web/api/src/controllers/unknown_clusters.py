@@ -1,12 +1,15 @@
+import numpy as np
 from flask import jsonify, request
-from peewee import IntegrityError, fn
+from peewee import IntegrityError, JOIN, fn
 
+from clusterer.src.cluster_storage import ClusterStorage
+from clusterer.src.clustering import fit
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.orm.src.database import db
 from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace
-from utils.tracing.src.tracer import get_trace_parent, set_span_in_context
+from utils.tracing.src.tracer import get_trace_parent
 
 
 def _get_unknown_clusters():
@@ -44,6 +47,21 @@ def _get_cluster_faces(cluster_id):
     .where(UnknownCluster.id == cluster_id)]
 
 
+def _fit():
+    faces = (Face.select()
+             .join(UnknownFace, JOIN.LEFT_OUTER)
+             .where((~Face.is_match) & (UnknownFace.cluster.is_null())))
+
+    embeddings = np.array([face.embedding for face in faces])
+
+    clt = fit(embeddings)
+
+    cluster_storage = ClusterStorage(False)
+
+    for face, label in zip(map(lambda f: f.id, faces), clt.labels_):
+        cluster_storage.store(face, label)
+
+
 class UnknownClustersController:
 
     def __init__(self, publisher_configuration, tracer):
@@ -52,6 +70,7 @@ class UnknownClustersController:
 
     def make_routes(self, app):
         app.route('/unknown_clusters')(_get_unknown_clusters)
+        app.route('/unknown_clusters/fit')(_fit)
         app.route('/unknown_clusters/<cluster_id>/faces')(_get_cluster_faces)
         app.route('/unknown_clusters/<cluster_id>/re_tag', methods=['POST'])(self._re_tag)
 

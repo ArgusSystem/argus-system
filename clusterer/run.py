@@ -1,4 +1,4 @@
-from src.unknown_clusterer import UnknownFacesClusterer
+from src.clustering_task import ClusteringTask
 from utils.application import run
 from utils.events.src.message_clients.rabbitmq import Consumer
 from utils.orm.src.database import connect
@@ -17,10 +17,10 @@ if __name__ == "__main__":
 
         connect(**configuration[DB_KEY])
 
-        unknown_faces_clusterer = UnknownFacesClusterer(faces_batch_size=configuration[FACES_BATCH_SIZE_KEY],
-                                                        skip_outliers=configuration[SKIP_OUTLIERS_KEY],
-                                                        publisher_configuration=configuration[PUBLISHER_KEY],
-                                                        tracer_configuration=configuration[TRACER_KEY])
+        unknown_faces_clusterer = ClusteringTask(faces_batch_size=configuration[FACES_BATCH_SIZE_KEY],
+                                                 skip_outliers=configuration[SKIP_OUTLIERS_KEY],
+                                                 publisher_configuration=configuration[PUBLISHER_KEY],
+                                                 tracer_configuration=configuration[TRACER_KEY])
 
         consumer_from_sampler = Consumer.new(**configuration[CONSUMER_KEY],
                                              on_message_callback=unknown_faces_clusterer.process,
