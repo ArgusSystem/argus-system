@@ -9,15 +9,36 @@ face_detector:
 
 debug: False
 
-publisher:
-  host: argus
-  username: argus
-  password: panoptes
-  exchange: argus
-  routing_key: faces
+notifier:
+  type: classification
+
+  classification:
+    publisher:
+      host: argus
+      username: argus
+      password: panoptes
+      exchange: argus
+      routing_key: faces
+
+  # Avoid classification and send message to web with detection information
+  web:
+    publisher:
+      host: argus
+      username: argus
+      password: panoptes
+      exchange: argus
+      routing_key: published_detected_faces
+
+    db:
+      database: argus
+      host: argus
+      port: 5432
+      user: argus
+      password: panoptes
+
 
 logging:
-  level: DEBUG
+  level: INFO
 
 storage:
   host: argus
@@ -28,3 +49,4 @@ storage:
 tracer:
   host: argus
   port: 6831
+

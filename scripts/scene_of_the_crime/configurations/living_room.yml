@@ -1,4 +1,4 @@
-id: 'camera-1'
+id: living_room
 publisher:
   host: localhost
   username: argus
@@ -6,9 +6,10 @@ publisher:
   exchange: argus
   routing_key: new_video_chunks
 video_recorder:
-    resolution: 1920x1080
-    recording_split: 5
-    framerate: 25
+    filepath: datasets/scene_of_the_crime/Living Room.mp4
+    resolution: 1280x720
+    recording_split: 1
+    framerate: 30
 storage:
   host: localhost
   port: 9500

@@ -1,4 +1,4 @@
-from peewee import DecimalField, ForeignKeyField, IntegerField, BigIntegerField, BooleanField, Model
+from peewee import DecimalField, FloatField, ForeignKeyField, IntegerField, BigIntegerField, BooleanField, Model
 from playhouse.postgres_ext import ArrayField
 
 from . import VideoChunk
@@ -12,6 +12,7 @@ class Face(Model):
     timestamp = BigIntegerField()
     face_num = IntegerField()
 
+    embedding = ArrayField(FloatField)
     person = ForeignKeyField(Person, null=True)
     bounding_box = ArrayField(IntegerField, default=[])
     probability = DecimalField(decimal_places=3)

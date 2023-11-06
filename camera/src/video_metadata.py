@@ -8,10 +8,9 @@ SEQUENCE_GENERATOR = SequenceGenerator()
 
 class VideoMetadata:
 
-    def __init__(self, camera_id, duration, filepath=get_filepath):
-        self.camera_id = camera_id
-        self.timestamp = time_ns() // 1_000_000  # EPOCH UTC IN MS
-        self.filename = filepath(self.timestamp, ENCODING)
-        self.encoding = ENCODING
+    def __init__(self, duration, timestamp=None, encoding=ENCODING, filepath=get_filepath):
+        self.timestamp = timestamp or (time_ns() // 1_000_000)  # EPOCH UTC IN MS
+        self.filename = filepath(self.timestamp, encoding)
+        self.encoding = encoding
         self.duration = duration
         self.sequence_id = SEQUENCE_GENERATOR.get()

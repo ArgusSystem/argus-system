@@ -23,5 +23,8 @@ class Storage:
         else:
             return self.client.fetch(self.bucket, name)
 
+    def list(self):
+        return self.client.list(self.bucket)
+
     def remove(self, name):
         self.client.remove(self.bucket, name)

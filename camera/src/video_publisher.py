@@ -12,9 +12,10 @@ logger = getLogger(__name__)
 
 class VideoPublisher:
 
-    def __init__(self, input_queue, tracer, publisher_configuration, storage_configuration):
+    def __init__(self, input_queue, tracer, camera_id, publisher_configuration, storage_configuration):
         self.input_queue = input_queue
         self.tracer = tracer
+        self.camera_id = camera_id
         self.publisher = Publisher.new(**publisher_configuration)
         self.storage = StorageFactory(**storage_configuration).new(StorageType.VIDEO_CHUNKS)
 
@@ -26,7 +27,7 @@ class VideoPublisher:
         video_metadata = processing_chunk.metadata
         context = processing_chunk.context
 
-        message = VideoChunkMessage(camera_id=video_metadata.camera_id,
+        message = VideoChunkMessage(camera_id=self.camera_id,
                                     timestamp=video_metadata.timestamp,
                                     trace=get_trace_parent(context),
                                     encoding=video_metadata.encoding,

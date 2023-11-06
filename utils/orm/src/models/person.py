@@ -3,6 +3,15 @@ from playhouse.postgres_ext import ArrayField
 from .person_role import PersonRole
 from ..database import db
 
+people = {}
+
+
+def get_person(person_id):
+    if person_id not in people:
+        people[person_id] = Person.get(person_id)
+
+    return people[person_id]
+
 
 class Person(Model):
     name = CharField()

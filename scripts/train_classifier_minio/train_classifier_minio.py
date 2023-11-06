@@ -23,7 +23,7 @@ CLASSIFIER_TYPE_KEY = 'classifier_type'
 USER_INTERACTION = 'user_interaction_on_multiple_faces'
 
 
-def train_model():
+def train_model(preprocessed=False):
     with open(os.path.dirname(os.path.realpath(__file__)) + "/train_classifier_minio.yml") as config_file:
         configuration = yaml.safe_load(config_file)
 
@@ -54,37 +54,39 @@ def train_model():
         for photo in person.photos:
             # Get photo
             img_bytestring = people_storage.fetch(photo)
-
-            # Perform face detection on photo
             img = bytestring_to_image(img_bytestring)
-            bounding_boxes = face_detector.detect_face_image(img)
-
-            # Get the first face
+            cropped_face = img
             add_face = True
-            x1, y1, x2, y2 = bounding_boxes[0]
-            cropped_face = img[y1:y2, x1:x2]
 
-            # If there are many faces in the photo, check which one to add to the model
-            if ask_user_interaction and len(bounding_boxes) > 1:
-                for bounding_box in bounding_boxes:
-                    x1, y1, x2, y2 = bounding_box
-                    cropped_face = img[y1:y2, x1:x2]
+            if not preprocessed:
+                # Perform face detection on photo
+                bounding_boxes = face_detector.detect_face_image(img)
 
-                    # Show cropped face and ask for user confirmation to add it to model
-                    cropped_face_copy = cropped_face.copy()
-                    cropped_face_copy = resize_keep_aspect_ratio(cropped_face_copy, width=600)
-                    cropped_face_copy = write_text_with_background(cropped_face_copy, person.name + ". Add to model y/n")
-                    cv2.imshow("face", cropped_face_copy)
+                # Get the first face
+                x1, y1, x2, y2 = bounding_boxes[0]
+                cropped_face = img[y1:y2, x1:x2]
 
-                    # Check user y/n
-                    ch = ord(" ")
-                    while ch != ord("y") and ch != ord("n"):
-                        ch = cv2.waitKey(0) & 0xFF
-                    add_face = ch == ord("y")
+                # If there are many faces in the photo, check which one to add to the model
+                if ask_user_interaction and len(bounding_boxes) > 1:
+                    for bounding_box in bounding_boxes:
+                        x1, y1, x2, y2 = bounding_box
+                        cropped_face = img[y1:y2, x1:x2]
 
-                    # If yes, skip all other faces in this photo
-                    if add_face:
-                        break
+                        # Show cropped face and ask for user confirmation to add it to model
+                        cropped_face_copy = cropped_face.copy()
+                        cropped_face_copy = resize_keep_aspect_ratio(cropped_face_copy, width=600)
+                        cropped_face_copy = write_text_with_background(cropped_face_copy, person.name + ". Add to model y/n")
+                        cv2.imshow("face", cropped_face_copy)
+
+                        # Check user y/n
+                        ch = ord(" ")
+                        while ch != ord("y") and ch != ord("n"):
+                            ch = cv2.waitKey(0) & 0xFF
+                        add_face = ch == ord("y")
+
+                        # If yes, skip all other faces in this photo
+                        if add_face:
+                            break
 
             if add_face:
                 # Get embedding from face

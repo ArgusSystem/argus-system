@@ -1,13 +1,15 @@
-import sys
 import pickle
 import numpy as np
-import os
+
+from scipy.special import softmax
+
+MIN_SAMPLES_THRESHOLD = 10
 
 
 class DistanceClassifier:
 
     def __init__(self):
-        self.classes = None
+        self.classes = []
 
     def train(self, embeddings_file_path):
         self.classes = load_images(embeddings_file_path)
@@ -17,30 +19,29 @@ class DistanceClassifier:
             pickle.dump(self, f)
 
     def predict(self, in_embedding):
+        ids = []
+        distances = []
 
-        min_id = -1
-        min_dist = 999
-        min_file = None
         for i in range(len(self.classes)):
-            temp_name = self.classes[i][0]
             for filename, file_embedding in self.classes[i][1]:
-                dist = np.sum(np.square(in_embedding - file_embedding))
-                if dist < min_dist:
-                    min_id = i
-                    min_dist = dist
-                    min_file = filename
+                d = np.sqrt(np.sum(np.square(in_embedding - file_embedding)))
 
-        # min_dist = 1.24 -> prob = 0.7
-        # min_dist = 0 -> prob = 1
-        # min_dist = 4.14 -> prob = 0
-        x_1 = 0
-        x_0_7 = 0.8
-        a = -0.3 / (x_0_7 + x_1)
-        b = 1 - a * x_1
+                if d == 0:
+                    return i, 1.0
 
-        prob = a * min_dist + b
-        return min_id, prob
-        #return min_id, min_dist
+                ids.append(i)
+                distances.append(1/d)
+
+        # Need a minimum number of samples to make sense out of the softmax function.
+        # If number is too low, probabilities are very similar and tend to 1/N.
+        if len(ids) < MIN_SAMPLES_THRESHOLD:
+            return None, 0.0
+
+        probabilities = softmax(np.array(distances))
+
+        index = probabilities.argmax()
+
+        return ids[index], probabilities[index]
 
     def get_name(self, class_index):
         return self.classes[class_index][0]
@@ -50,7 +51,6 @@ class DistanceClassifier:
 
 
 def load_images(embeddings_file):
-
     # Load all images
     classes = {}
     with open(embeddings_file, 'r') as f:

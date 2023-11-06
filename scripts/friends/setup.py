@@ -1,8 +1,6 @@
 from random import uniform
 from os import listdir, path
 
-import pytz
-
 from utils.orm.src.database import connect
 from utils.orm.src.models import PersonRole, Person, Camera, AreaType, Area, Restriction, RestrictionSeverity, \
     RestrictionWarden, UserPerson
