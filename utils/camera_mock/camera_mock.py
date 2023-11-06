@@ -93,7 +93,8 @@ if __name__ == "__main__":
 
     # Camera loop
     frame = None
-    final_frame = 2 * 60  # float('inf')
+    final_frame = float('inf')
+    #final_frame = 2 * 60
 
     # Decimation
     i_d = 0

@@ -132,6 +132,8 @@ if __name__ == "__main__":
         if not paused or process_one_frame:
             # Read frame from Webcam
             ret, image = camera.read()
+            if image is None:
+                break
             frame_number += 1
 
             if async_result is None:

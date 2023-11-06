@@ -1,0 +1,23 @@
+
+# ---- Face Detector Type
+face_detector: tensorflow_faceboxes
+#face_detector: 'none'
+#face_detector: tensorflow_mtcnn
+#face_detector: paddle_mtcnn
+
+# ---- Face Embedder Type
+#face_embedder: tensorflow_facenet
+#face_embedder: paddle_mobilefacenet
+face_embedder: pytorch_facenet
+
+# ---- Face Classifier Type
+face_classifier:
+  # ---- Face Classifier Model File
+  model: datasets/chokepoint/sv_chokepoint_pytorch_facenet.pkl
+
+# ---- Face Classification Prob Threshold
+#threshold: 0.65
+threshold: 0
+
+# ---- Test Dataset Dir
+images_dir: ../chokepoint/raw/P1E_S1/P1E_S1_C2
