@@ -65,7 +65,7 @@ class FaceClassificationTask:
 
                 is_match = classification_probability > self.threshold
 
-                if classification_index:
+                if classification_index is not None:
                     person_id = int(self.face_classifier.get_name(classification_index))
                     name = get_person(person_id).name
                 else:
