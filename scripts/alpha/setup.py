@@ -15,8 +15,8 @@ user_id = create_user('argus', 'panoptes', 'gabriel')
 
 # Setup roles
 
-dweller_role_id = PersonRole.insert(name='dweller').execute()
-guest_role_id = PersonRole.insert(name='friend').execute()
+dweller_role_id = PersonRole.insert(name='host').execute()
+guest_role_id = PersonRole.insert(name='guest').execute()
 
 # Setup edu and gabo
 
@@ -37,6 +37,7 @@ def create_person(person_id, person_name, role_id):
 
 gabo_id = create_person(0, 'gabo', dweller_role_id)
 edu_id = create_person(1, 'edu', guest_role_id)
+# lauti_id = create_person(2, 'lauti', guest_role_id)
 
 UserPerson.insert(user_id=user_id, person_id=gabo_id).execute()
 
@@ -75,6 +76,5 @@ for i, area in enumerate(area_ids):
                   ).execute()
 
 print("Training classifier model...")
-# Using aligned photos
-train_model(True)
+train_model()
 print("Training done!")
