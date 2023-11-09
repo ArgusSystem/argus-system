@@ -22,10 +22,9 @@ class Warden:
             warden_trace = get_trace_parent()
 
             for restriction_id in self.rule_manager.execute(face_id):
-                broken_restriction = BrokenRestriction(face_id=face_id, restriction_id=restriction_id)
-                broken_restriction.save()
+                broken_restriction_id = BrokenRestriction.insert(face_id=face_id, restriction_id=restriction_id).execute()
 
-                self.publisher.publish(encode(BrokenRestrictionMessage(broken_restriction_id=broken_restriction.id,
+                self.publisher.publish(encode(BrokenRestrictionMessage(broken_restriction_id=broken_restriction_id,
                                                                        face_id=face_id,
                                                                        restriction_id=restriction_id,
                                                                        trace_id=warden_trace)))

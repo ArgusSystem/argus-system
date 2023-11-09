@@ -21,7 +21,7 @@ class ClusteringTask:
         self.faces_batch = []
         self.faces_batch_size = faces_batch_size
 
-        self.skip_outliers = skip_outliers
+        self.skip_outliers = skip_outliers == 'True'
 
     def process(self, message):
         unknown_face_message: UnknownFaceMessage = decode(UnknownFaceMessage, message)

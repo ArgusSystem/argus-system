@@ -12,8 +12,8 @@ db:
 tracer:
   host: argus
   port: 6831
-faces_batch_size: 50
-skip_outliers: True
+faces_batch_size: 185
+skip_outliers: False
 publisher:
   host: argus
   username: argus
