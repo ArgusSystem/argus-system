@@ -1,11 +1,17 @@
-const KEY = 'username';
+const USERNAME = 'username';
+const ALIAS = 'alias';
 
-export function signIn(username) {
-    localStorage.setItem(KEY, username);
+export function signIn(username, alias) {
+    localStorage.setItem(USERNAME, username);
+    localStorage.setItem(ALIAS, alias)
 }
 
 export function getUsername() {
-    return localStorage.getItem(KEY);
+    return localStorage.getItem(USERNAME);
+}
+
+export function getAlias() {
+    return localStorage.getItem(ALIAS);
 }
 
 export function isSignedIn() {
@@ -13,6 +19,7 @@ export function isSignedIn() {
 }
 
 export function signOut() {
-    localStorage.removeItem(KEY);
+    localStorage.removeItem(USERNAME);
+    localStorage.removeItem(ALIAS)
 }
 

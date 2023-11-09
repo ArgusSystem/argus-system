@@ -2,7 +2,8 @@ from os import listdir, path
 from random import uniform
 
 from scripts.train_classifier_minio.train_classifier_minio import train_model
-from utils.orm.src.models import Area, AreaType, Camera, Person, PersonRole, UserPerson
+from utils.orm.src.models import (Area, AreaType, Camera, Person, PersonRole,
+                                  Restriction, RestrictionSeverity, RestrictionWarden, UserPerson)
 from utils.orm.src.models.user import create as create_user
 from utils.orm.src.database import connect
 from utils.video_storage import StorageFactory, StorageType
@@ -15,7 +16,7 @@ user_id = create_user('argus', 'panoptes', 'gabriel')
 
 # Setup roles
 
-dweller_role_id = PersonRole.insert(name='host').execute()
+host_role_id = PersonRole.insert(name='host').execute()
 guest_role_id = PersonRole.insert(name='guest').execute()
 
 # Setup edu and gabo
@@ -35,7 +36,7 @@ def create_person(person_id, person_name, role_id):
     return Person.insert(id=person_id, name=person_name, photos=photos, role=role_id).execute()
 
 
-gabo_id = create_person(0, 'gabo', dweller_role_id)
+gabo_id = create_person(0, 'gabo', host_role_id)
 edu_id = create_person(1, 'edu', guest_role_id)
 # lauti_id = create_person(2, 'lauti', guest_role_id)
 
@@ -74,6 +75,52 @@ for i, area in enumerate(area_ids):
                   latitude=cam_latitude + uniform(-cam_lat_long_var, cam_lat_long_var),
                   longitude=cam_longitude + uniform(-cam_lat_long_var, cam_lat_long_var)
                   ).execute()
+
+
+def time_to_seconds(time):
+    hours, minutes = time.split(':')
+    return int(hours) * 3600 + int(minutes) * 60
+
+
+def create_rule(type_who, value_who, rule_areas, start_time, end_time, severity):
+    restriction_id = Restriction.insert(
+        rule={
+            'who': [
+                {
+                    'type': type_who,
+                    'value': value_who
+                }
+            ],
+            'where': [
+                {
+                    'type': 'area_type',
+                    'value': rule_areas
+                }
+            ],
+            'when': [
+                {
+                    'type': 'repeated',
+                    'value': {
+                        'start_time': time_to_seconds(start_time),
+                        'end_time': time_to_seconds(end_time),
+                        'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                        'time_zone': 'America/Buenos_Aires'
+                    }
+                }
+            ]
+        }, severity=severity
+    ).execute()
+
+    RestrictionWarden.insert(restriction_id=restriction_id, role_id=host_role_id).execute()
+
+
+info_severity = RestrictionSeverity.insert(name='info', value=0).execute()
+warning_severity = RestrictionSeverity.insert(name='warning', value=1).execute()
+critical_severity = RestrictionSeverity.insert(name='critical', value=2).execute()
+
+create_rule('role', [guest_role_id], [private_area_type_id], '00:00', '23:59', warning_severity)
+create_rule('unknown', None, [public_area_type_id], '00:00', '23:59', warning_severity)
+create_rule('unknown', None, [private_area_type_id], '00:00', '23:59', critical_severity)
 
 print("Training classifier model...")
 train_model()
