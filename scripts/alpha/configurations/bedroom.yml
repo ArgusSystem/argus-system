@@ -1,6 +1,6 @@
 id: bedroom
 publisher:
-  host: localhost
+  host: argus
   username: argus
   password: panoptes
   exchange: argus
@@ -11,12 +11,12 @@ video_recorder:
     recording_split: 1
     framerate: 30
 storage:
-  host: localhost
+  host: argus
   port: 9500
   access_key: argus
   secret_key: panoptes
 logging:
   level: INFO
 tracer:
-  host: localhost
+  host: argus
   port: 6831
