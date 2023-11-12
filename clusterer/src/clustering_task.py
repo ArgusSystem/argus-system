@@ -43,7 +43,6 @@ class ClusteringTask:
                 with self.tracer.start_as_current_span('store-batch-results'):
                     for face, label in zip(map(lambda f: f.face_id, self.faces_batch), clt.labels_):
                         cluster_storage.store(face, label)
-                        self.publisher.publish(encode(MatchedFaceMessage(face_id=face, trace=trace)))
 
                 self.faces_batch.clear()
 

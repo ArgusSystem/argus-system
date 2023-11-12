@@ -105,12 +105,11 @@ class FaceClassificationTask:
                 self.publisher_to_web.publish(encode(detected_face_message))
 
                 # Queue face data for warden rules processing
-                if is_match:
-                    matched_face_message = MatchedFaceMessage(face_id=str(face_id), trace=face_message.trace)
-                    self.publisher_to_warden.publish(encode(matched_face_message))
+                matched_face_message = MatchedFaceMessage(face_id=str(face_id), trace=face_message.trace)
+                self.publisher_to_warden.publish(encode(matched_face_message))
 
                 # Queue face data for unknown face clustering
-                else:
+                if not is_match:
                     unknown_face_message = UnknownFaceMessage(face_id=str(face_id), embedding=embedding,
                                                               trace=face_message.trace)
                     self.publisher_to_clusterer.publish(encode(unknown_face_message))
