@@ -35,18 +35,17 @@ class Sighting(View):
                                              'OR lag(severity) OVER (ORDER BY person, matched, timestamp) <> severity ' \
                                    'THEN 1 END as is_reset ' \
                         'FROM (SELECT camera.id                                        as camera,' \
-                                     'COALESCE(face.person_id, unknownface.cluster_id) as person,' \
+                                     'face.person_id                                   as person,' \
                                      'face.is_match                                    as matched,' \
                                      'face.timestamp                                   as timestamp,' \
-                                     'restriction.id                                   as restriction,' \
-                                     'restrictionseverity.name                         as severity ' \
+                                     'COALESCE(restriction.id, -1)                     as restriction,' \
+                                     'COALESCE(restrictionseverity.name, \'\')     as severity ' \
                               'FROM face ' \
                               'LEFT JOIN videochunk ON face.video_chunk_id = videochunk.id ' \
                               'LEFT JOIN camera ON videochunk.camera_id = camera.id ' \
                               'LEFT JOIN brokenrestriction ON brokenrestriction.face_id = face.id ' \
                               'LEFT JOIN restriction ON brokenrestriction.restriction_id = restriction.id ' \
                               'LEFT JOIN restrictionseverity ON restriction.severity_id = restrictionseverity.id ' \
-                              'LEFT JOIN unknownface on face.id = unknownface.face_id ' \
                               'ORDER BY person, matched, timestamp' \
                               ') AS tmp' \
                         ') AS t ' \
