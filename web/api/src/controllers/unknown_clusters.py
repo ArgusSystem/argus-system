@@ -79,13 +79,15 @@ class UnknownClustersController:
 
         # Update database
         with db.transaction() as txn:
-            Face.update(person_id=data['person']) \
+            Face.update(person_id=data['person'], is_match=True) \
                 .where(Face.id.in_(data['faces'])) \
                 .execute()
 
             UnknownFace.delete() \
                 .where(UnknownFace.face_id.in_(data['faces'])) \
                 .execute()
+
+            # TODO: Check Broken Restrictions
 
             txn.commit()
 

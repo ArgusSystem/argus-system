@@ -60,6 +60,7 @@ if __name__ == "__main__":
 
             video_chunk_id = f'{chunk.camera.alias}-{chunk.timestamp}'
 
+            # Generalize face classification task
             for face in chunk.faces:
                 name = 'Unknown'
                 person_id = -1
@@ -80,10 +81,10 @@ if __name__ == "__main__":
                                                                   trace=context)
                                               ))
 
-                if face.is_match:
-                    matched_face_message = MatchedFaceMessage(face_id=str(face.id), trace=context)
-                    warden_publisher.publish(encode(matched_face_message))
-                else:
+                matched_face_message = MatchedFaceMessage(face_id=str(face.id), trace=context)
+                warden_publisher.publish(encode(matched_face_message))
+
+                if not face.is_match:
                     unknown_face_message = UnknownFaceMessage(face_id=str(face.id), embedding=face.embedding,
                                                               trace=context)
                     clusterer_publisher.publish(encode(unknown_face_message))

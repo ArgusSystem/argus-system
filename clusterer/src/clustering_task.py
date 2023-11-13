@@ -1,10 +1,9 @@
 from logging import getLogger
 
 from utils.events.src.message_clients.rabbitmq import Publisher
-from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
-from utils.events.src.messages.marshalling import decode, encode
-from utils.tracing.src.tracer import get_context, get_trace_parent, get_tracer
+from utils.events.src.messages.marshalling import decode
+from utils.tracing.src.tracer import get_context, get_tracer
 from .clustering import fit
 
 from .cluster_storage import ClusterStorage
@@ -37,8 +36,6 @@ class ClusteringTask:
                     clt = fit(encodings)
 
                 cluster_storage = ClusterStorage(self.skip_outliers)
-
-                trace = get_trace_parent()
 
                 with self.tracer.start_as_current_span('store-batch-results'):
                     for face, label in zip(map(lambda f: f.face_id, self.faces_batch), clt.labels_):
