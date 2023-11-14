@@ -1,6 +1,6 @@
 from utils.orm.src.models import Face, UnknownFace
 from utils.orm.src.views import Sighting
-from peewee import JOIN, fn
+from peewee import Case
 
 
 def get_sighting_for(face_id, restriction_id):
@@ -21,8 +21,7 @@ def get_sighting_for(face_id, restriction_id):
 
 
 def _get_person(face_id):
-    return (Face.select(fn.COALESCE(Face.person_id, UnknownFace.cluster_id).alias('person'),
+    return (Face.select(Case(None, [(Face.is_match, Face.person_id)], -1).alias('person'),
                         Face.timestamp, Face.is_match)
             .where(Face.id == face_id)
-            .join(UnknownFace, JOIN.LEFT_OUTER)
             .cte('target', columns=('person', 'timestamp', 'is_match')))

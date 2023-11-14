@@ -8,28 +8,31 @@ from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.orm.src import Sighting
 from utils.orm.src.models import BrokenRestriction, Camera, Face, Notification, Person, VideoChunk, UnknownCluster, \
     UnknownFace
 from utils.orm.src.database import connect
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
 
 
-def clean():
+def clean(db):
     UnknownFace.truncate_table(restart_identity=True)
     UnknownCluster.truncate_table(restart_identity=True, cascade=True)
     Notification.truncate_table(restart_identity=True)
     BrokenRestriction.truncate_table(restart_identity=True, cascade=True)
+    db.execute_sql(Sighting.drop_view())
+    db.execute_sql(Sighting.create_view())
 
 
 if __name__ == "__main__":
-    connect('argus', 'argus', 5432, 'argus', 'panoptes')
+    database = connect('argus', 'argus', 5432, 'argus', 'panoptes')
     chunk_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'published_video_chunks')
     face_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'published_detected_faces')
     warden_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'face_rule_check')
     clusterer_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'unknown_faces')
     tracer = get_tracer('argus', 6831, 'database_streamer')
 
-    clean()
+    clean(database)
 
     chunks_query = VideoChunk.select(VideoChunk, Camera).join(Camera).order_by(VideoChunk.timestamp)
     faces_query = Face.select(Face, Person).join(Person)
