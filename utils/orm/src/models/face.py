@@ -20,3 +20,9 @@ class Face(Model):
 
     class Meta:
         database = db
+
+    def image_key(self):
+        return '-'.join([self.video_chunk.camera.alias,
+                         str(self.video_chunk.timestamp),
+                         str(self.offset),
+                         str(self.face_num)])

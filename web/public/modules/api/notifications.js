@@ -33,3 +33,9 @@ export function fetchNotificationsCount(username) {
 		.catch(error => console.error('Failed to fetch notifications count!', error));
 }
 
+export function getNotificationFaces(id) {
+	return fetch(`${id_url(id)}/faces`)
+			.then(response => response.json())
+			.catch(error => console.error('Failed to mark notification as read!', error));
+}
+

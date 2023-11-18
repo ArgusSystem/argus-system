@@ -1,6 +1,7 @@
 from flask import jsonify, request
 
-from utils.metadata.src.repository.notifications import count_notifications, get_notification, get_notifications, \
+from utils.metadata.src.repository.notifications import count_notifications, get_notification, get_notification_faces, \
+    get_notifications, \
     mark_notification_read
 
 UNKNOWN = 'UNKNOWN'
@@ -42,11 +43,22 @@ def _mark_notification_read(notification_id):
     return jsonify(success=True)
 
 
+def _get_notification_faces(notification_id):
+    faces = get_notification_faces(notification_id)
+
+    return [{
+        'id': face.id,
+        'timestamp': face.timestamp,
+        'image_key': face.image_key()
+    } for face in faces]
+
+
 class NotificationsController:
 
     @staticmethod
     def make_routes(app):
         app.route('/notifications/id/<notification_id>')(_get_notification)
         app.route('/notifications/id/<notification_id>/read', methods=['POST'])(_mark_notification_read)
+        app.route('/notifications/id/<notification_id>/faces')(_get_notification_faces)
         app.route('/notifications/user/<username>')(_get_notifications)
         app.route('/notifications/user/<username>/count')(_count_notifications)

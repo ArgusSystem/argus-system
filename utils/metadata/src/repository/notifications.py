@@ -1,5 +1,6 @@
 from peewee import JOIN
 
+from utils.metadata.src.repository.sightings import get_sighting_for
 from utils.orm.src.models import BrokenRestriction, \
     Camera, \
     Face, \
@@ -74,3 +75,22 @@ def mark_notification_read(notification_id):
         .update(read=True) \
         .where(Notification.id == notification_id) \
         .execute()
+
+
+def get_notification_faces(notification_id):
+    notification = (Notification.select(Notification, BrokenRestriction)
+                    .join(BrokenRestriction)
+                    .where(Notification.id == notification_id)
+                    .get())
+
+    sighting = get_sighting_for(notification.broken_restriction.face_id, notification.broken_restriction.restriction_id)
+
+    broken_restrictions = (BrokenRestriction.select(Face, VideoChunk, Camera)
+                           .join(Face)
+                           .join(VideoChunk)
+                           .join(Camera)
+                           .where((BrokenRestriction.restriction_id == sighting.restriction) &
+                                  (Camera.id == sighting.camera) &
+                                  (Face.timestamp >= sighting.start_time) & (Face.timestamp <= sighting.end_time)))
+
+    return [br.face for br in broken_restrictions]

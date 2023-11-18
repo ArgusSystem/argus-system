@@ -81,3 +81,16 @@ export function createTableHeader(row, ...fields) {
     }
     return mapChildrenToRow(row, ...nodes);
 }
+
+export function createDiv(...classes) {
+    const node = document.createElement('div');
+    node.classList.add(classes);
+    return node;
+}
+
+export function createImg(alt='img') {
+    const node = document.createElement('img');
+    node.src = 'data:,';
+    node.alt = alt;
+    return node;
+}

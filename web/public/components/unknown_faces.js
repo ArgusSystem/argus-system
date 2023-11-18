@@ -1,6 +1,6 @@
 import { fetchHTMLElement } from './utils.js';
-import { API_URL } from '../modules/api/url.js';
 import { timestampToISOString } from '../modules/format.js';
+import { getFaceImageUrl } from '../modules/api/faces.js';
 
 function updateOffcanvas(faceId, imgUrl, camera, timestamp) {
     document.getElementById('face-image').src = imgUrl;
@@ -11,7 +11,7 @@ function updateOffcanvas(faceId, imgUrl, camera, timestamp) {
 
 async function createUnknownFace(face){
     const element = await fetchHTMLElement('components/table_rows/unknown_face.html');
-    const url = `${API_URL}/faces/${face.url}`
+    const url = getFaceImageUrl(face.url);
 
     element.querySelector('img').src = url;
 
