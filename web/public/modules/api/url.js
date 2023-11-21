@@ -1,7 +1,9 @@
-const {protocol, hostname} = window.location;
+const {protocol} = window.location;
 
-//export const API_URL = `${protocol}//${hostname}:5000`;
-export const API_URL = `${protocol}//argus:5000`;
+const HOST = 'argus-web'
+
+export const API_URL = `${protocol}//${HOST}:5000`;
+
 
 export function with_params(url, params) {
     const endpoint = new URL(url);
