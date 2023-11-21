@@ -6,7 +6,6 @@ from peewee import BigIntegerField, CharField, IntegerField
 QUERY_SQL = path.join(path.dirname(__file__), '..', '..', 'resources', 'unknown.sql')
 
 
-# TODO: Group max concurrent unknown people
 class UnknownSighting(View):
     camera = IntegerField()
 
@@ -15,6 +14,8 @@ class UnknownSighting(View):
 
     start_time = BigIntegerField()
     end_time = BigIntegerField()
+
+    concurrent_detections = IntegerField()
 
     def interval(self):
         return self.start_time, self.end_time
