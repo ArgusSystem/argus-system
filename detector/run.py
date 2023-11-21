@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from detector import FaceDetectionTask
 from utils.application import run
 from utils.events.src.message_clients.rabbitmq import Consumer
