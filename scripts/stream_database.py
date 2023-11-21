@@ -8,7 +8,6 @@ from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
-from utils.orm.src import Sighting
 from utils.orm.src.models import BrokenRestriction, Camera, Face, Notification, Person, VideoChunk, UnknownCluster, \
     UnknownFace
 from utils.orm.src.database import connect
@@ -20,8 +19,6 @@ def clean(db):
     UnknownCluster.truncate_table(restart_identity=True, cascade=True)
     Notification.truncate_table(restart_identity=True)
     BrokenRestriction.truncate_table(restart_identity=True, cascade=True)
-    db.execute_sql(Sighting.drop_view())
-    db.execute_sql(Sighting.create_view())
 
 
 if __name__ == "__main__":

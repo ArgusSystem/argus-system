@@ -3,12 +3,12 @@ from os import path
 from .view import View
 from peewee import BigIntegerField, CharField, IntegerField
 
-SIGHTING_SQL = path.join(path.dirname(__file__), '..', '..', 'resources', 'sighting.sql')
+QUERY_SQL = path.join(path.dirname(__file__), '..', '..', 'resources', 'unknown.sql')
 
 
-class Sighting(View):
+# TODO: Group max concurrent unknown people
+class UnknownSighting(View):
     camera = IntegerField()
-    person = IntegerField()
 
     restriction = IntegerField()
     severity = CharField()
@@ -20,18 +20,18 @@ class Sighting(View):
         return self.start_time, self.end_time
 
     def identifier(self):
-        return self.camera, self.person, self.restriction
+        return self.camera, self.restriction
 
     def offender(self):
-        return self.person
+        return None
 
     @classmethod
     def create_view(cls):
-        with open(SIGHTING_SQL) as file:
+        with open(QUERY_SQL) as file:
             query = file.read()
 
-        return f'CREATE VIEW "sighting" AS {query}'
+        return f'CREATE VIEW "unknownsighting" AS {query}'
 
     @classmethod
     def drop_view(cls):
-        return 'DROP VIEW IF EXISTS "sighting"'
+        return 'DROP VIEW IF EXISTS "unknownsighting"'

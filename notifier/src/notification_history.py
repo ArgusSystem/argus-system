@@ -3,7 +3,7 @@ from math import inf
 
 
 def _get_key(sighting):
-    return sighting.person, sighting.matched, sighting.restriction
+    return sighting.identifier()
 
 
 def intersect(a, b):
@@ -13,7 +13,8 @@ def intersect(a, b):
 class NotificationHistory:
 
     def __init__(self):
-        # TODO: A deque may be more performant, with a circular array implementation
+        # TODO: A deque may be more performant, with a circular array implementation. More importantly, this
+        #       should be persisted to allow distribution and recovery.
         self.history: defaultdict = defaultdict(list)
 
     def update(self, sighting):

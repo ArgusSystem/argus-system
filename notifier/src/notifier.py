@@ -10,7 +10,6 @@ def _notify(users, history_entry, broken_restriction_id):
     for user_id in users:
         if not history_entry.has_notified(user_id):
             create_notification(user_id, broken_restriction_id)
-            print(f'Notification sent to {user_id}')
             history_entry.notify_user(user_id)
 
 
@@ -32,7 +31,7 @@ class Notifier:
         with self.tracer.start_as_current_span('notifier', context=get_context(broken_restriction_message.trace_id)):
             history_entry = self.notification_history.update(sighting)
 
-            if sighting.matched:
-                _notify(get_offenders(sighting.person), history_entry, broken_restriction_id)
+            if sighting.offender():
+                _notify(get_offenders(sighting.offender()), history_entry, broken_restriction_id)
 
             _notify(get_wardens(restriction_id), history_entry, broken_restriction_id)

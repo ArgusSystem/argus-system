@@ -15,10 +15,8 @@ def _get_history():
 
     assert from_date < to_date
 
-    # Only used for registered people, but I can also be used for clusters in the future
     sightings = Sighting.select(Sighting.camera, Sighting.severity, Sighting.start_time, Sighting.end_time) \
         .where((Sighting.person == person_id) &
-               Sighting.matched &
                (Sighting.start_time >= from_date) &
                (Sighting.end_time < to_date)) \
         .order_by(Sighting.start_time.desc()) \

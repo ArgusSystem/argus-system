@@ -9,6 +9,8 @@ from utils.time.src.timestamp import ARGENTINA_TZ, from_timestamp_ms
 EPOCH_MAX_TIMESTAMP_MS = ((1 << 31) - 1) * 1000
 
 
+# TODO: Review with new sightings
+
 def _to_weekday(timestamp):
     tt = from_timestamp_ms(timestamp, ARGENTINA_TZ).timetuple()
     return tt.tm_wday
