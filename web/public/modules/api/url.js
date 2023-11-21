@@ -1,6 +1,6 @@
 const {protocol} = window.location;
 
-const HOST = 'argus-web'
+const HOST = 'argus-web';
 
 export const API_URL = `${protocol}//${HOST}:5000`;
 
