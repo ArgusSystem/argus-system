@@ -12,7 +12,7 @@ async function createUnknownClusterRow(){
 }
 
 export async function createUnknownClusterHeader() {
-    return createTableHeader(await createUnknownClusterRow(), "Id", "Count");
+    return createTableHeader(await createUnknownClusterRow(), "Id", "Count", "Outliers");
 }
 
 export async function createUnknownClusterItem(cluster) {
@@ -22,7 +22,8 @@ export async function createUnknownClusterItem(cluster) {
 
     mapChildrenToRow(row,
         createTextNode(id),
-        createTextNode(cluster['faces_count']));
+        createTextNode(cluster['faces_count']),
+        createTextNode(cluster['outliers']));
 
     row.onclick = () => redirect(Page.CLUSTER, {id});
 

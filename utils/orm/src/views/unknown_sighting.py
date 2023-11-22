@@ -2,7 +2,6 @@ from .view import View
 from peewee import BigIntegerField, CharField, IntegerField
 
 
-# TODO: Group max concurrent unknown people
 class UnknownSighting(View):
     camera = IntegerField()
 
@@ -11,6 +10,8 @@ class UnknownSighting(View):
 
     start_time = BigIntegerField()
     end_time = BigIntegerField()
+
+    concurrent_detections = IntegerField()
 
     def interval(self):
         return self.start_time, self.end_time

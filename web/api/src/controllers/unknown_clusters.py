@@ -22,13 +22,15 @@ def _get_unknown_clusters():
     faces_count = fn.COUNT(UnknownFace.face_id)
 
     return [{
-        'id': face.cluster_id,
-        'faces_count': face.faces_count
+        'id': face.cluster.id,
+        'faces_count': face.faces_count,
+        'outliers': face.cluster.outliers
     } for face in UnknownFace
-    .select(UnknownFace.cluster_id, faces_count.alias('faces_count'))
-    .group_by(UnknownFace.cluster_id)
-    .order_by(faces_count.desc())
-    .limit(clusters_count)]
+        .select(UnknownCluster.id, faces_count.alias('faces_count'), UnknownCluster.outliers)
+        .join(UnknownCluster)
+        .group_by(UnknownCluster.id, UnknownCluster.outliers)
+        .order_by(faces_count.desc())
+        .limit(clusters_count)]
 
 
 def _get_cluster_faces(cluster_id):
@@ -61,6 +63,8 @@ def _fit():
     for face, label in zip(map(lambda f: f.id, faces), clt.labels_):
         cluster_storage.store(face, label)
 
+    return jsonify(success=True)
+
 
 def safe_delete_cluster(transaction, cluster_id):
     try:
@@ -80,7 +84,7 @@ class UnknownClustersController:
 
     def make_routes(self, app):
         app.route('/unknown_clusters')(_get_unknown_clusters)
-        app.route('/unknown_clusters/fit')(_fit)
+        app.route('/unknown_clusters/fit', methods=['POST'])(_fit)
         app.route('/unknown_clusters/<cluster_id>/faces')(_get_cluster_faces)
         app.route('/unknown_clusters/<cluster_id>/re_tag', methods=['POST'])(self._re_tag)
 

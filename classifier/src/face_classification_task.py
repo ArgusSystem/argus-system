@@ -108,10 +108,4 @@ class FaceClassificationTask:
                 matched_face_message = MatchedFaceMessage(face_id=str(face_id), trace=face_message.trace)
                 self.publisher_to_warden.publish(encode(matched_face_message))
 
-                # Queue face data for unknown face clustering
-                if not is_match:
-                    unknown_face_message = UnknownFaceMessage(face_id=str(face_id), embedding=embedding,
-                                                              trace=face_message.trace)
-                    self.publisher_to_clusterer.publish(encode(unknown_face_message))
-
         logger.info("Finished - %s, found: %s with prob: %.2f", face_message, name, classification_probability)
