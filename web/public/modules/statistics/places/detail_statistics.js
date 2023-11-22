@@ -46,7 +46,7 @@ async function refreshAvgTimeSpent(camera, range) {
 async function refreshTrespassers(camera, range) {
     const [start, end] = range;
     const trespassers = await fetchTrespassers(camera, start, end);
-    document.getElementById('trespassers').innerText = `Trespassers: ${trespassers}`;
+    document.getElementById('trespassers').innerText = `Trespassing Count: ${trespassers}`;
 }
 
 async function refreshConcurrentVisits(camera, range) {
