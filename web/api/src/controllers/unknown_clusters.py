@@ -7,9 +7,12 @@ from clusterer.src.clustering import fit
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
+from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.orm.src.database import db
-from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace
+from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace, BrokenRestriction
 from utils.tracing.src.tracer import get_trace_parent
+
+TAG_DELETE_FACE = -2
 
 
 def _get_unknown_clusters():
@@ -59,10 +62,20 @@ def _fit():
         cluster_storage.store(face, label)
 
 
+def safe_delete_cluster(transaction, cluster_id):
+    try:
+        UnknownCluster.delete() \
+            .where(UnknownCluster.id == cluster_id) \
+            .execute()
+    except IntegrityError:
+        transaction.rollback()
+
+
 class UnknownClustersController:
 
-    def __init__(self, publisher_configuration, tracer):
-        self.publisher = Publisher.new(**publisher_configuration)
+    def __init__(self, publisher_to_warden_configuration, publisher_to_clusterer_configuration, tracer):
+        self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
+        self.publisher_to_clusterer = Publisher.new(**publisher_to_clusterer_configuration)
         self.tracer = tracer
 
     def make_routes(self, app):
@@ -73,34 +86,37 @@ class UnknownClustersController:
 
     def _re_tag(self, cluster_id):
         data = request.json
+        person_id = data['person']
+        faces = data['faces']
 
-        # Update database
-        with db.transaction() as txn:
-            Face.update(person_id=data['person'], is_match=True) \
-                .where(Face.id.in_(data['faces'])) \
-                .execute()
-
-            UnknownFace.delete() \
-                .where(UnknownFace.face_id.in_(data['faces'])) \
-                .execute()
-
-            # TODO: Check Broken Restrictions
-
-            txn.commit()
-
-            try:
-                UnknownCluster.delete() \
-                    .where(UnknownCluster.id == cluster_id) \
+        if person_id != TAG_DELETE_FACE:
+            # Update database
+            with db.transaction() as txn:
+                Face.update(person_id=person_id, is_match=True) \
+                    .where(Face.id.in_(faces)) \
                     .execute()
-            except IntegrityError:
-                txn.rollback()
+                UnknownFace.delete() \
+                    .where(UnknownFace.face_id.in_(faces)) \
+                    .execute()
+                BrokenRestriction.delete() \
+                    .where(BrokenRestriction.face.in_(faces)) \
+                    .execute()
+                txn.commit()
 
-        # Send faces to warden
-        with self.tracer.start_as_current_span(f'cluster-{cluster_id}-re-tag'):
-            trace = get_trace_parent()
+                safe_delete_cluster(txn, cluster_id)
 
-            for face_id in data['faces']:
-                with self.tracer.start_as_current_span(face_id):
-                    self.publisher.publish(encode(MatchedFaceMessage(face_id=face_id, trace=trace)))
+            # Send faces to warden
+            with self.tracer.start_as_current_span(f'cluster-{cluster_id}-re-tag'):
+                trace = get_trace_parent()
+
+                for face_id in faces:
+                    with self.tracer.start_as_current_span(face_id):
+                        self.publisher_to_warden.publish(encode(MatchedFaceMessage(face_id=face_id, trace=trace)))
+        else:
+            with db.transaction() as txn:
+                Face.delete().where(Face.id.in_(faces)).execute()
+                txn.commit()
+
+                safe_delete_cluster(txn, cluster_id)
 
         return jsonify(success=True)
