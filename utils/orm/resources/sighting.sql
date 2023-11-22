@@ -28,4 +28,4 @@ FROM (
         ) AS t
     ) AS G
 GROUP BY camera, person, restriction, severity, grp
-ORDER BY end_time;
+ORDER BY person, end_time;

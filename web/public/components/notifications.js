@@ -33,7 +33,7 @@ function createNotificationNode (notification) {
 
     const p = document.createElement('p');
     p.innerText = notification.text;
-    p.classList.add('d-inline', 'px-2')
+    p.classList.add('d-inline', 'px-2');
     li.appendChild(p);
 
     return li;
@@ -79,7 +79,11 @@ function createSeeAll() {
 
 function toNotificationInformation(notification) {
     return {
-        id: notification['id'],
+        user_id: notification.user_id,
+        person_id: notification.person_id,
+        camera_id: notification.camera_id,
+        restriction_id: notification.restriction_id,
+        start_time: notification.start_time,
         read: notification.read,
         severity: notification.restriction.severity,
         text: `Persona no autorizada en ${notification['place']} : ${notification['person']}`
@@ -92,6 +96,7 @@ export async function createNotificationDropdown () {
     const list = document.getElementById('notificationDropdown');
 
     const notificationsCount = await fetchNotificationsCount(username);
+    console.log("notifications:" + notificationsCount);
 
     if (notificationsCount > 0)
         document.getElementById('notificationIcon').appendChild(createBadge(notificationsCount));

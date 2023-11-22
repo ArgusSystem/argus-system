@@ -14,14 +14,15 @@ async function createNotificationRow(){
 }
 
 async function createNotificationHeader() {
-    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Time', 'Restriction');
+    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Start Time', 'End Time', 'Restriction');
 }
 
 async function createNotificationItemRow(notification, ruleContext) {
     return mapChildrenToRow(await createNotificationRow(),
             createTextNode(notification.person),
             createTextNode(notification.place),
-            createTextNode(timestampToString(notification.timestamp)),
+            createTextNode(timestampToString(notification.start_time)),
+            createTextNode(timestampToString(notification.end_time)),
             createTextNode(ruleContext.formatToString(notification.restriction.rule))
         );
 }
