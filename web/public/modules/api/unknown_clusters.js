@@ -20,3 +20,8 @@ export function reTagFaces(clusterId, person, faces) {
 			.catch((error) => console.error('Failed to re tag cluster!', error));
 }
 
+
+export function fitClusters() {
+	return post(`${BASE_URL}/fit`, {})
+			.catch((error) => console.error('Failed to fit clusters!', error));
+}
