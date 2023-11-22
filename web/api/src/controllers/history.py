@@ -15,7 +15,7 @@ def _get_history():
 
     assert from_date < to_date
 
-    sightings = Sighting.select(Sighting.camera, Sighting.severity, Sighting.start_time, Sighting.end_time) \
+    sightings = Sighting.select(Sighting.camera, Sighting.person, Sighting.severity, Sighting.start_time, Sighting.end_time) \
         .where((Sighting.person == person_id) &
                (Sighting.start_time >= from_date) &
                (Sighting.end_time < to_date)) \
@@ -24,6 +24,7 @@ def _get_history():
 
     return [{
         'camera_id': s.camera,
+        'person_id': s.person,
         'severity': s.severity,
         'start_time': s.start_time,
         'end_time': s.end_time

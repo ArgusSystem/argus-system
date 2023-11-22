@@ -1,4 +1,10 @@
 import {Map} from '../../components/map.js'
+import {createAlbumIcon} from "../../components/icons.js";
+import {fetchHTMLElement} from "../../components/utils.js";
+import {getFaceImageUrl} from "../api/faces.js";
+import {API_URL} from "../api/url.js";
+import {loadReTaggingOptions} from "../history/re_tagging.js";
+
 
 
 class SightingsList {
@@ -18,7 +24,7 @@ class SightingsList {
         this.map.init();
     }
 
-    add(camera, sighting) {
+    async add(camera, sighting) {
         const start_date = new Date(sighting.start_time);
         const end_date = new Date(sighting.end_time);
 
@@ -46,6 +52,8 @@ class SightingsList {
         };
 
         item.appendChild(document.createTextNode(camera.name));
+        var albumButton = await this.#createAlbumButton(sighting);
+        item.appendChild(albumButton);
         item.appendChild(this.#createDateNode(start_date, end_date));
 
         this.parent.appendChild(item);
@@ -78,11 +86,35 @@ class SightingsList {
         span.innerText = `${start_date.toLocaleTimeString()} - ${end_date.toLocaleTimeString()}`;
         return span;
     }
+
+    async #createAlbumButton(sighting) {
+        let button = document.createElement('button');
+
+        button.setAttribute('class', 'btn');
+        button.setAttribute('type', 'button');
+        button.setAttribute('data-bs-toggle', 'modal');
+        button.setAttribute('data-bs-target', '#faces-modal');
+        button.onclick = async () => create_album_callback(sighting) ;
+        button.appendChild(await createAlbumIcon());
+
+        return button;
+    }
+}
+
+async function create_album_callback(sighting) {
+    await createFaces(await fetchKnownFaces(
+            sighting.camera_id,
+            sighting.person_id,
+            sighting.start_time,
+            sighting.end_time
+        ));
+
+    await loadReTaggingOptions();
 }
 
 const list = new SightingsList();
 
-export function onSightings(cameras, sightings) {
+export async function onSightings(cameras, sightings) {
     document.getElementById('sightings').removeAttribute('hidden');
 
     list.init();
@@ -90,4 +122,46 @@ export function onSightings(cameras, sightings) {
     sightings.forEach(sighting => {
         list.add(cameras[sighting.camera_id], sighting);
     });
+}
+
+async function createSightingFace(face){
+    const element = await fetchHTMLElement('components/table_rows/unknown_face.html');
+
+    element.querySelector('img').src = getFaceImageUrl(face.url);
+
+    const checkboxId = `checkbox-${face.id}`;
+    const checkbox = element.querySelector('input');
+    checkbox.id = checkboxId;
+    checkbox.value = face.id;
+    element.querySelector('label').setAttribute('for', checkboxId);
+
+    //element.onclick = () => updateOffcanvas(face.id, url, face.camera, face.timestamp);
+    element.addEventListener('click', (event) => {
+        // Check if the click event originated from the checkbox
+        if (!event.target.matches('input[type="checkbox"]')) {
+            checkbox.checked = !checkbox.checked;
+        }
+    });
+
+    return element;
+}
+
+async function createFaces(faces) {
+    const parent = document.getElementById('face-grid-parent');
+    parent.removeChild(parent.firstChild);
+
+    let grid = document.createElement('div');
+    grid.id = 'face-grid';
+    grid.className = 'row row-cols-auto g-2';
+    parent.appendChild(grid);
+
+    for (const face of faces) {
+        grid.appendChild(await createSightingFace(face));
+    }
+}
+
+function fetchKnownFaces(camera, person, start_time, end_time) {
+    return fetch(`${API_URL}/known_faces/${camera}/${person}/${start_time}/${end_time}`)
+		.then((response) => response.json())
+		.catch((error) => console.error('Failed to fetch known faces!', error));
 }

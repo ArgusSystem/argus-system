@@ -6,7 +6,8 @@ from utils.application import run
 from utils.tracing.src.tracer import get_tracer
 
 DB_KEY = 'db'
-PUBLISHER_KEY = 'publisher'
+PUBLISHER_TO_WARDEN_KEY = 'publisher_to_warden'
+PUBLISHER_TO_CLUSTERER_KEY = 'publisher_to_clusterer'
 SERVER_KEY = 'server'
 TRACER_KEY = 'tracer'
 VIDEO_STORAGE_KEY = 'video_storage'
@@ -17,7 +18,8 @@ if __name__ == "__main__":
 
         controllers_factory = ControllersFactory(db_configuration=application.configuration[DB_KEY],
                                                  storage_configuration=application.configuration[VIDEO_STORAGE_KEY],
-                                                 publisher_configuration=application.configuration[PUBLISHER_KEY],
+                                                 publisher_to_warden_configuration=application.configuration[PUBLISHER_TO_WARDEN_KEY],
+                                                 publisher_to_clusterer_configuration=application.configuration[PUBLISHER_TO_CLUSTERER_KEY],
                                                  tracer=tracer)
 
         server = ServerThread(**application.configuration[SERVER_KEY],
