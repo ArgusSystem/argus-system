@@ -6,12 +6,18 @@ video_storage:
   port: 9500
   access_key: argus
   secret_key: panoptes
-publisher:
+publisher_to_warden:
   host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: face_rule_check
+publisher_to_clusterer:
+  host: argus
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: unknown_faces
 db:
   database: argus
   host: argus
