@@ -19,13 +19,13 @@ def _get_unknown_clusters():
     faces_count = fn.COUNT(UnknownFace.face_id)
 
     return [{
-        'id': face.cluster_id,
+        'id': face.cluster.id,
         'faces_count': face.faces_count,
         'outliers': face.cluster.outliers
     } for face in UnknownFace
-        .select(UnknownFace.cluster_id, faces_count.alias('faces_count'), UnknownCluster.outliers)
+        .select(UnknownCluster.id, faces_count.alias('faces_count'), UnknownCluster.outliers)
         .join(UnknownCluster)
-        .group_by(UnknownFace.cluster_id, UnknownCluster.outliers)
+        .group_by(UnknownCluster.id, UnknownCluster.outliers)
         .order_by(faces_count.desc())
         .limit(clusters_count)]
 
