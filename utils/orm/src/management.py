@@ -15,10 +15,10 @@ def drop_tables(database):
 def create_views(database):
     assert database.is_connection_usable()
     for view_class in View.__subclasses__():
-        database.execute_sql(view_class.create_view())
+        database.execute_sql(view_class.create_view_str())
 
 
 def drop_views(database):
     assert database.is_connection_usable()
     for view_class in View.__subclasses__():
-        database.execute_sql(view_class.drop_view())
+        database.execute_sql(view_class.drop_view_str())
