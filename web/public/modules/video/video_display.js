@@ -40,7 +40,7 @@ export function setUpDisplay(video, canvas, scalingFactor, videoInterpolator) {
             ctx.rect(x1, y1, w, h);
             ctx.fillStyle = "rgba(0,0,0,0)";
             ctx.fill();
-            ctx.lineWidth = 5;
+            ctx.lineWidth = 5 / scalingFactor;
             ctx.strokeStyle = color;
             ctx.stroke();
         }
