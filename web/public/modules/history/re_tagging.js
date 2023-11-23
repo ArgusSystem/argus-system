@@ -1,8 +1,7 @@
 import { fetchPeople } from '../api/people.js';
-import { redirect, reload } from '../routing.js';
-import { Page } from '../page.js';
-import {post} from "../api/utils.js";
-import {API_URL} from "../api/url.js";
+import { post } from "../api/utils.js";
+import { API_URL } from "../api/url.js";
+import { searchSubmit } from "./search.js";
 
 const PERSON_ID_UNKNOWN = -1;
 const PERSON_ID_DELETE = -2;
@@ -38,8 +37,8 @@ function createDropdownOption(element, option_text, option_value) {
     li.innerText = option_text;
     li.onclick = async () => {
         const facesUpdated = await reTag(option_value);
-        reload();
-        //$('#faces-modal').modal('hide');
+        $('#faces-modal').modal('hide');
+        searchSubmit();
     };
     element.appendChild(li);
 }
