@@ -40,10 +40,8 @@ class ControllersFactory:
             RestrictionsController,
             RestrictionSeveritiesController,
             UsersController,
-            UnknownClustersController(self.publisher_to_warden_configuration, self.publisher_to_clusterer_configuration,
-                                      self.tracer),
+            UnknownClustersController(self.publisher_to_warden_configuration, self.tracer),
             FacesController(self.storage_factory.new(StorageType.FRAME_FACES)),
             StatisticsController,
-            KnownFacesController(self.publisher_to_warden_configuration, self.publisher_to_clusterer_configuration,
-                                      self.tracer)
+            KnownFacesController(self.publisher_to_warden_configuration, self.tracer)
         ]

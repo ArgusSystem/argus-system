@@ -33,3 +33,7 @@ export async function loadSearchSubmit(cameras) {
         await onSightings(cameras, data);
     };
 }
+
+export async function searchSubmit(){
+    await document.getElementById('submit-filter').click();
+}

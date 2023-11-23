@@ -12,12 +12,6 @@ publisher_to_warden:
   password: panoptes
   exchange: argus
   routing_key: face_rule_check
-publisher_to_clusterer:
-  host: argus
-  username: argus
-  password: panoptes
-  exchange: argus
-  routing_key: unknown_faces
 db:
   database: argus
   host: argus
