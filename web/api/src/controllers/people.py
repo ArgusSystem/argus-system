@@ -14,7 +14,7 @@ def _last_seen(person_id):
     face = Face.select(Face.id, Face.offset, Face.timestamp, VideoChunk.timestamp, Camera.alias) \
         .join(VideoChunk) \
         .join(Camera) \
-        .where(Face.person_id == person_id) \
+        .where((Face.person_id == person_id) & Face.is_match) \
         .order_by(Face.timestamp.desc()) \
         .first()
 

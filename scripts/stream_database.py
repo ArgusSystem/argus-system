@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time_ns
 
 from peewee import prefetch
 
@@ -7,10 +7,14 @@ from utils.events.src.messages.detected_face_message import DetectedFaceMessage
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.events.src.messages.video_chunk_message import VideoChunkMessage
+from utils.metadata.src.naming.face import to_object_storage_key as face_object_key
+from utils.metadata.src.naming.frame import to_object_storage_key as frame_object_key
+from utils.metadata.src.naming.video_chunk import to_object_storage_key as video_chunk_object_key
 from utils.orm.src.models import BrokenRestriction, Camera, Face, Notification, Person, VideoChunk, UnknownCluster, \
     UnknownFace
 from utils.orm.src.database import connect
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
+from utils.video_storage import StorageFactory, StorageType
 
 
 def clean():
@@ -27,6 +31,11 @@ if __name__ == "__main__":
     warden_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'face_rule_check')
     tracer = get_tracer('argus', 6831, 'database_streamer')
 
+    storage_factory = StorageFactory('argus', 9500, 'argus', 'panoptes')
+    video_chunks_storage = storage_factory.new(StorageType.VIDEO_CHUNKS)
+    frame_storage = storage_factory.new(StorageType.VIDEO_FRAMES)
+    faces_storage = storage_factory.new(StorageType.FRAME_FACES)
+
     clean()
 
     chunks_query = VideoChunk.select(VideoChunk, Camera).join(Camera).order_by(VideoChunk.timestamp)
@@ -35,19 +44,46 @@ if __name__ == "__main__":
     chunks_with_faces = prefetch(chunks_query, faces_query)
 
     sequence_id = -1
-    timestamp = None
+    last_chunk_timestamp = None
+    new_timestamp = (time_ns() // 1_000_000_000) * 1_000
+    new_timestamp -= 5 * 1000
 
     for chunk in chunks_with_faces:
-        if timestamp != chunk.timestamp:
+        if last_chunk_timestamp != chunk.timestamp:
             sequence_id += 1
-            timestamp = chunk.timestamp
-            sleep(0.9)
+            last_chunk_timestamp = chunk.timestamp
+            new_timestamp += 1_000  # Assumes that difference between chunk is 1 second
+            sleep(0.75)
 
         with tracer.start_as_current_span(f'stream_chunk'):
             context = get_trace_parent()
 
+            # Update video chunk name in minio
+            camera = chunk.camera.alias
+            video_chunks_storage.rename(video_chunk_object_key(camera, last_chunk_timestamp),
+                                        video_chunk_object_key(camera, new_timestamp))
+
+            # Update timestamp in VideoChunk
+            chunk.timestamp = new_timestamp
+            chunk.save()
+
+            # Update frame name in minio
+            for offset in chunk.samples:
+                frame_storage.rename(frame_object_key(camera, last_chunk_timestamp, offset),
+                                     frame_object_key(camera, new_timestamp, offset))
+
+            # Update timestamp in Face
+            for face in chunk.faces:
+                # Update face name in minio
+                faces_storage.rename(face_object_key(camera, last_chunk_timestamp, face.offset, face.face_num),
+                                     face_object_key(camera, new_timestamp, face.offset, face.face_num))
+
+                face.timestamp = new_timestamp + (face.timestamp - last_chunk_timestamp)
+                face.save()
+
+
             chunk_publisher.publish(encode(VideoChunkMessage(
-                camera_id=chunk.camera.alias,
+                camera_id=camera,
                 timestamp=chunk.timestamp,
                 trace=context,
                 encoding='mp4',
@@ -56,7 +92,7 @@ if __name__ == "__main__":
                 sequence_id=sequence_id
             )))
 
-            video_chunk_id = f'{chunk.camera.alias}-{chunk.timestamp}'
+            video_chunk_id = f'{camera}-{chunk.timestamp}'
 
             # Generalize face classification task
             for face in chunk.faces:
