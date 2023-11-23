@@ -91,10 +91,20 @@ function toNotificationInformation(notification) {
 }
 
 export async function createNotificationDropdown () {
-    const username = getUsername();
+    await populateNotificationDropdown();
 
+    const updateSecondsDelta = 10;
+    setInterval(async () => {
+        await populateNotificationDropdown();
+    }, updateSecondsDelta * 1000);
+}
+
+async function populateNotificationDropdown() {
     const list = document.getElementById('notificationDropdown');
+    // remember what will be deleted later
+    const prev_children = list.childElementCount;
 
+    const username = getUsername();
     const notificationsCount = await fetchNotificationsCount(username);
     console.log("notifications:" + notificationsCount);
 
@@ -112,4 +122,9 @@ export async function createNotificationDropdown () {
 
     list.appendChild(createDivider());
     list.appendChild(createSeeAll());
+
+    // delete old info
+    for (let i = 0; i < prev_children; i++) {
+        list.removeChild(list.firstChild);
+    }
 }
