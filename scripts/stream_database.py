@@ -53,7 +53,7 @@ if __name__ == "__main__":
             sequence_id += 1
             last_chunk_timestamp = chunk.timestamp
             new_timestamp += 1_000  # Assumes that difference between chunk is 1 second
-            sleep(0.75)
+            sleep(0.5)
 
         with tracer.start_as_current_span(f'stream_chunk'):
             context = get_trace_parent()

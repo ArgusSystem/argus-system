@@ -106,7 +106,6 @@ async function populateNotificationDropdown() {
 
     const username = getUsername();
     const notificationsCount = await fetchNotificationsCount(username);
-    console.log("notifications:" + notificationsCount);
 
     if (notificationsCount > 0)
         document.getElementById('notificationIcon').appendChild(createBadge(notificationsCount));

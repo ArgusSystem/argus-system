@@ -22,8 +22,8 @@ export class VideoInterpolator {
             this.facesIndex.get(this.lastSample.chunkId, this.lastSample.frameOffset) :
             [];
 
-        if (faces.length > 0)
-            console.log('Found %d faces for {chunk: %s, offset: %d} from {chunk: %s, offset: %d}', faces.length, chunkId, frameOffset, this.lastSample.chunkId, this.lastSample.frameOffset);
+        // if (faces.length > 0)
+        //     console.log('Found %d faces for {chunk: %s, offset: %d} from {chunk: %s, offset: %d}', faces.length, chunkId, frameOffset, this.lastSample.chunkId, this.lastSample.frameOffset);
 
         return faces;
     }

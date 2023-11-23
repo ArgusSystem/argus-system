@@ -57,12 +57,12 @@ export function setUpDisplay(camera, videoInterpolator) {
 
     video.requestVideoFrameCallback(updateCanvas);
 
-    let previous_frame_count = 0;
-
-    setInterval(() => {
-        const current_frame_count = frame_count;
-        console.log('FPS: %d', current_frame_count - previous_frame_count);
-        previous_frame_count = current_frame_count;
-    },1000);
+    // let previous_frame_count = 0;
+    //
+    // setInterval(() => {
+    //     const current_frame_count = frame_count;
+    //     console.log('FPS: %d', current_frame_count - previous_frame_count);
+    //     previous_frame_count = current_frame_count;
+    // },1000);
 }
 
