@@ -22,8 +22,8 @@ class Camera(Model):
 
     encoding = CharField()
 
-    latitude = DecimalField(max_digits=8, decimal_places=6)
-    longitude = DecimalField(max_digits=9, decimal_places=6)
+    latitude = DecimalField(max_digits=16, decimal_places=14)
+    longitude = DecimalField(max_digits=16, decimal_places=14)
 
     area = ForeignKeyField(Area)
 
