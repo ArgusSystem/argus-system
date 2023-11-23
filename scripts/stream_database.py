@@ -48,12 +48,18 @@ if __name__ == "__main__":
     new_timestamp = (time_ns() // 1_000_000_000) * 1_000
     new_timestamp -= 5 * 1000
 
+    DEBUG_TIME = time_ns()
+
     for chunk in chunks_with_faces:
         if last_chunk_timestamp != chunk.timestamp:
             sequence_id += 1
             last_chunk_timestamp = chunk.timestamp
             new_timestamp += 1_000  # Assumes that difference between chunk is 1 second
-            sleep(0.5)
+            sleep(0.25)
+
+            CURRENT_TIME = time_ns()
+            print(f'{sequence_id} : {(CURRENT_TIME - DEBUG_TIME) // 1_000_000}')
+            DEBUG_TIME = CURRENT_TIME
 
         with tracer.start_as_current_span(f'stream_chunk'):
             context = get_trace_parent()
@@ -118,4 +124,4 @@ if __name__ == "__main__":
                 matched_face_message = MatchedFaceMessage(face_id=str(face.id), trace=context)
                 warden_publisher.publish(encode(matched_face_message))
 
-        print(f'Sent {sequence_id} with {len(chunk.faces)}')
+        # print(f'Sent {sequence_id} with {len(chunk.faces)}')
