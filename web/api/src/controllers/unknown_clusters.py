@@ -7,7 +7,6 @@ from clusterer.src.clustering import fit
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
-from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 from utils.orm.src.database import db
 from utils.orm.src.models import Camera, Face, VideoChunk, UnknownCluster, UnknownFace, BrokenRestriction
 from utils.tracing.src.tracer import get_trace_parent
@@ -55,6 +54,9 @@ def _fit():
              .where((~Face.is_match) & (UnknownFace.cluster.is_null())))
 
     embeddings = np.array([face.embedding for face in faces])
+
+    if len(embeddings) == 0:
+        return jsonify(success=False)
 
     clt = fit(embeddings)
 
