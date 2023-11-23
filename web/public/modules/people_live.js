@@ -53,7 +53,8 @@ async function refreshMap(map) {
     list.replaceChildren();
 
     // Filter up to 5 minutes or set to 0 to avoid filtering
-    const timeLowerBound = Date.now() - 5 * 60 * 1000;
+    // Up to 24 hs for demo
+    const timeLowerBound = Date.now() - 24 * 60 * 60 * 1000;
 
     for (const person of people
         .filter(p => p.last_seen !== null && p.last_seen.time > timeLowerBound)
