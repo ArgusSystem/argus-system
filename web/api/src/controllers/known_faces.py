@@ -30,9 +30,8 @@ def _get_faces(camera_id, person_id, start_time, end_time):
 
 class KnownFacesController:
 
-    def __init__(self, publisher_to_warden_configuration, publisher_to_clusterer_configuration, tracer):
+    def __init__(self, publisher_to_warden_configuration, tracer):
         self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
-        self.publisher_to_clusterer = Publisher.new(**publisher_to_clusterer_configuration)
         self.tracer = tracer
 
     def make_routes(self, app):
@@ -56,7 +55,7 @@ class KnownFacesController:
                     .where(BrokenRestriction.face.in_(faces)) \
                     .execute()
 
-            # Send faces to warden (and maybe clusterer)
+            # Send faces to warden
             with self.tracer.start_as_current_span(f'known-faces-re-tag'):
                 trace = get_trace_parent()
 
@@ -64,12 +63,6 @@ class KnownFacesController:
                     with self.tracer.start_as_current_span(face_id):
                         self.publisher_to_warden.publish(encode(MatchedFaceMessage(face_id=face_id, trace=trace)))
 
-                    # Send faces to clusterer
-                    if person_id == TAG_AS_UNKNOWN:
-                        face = Face.get(Face.id == face_id)
-                        unknown_face_message = UnknownFaceMessage(face_id=face_id, embedding=face.embedding,
-                                                                  trace=trace)
-                        self.publisher_to_clusterer.publish(encode(unknown_face_message))
         else:
             # Update database
             Face.delete().where(Face.id.in_(faces)).execute()

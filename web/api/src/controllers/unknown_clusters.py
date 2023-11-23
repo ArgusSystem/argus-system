@@ -77,9 +77,8 @@ def safe_delete_cluster(transaction, cluster_id):
 
 class UnknownClustersController:
 
-    def __init__(self, publisher_to_warden_configuration, publisher_to_clusterer_configuration, tracer):
+    def __init__(self, publisher_to_warden_configuration, tracer):
         self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
-        self.publisher_to_clusterer = Publisher.new(**publisher_to_clusterer_configuration)
         self.tracer = tracer
 
     def make_routes(self, app):
