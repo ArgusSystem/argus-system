@@ -24,7 +24,8 @@ def _get_faces(camera_id, person_id, start_time, end_time):
         .where((Camera.id == camera_id) &
                (Face.person == person_id) &
                (Face.timestamp >= start_time) &
-               (Face.timestamp <= end_time))
+               (Face.timestamp <= end_time) &
+               Face.is_match)
     ]
 
 
