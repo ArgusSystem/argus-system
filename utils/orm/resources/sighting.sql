@@ -1,15 +1,15 @@
 SELECT camera, person, severity, restriction, min(TIMESTAMP) AS start_time,  max(TIMESTAMP) AS end_time
 FROM (
-    SELECT timestamp, camera, person, restriction, severity, count(is_reset) OVER (ORDER BY person, timestamp) AS grp
+    SELECT timestamp, camera, person, restriction, severity, count(is_reset) OVER (ORDER BY person, timestamp, camera) AS grp
     FROM (
         SELECT timestamp,
                camera,
                person,
                restriction,
                severity,
-               CASE WHEN lag(camera) OVER (ORDER BY person, timestamp) <> camera
-                         OR lag(person) OVER (ORDER BY person, timestamp) <> person
-                         OR lag(severity) OVER (ORDER BY person, timestamp) <> severity
+               CASE WHEN lag(camera) OVER (ORDER BY person, timestamp, camera) <> camera
+                         OR lag(person) OVER (ORDER BY person, timestamp, camera) <> person
+                         OR lag(severity) OVER (ORDER BY person, timestamp, camera) <> severity
                    THEN 1 END as is_reset
         FROM (SELECT camera.id                                        as camera,
                      face.person_id                                   as person,
@@ -23,7 +23,7 @@ FROM (
               LEFT JOIN restriction ON brokenrestriction.restriction_id = restriction.id
               LEFT JOIN restrictionseverity ON restriction.severity_id = restrictionseverity.id
               WHERE is_match
-              ORDER BY person, timestamp
+              ORDER BY person, timestamp, camera
               ) AS tmp
         ) AS t
     ) AS G
