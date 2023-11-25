@@ -5,7 +5,7 @@ import {getFaceImageUrl} from "../api/faces.js";
 import {API_URL} from "../api/url.js";
 import {loadReTaggingOptions} from "../history/re_tagging.js";
 
-
+let lastSelectedCheckbox = null;
 
 class SightingsList {
     constructor () {
@@ -135,12 +135,25 @@ async function createSightingFace(face){
     checkbox.value = face.id;
     element.querySelector('label').setAttribute('for', checkboxId);
 
-    //element.onclick = () => updateOffcanvas(face.id, url, face.camera, face.timestamp);
     element.addEventListener('click', (event) => {
-        // Check if the click event originated from the checkbox
+        // If the click event originated from the checkbox, don't toggle again
         if (!event.target.matches('input[type="checkbox"]')) {
             checkbox.checked = !checkbox.checked;
         }
+        // If shift was held, toggle all faces from the last selected to this one
+        if (event.shiftKey && lastSelectedCheckbox) {
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            const currentIndex = Array.from(checkboxes).indexOf(checkbox);
+            const lastIndex = Array.from(checkboxes).indexOf(lastSelectedCheckbox);
+
+            const start = Math.min(currentIndex, lastIndex);
+            const end = Math.max(currentIndex, lastIndex);
+
+            for (let i = start; i <= end; i++) {
+                checkboxes[i].checked = checkbox.checked;
+            }
+        }
+        lastSelectedCheckbox = checkbox;
     });
 
     return element;
