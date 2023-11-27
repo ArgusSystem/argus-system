@@ -16,6 +16,8 @@ from utils.orm.src.database import connect
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
 from utils.video_storage import StorageFactory, StorageType
 
+ONLY_CLEAN = False
+
 
 def clean():
     UnknownFace.truncate_table(restart_identity=True)
@@ -37,6 +39,9 @@ if __name__ == "__main__":
     faces_storage = storage_factory.new(StorageType.FRAME_FACES)
 
     clean()
+
+    if ONLY_CLEAN:
+        exit(0)
 
     chunks_query = VideoChunk.select(VideoChunk, Camera).join(Camera).order_by(VideoChunk.timestamp)
     faces_query = Face.select(Face, Person).join(Person)
@@ -86,7 +91,6 @@ if __name__ == "__main__":
 
                 face.timestamp = new_timestamp + (face.timestamp - last_chunk_timestamp)
                 face.save()
-
 
             chunk_publisher.publish(encode(VideoChunkMessage(
                 camera_id=camera,
