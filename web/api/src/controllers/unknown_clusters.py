@@ -39,13 +39,15 @@ def _get_cluster_faces(cluster_id):
         'timestamp': unknown_face.face.video_chunk.timestamp,
         'url': unknown_face.face.image_key()
     } for unknown_face in UnknownFace
-    .select(Face.id, Face.offset, Face.face_num, VideoChunk.timestamp, Camera.alias)
-    .join(UnknownCluster)
-    .switch(UnknownFace)
-    .join(Face)
-    .join(VideoChunk)
-    .join(Camera)
-    .where(UnknownCluster.id == cluster_id)]
+        .select(Face.id, Face.offset, Face.face_num, VideoChunk.timestamp, Camera.alias)
+        .join(UnknownCluster)
+        .switch(UnknownFace)
+        .join(Face)
+        .join(VideoChunk)
+        .join(Camera)
+        .where(UnknownCluster.id == cluster_id)
+        .order_by(Camera.id, VideoChunk.timestamp)
+    ]
 
 
 def _fit():

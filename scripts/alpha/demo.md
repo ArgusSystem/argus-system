@@ -3,7 +3,7 @@
 ## Before meeting
 
 1. Start platform services docker environments
-2. Clean with stream database (ONLY_CLEAN: _True_)
+2. Run _alpha_setup_ script
 3. Start Argus applications (1 of each)
    1. Sampler
    2. Detector
@@ -12,8 +12,10 @@
    5. Notifier
    6. Web Streamer
    7. Web API
-4. Change CLEAN_ONLY to _False_
-5. Go to Home tab
+4. Run all streams together
+5. Clean with stream database (ONLY_CLEAN: _True_)
+6. Change CLEAN_ONLY to _False_
+7. Go to the Home tab
 
 ## Demo
 
