@@ -60,9 +60,12 @@ width = 1280
 height = 720
 fps = 30
 
-cam_latitude = -34.61756707610067
-cam_longitude = -58.36823264327735
-cam_lat_long_var = -0.000155
+cam_coords = [
+    [-34.61759710915304, -58.3682885202042],    # kitchen
+    [-34.61793573388762, -58.36794722208188],   # hallway
+    [-34.61756692160962, -58.36772394293642],   # study
+    [-34.61730835828806, -58.36774148629787]    # bedroom
+]
 
 for i, area in enumerate(area_ids):
     Camera.insert(alias=areas[i],
@@ -72,8 +75,8 @@ for i, area in enumerate(area_ids):
                   height=height,
                   framerate=fps,
                   encoding='mp4',
-                  latitude=cam_latitude + uniform(-cam_lat_long_var, cam_lat_long_var),
-                  longitude=cam_longitude + uniform(-cam_lat_long_var, cam_lat_long_var)
+                  latitude=cam_coords[i][0],
+                  longitude=cam_coords[i][1]
                   ).execute()
 
 
