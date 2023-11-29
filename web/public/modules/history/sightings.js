@@ -34,20 +34,14 @@ class SightingsList {
         const item = document.createElement('button');
         item.setAttribute('type', 'button');
 
-        const color = sighting.severity ?? 'light';
+        const color = sighting.severity !== ""? sighting.severity: 'light';
         item.setAttribute('class', `list-group-item-action list-group-item-${color}`);
 
-        // Only on first item added
-        if (this.activeItem === null) {
+        item.onclick =() => {
+            if (this.activeItem !== null)
+                this.activeItem.classList.remove('active');
             item.classList.add('active');
             this.activeItem = item;
-        }
-
-        const that = this;
-        item.onclick =() => {
-            that.activeItem.classList.remove('active');
-            item.classList.add('active');
-            that.activeItem = item;
             this.map.focus(camera.id);
         };
 
@@ -60,6 +54,11 @@ class SightingsList {
 
         // Update map
         this.map.addMarker(camera);
+
+        // Only on first item added
+        if (this.activeItem === null) {
+            item.click();
+        }
     }
 
     #createDayNodeIfNecessary(date) {
