@@ -56,6 +56,8 @@ async function refreshMap(map) {
     // Up to 1 hs for demo
     const timeLowerBound = Date.now() - 60 * 60 * 1000;
 
+    const people_per_place = {};
+
     for (const person of people
         .filter(p => p.last_seen !== null && p.last_seen.time > timeLowerBound)
         .sort((a, b) => b.last_seen.time - a.last_seen.time)) {
