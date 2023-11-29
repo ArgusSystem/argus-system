@@ -56,6 +56,8 @@ export class Map {
         this.drawMapCorridors(Object.values(FIUBA_COORDS));
         this.mapRooms = null;
         this.drawMapRooms(Object.values(FIUBA_COORDS));
+        this.mapRoomLabels = [];
+        this.drawMapRoomLabels(Object.keys(FIUBA_COORDS), Object.values(FIUBA_COORDS).map((coords) => coords[0]));
 
         this.markers = {};
         this.markersCenter = null;
@@ -76,20 +78,27 @@ export class Map {
         setTimeout(() => { map.invalidateSize() }, 100);
     }
 
-    addMarker(camera) {
-        console.log(camera);
+    addMarker(camera, labels=[], opacity=0.5) {
+        //console.log(camera);
         if (!(camera.id in this.markers)) {
-            const coordinates = [camera.latitude, camera.longitude];
 
-            const marker = L.marker([camera.latitude, camera.longitude], {opacity: 0});
-
+            const marker = L.marker([camera.latitude, camera.longitude], {opacity: opacity});
             // First marker
             if (this.activeMarker === null) {
                 //marker.setOpacity(1.0);
                 this.activeMarker = marker;
             }
-
             this.map.addLayer(marker);
+
+            // add popup with labels
+            if (labels.length > 0) {
+                const labelContainer = L.DomUtil.create('div', 'custom-label-container');
+                labels.forEach((label, index) => {
+                    const labelElement = L.DomUtil.create('div', 'custom-label', labelContainer);
+                    labelElement.innerHTML = label;
+                });
+                const popup = marker.bindPopup(labelContainer, {className: 'custom-label-popup', closeButton: false});
+            }
 
             this.markers[camera.id] = marker;
 
@@ -121,13 +130,48 @@ export class Map {
         })).addTo(this.map);
     }
 
+    drawMapRoomLabels(labels, points){
+        for (let i = 0; i < labels.length; ++i) {
+            const label = labels[i];
+            const point = points[i];
+
+            // Convert geographical coordinates to pixel coordinates
+            const pixelCoordinates = this.map.latLngToContainerPoint([point[0], point[1]]);
+
+            // Create a custom div for the text
+            const customTextDiv = L.DomUtil.create('div', 'custom-text');
+            customTextDiv.innerHTML = label;
+
+            // Set the position using absolute positioning
+            customTextDiv.style.position = 'absolute';
+            customTextDiv.style.left = pixelCoordinates.x + 'px';
+            customTextDiv.style.top = pixelCoordinates.y + 'px';
+
+            customTextDiv.style.zIndex = 500; // Adjust the z-index as needed
+
+            const self = this;
+
+            function updateTextPosition() {
+                const pixelCoordinates = self.map.latLngToContainerPoint([point[0], point[1]]);
+                customTextDiv.style.left = pixelCoordinates.x + 'px';
+                customTextDiv.style.top = pixelCoordinates.y + 'px';
+            }
+
+            this.map.on('move', updateTextPosition);
+
+            // Add the custom div to the map container
+            this.map.getContainer().appendChild(customTextDiv);
+            this.mapRoomLabels.push(customTextDiv);
+        }
+    }
+
     focus(camera_id) {
-        //this.activeMarker.setOpacity(0.5);
+        this.activeMarker.setOpacity(0.5);
 
         const marker = this.markers[camera_id];
 
         this.map.panTo(this.markersCenter, DEFAULT_ZOOM);
-        //marker.setOpacity(1.0);
+        marker.setOpacity(1.0);
 
         this.activeMarker = marker;
 
