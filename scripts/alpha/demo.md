@@ -19,6 +19,8 @@
 
 ## Demo
 
+### Edu's computer
+
 1. Show set-up
    1. People
    2. Areas
@@ -26,13 +28,16 @@
 2. Go to Live Feed -> All-Cameras View
 3. Start _stream_database_ script
    1. Show notifications popping up on the right
-4. Show Notifications tab
+4. Show Notifications tab (10)
 5. Show History tab
 6. Show unknown faces
    1. Run clustering task
-   2. Re tag all clusters (Outliers must have 69 pics at the end)
-7. Go back to Live Feed -> All-Cameras View
-8. Re-run _stream_database_
+   2. Re tag all clusters (Everything except outliers)
+
+### Gabo's computer
+
+1. Go back to Live Feed -> All-Cameras View
+2. Re-run _stream_database_
    1. Show lees notifications popping up
-9. Show Notifications tab
-10. Show statistics
+3. Show Notifications tab
+4. Show statistics

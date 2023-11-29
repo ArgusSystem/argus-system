@@ -35,6 +35,10 @@ loadPage(Tab.NOTIFICATIONS, async () => {
 
     for (const notification of (await fetchNotifications(getUsername(), NOTIFICATIONS_TO_LOAD))) {
         const row = await createNotificationItemRow(notification, ruleContext);
+
+        if (!notification.read)
+            row.classList.add('list-group-item-dark', 'fw-bold')
+
         row.onclick = async () => await redirectToNotification(notification);
         list.appendChild(row);
     }

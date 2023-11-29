@@ -60,7 +60,7 @@ if __name__ == "__main__":
             sequence_id += 1
             last_chunk_timestamp = chunk.timestamp
             new_timestamp += 1_000  # Assumes that difference between chunk is 1 second
-            sleep(0.25)
+            # sleep(0.25)
 
             CURRENT_TIME = time_ns()
             print(f'{sequence_id} : {(CURRENT_TIME - DEBUG_TIME) // 1_000_000}')
