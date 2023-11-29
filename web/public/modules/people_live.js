@@ -59,8 +59,19 @@ async function refreshMap(map) {
     for (const person of people
         .filter(p => p.last_seen !== null && p.last_seen.time > timeLowerBound)
         .sort((a, b) => b.last_seen.time - a.last_seen.time)) {
-        map.addMarker(cameras[person.last_seen.place]);
         list.appendChild(createPersonItem(person));
+
+        if (!people_per_place[person.last_seen.place]) {
+            people_per_place[person.last_seen.place] = [];
+        }
+        people_per_place[person.last_seen.place].push(person.name);
+    }
+
+    for (const place in people_per_place) {
+        const names = people_per_place[place];
+        const camera = cameras[place];
+
+        map.addMarker(camera, names);
     }
 }
 
