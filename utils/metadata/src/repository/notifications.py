@@ -1,5 +1,6 @@
 from peewee import JOIN
 
+from utils.metadata.src.repository.sightings import get_sighting_for
 from utils.orm.src.models import BrokenRestriction, \
     Camera, \
     Face, \
@@ -11,6 +12,7 @@ from utils.orm.src.models import BrokenRestriction, \
     User, \
     UserPerson, \
     VideoChunk
+from utils.orm.src.views import NotificationSummary
 
 
 def create_notification(user_id, broken_restriction_id):
@@ -37,40 +39,62 @@ def get_wardens(restriction_id):
 
 def _join_metadata(query):
     return query \
-        .join(BrokenRestriction, on=(Notification.broken_restriction_id == BrokenRestriction.id)) \
-        .join(Face, on=(BrokenRestriction.face_id == Face.id)) \
-        .join(VideoChunk, on=(Face.video_chunk_id == VideoChunk.id)) \
-        .join(Camera, on=(VideoChunk.camera_id == Camera.id)) \
-        .join(Person, JOIN.LEFT_OUTER, on=(Face.person_id == Person.id)) \
-        .join(Restriction, on=(BrokenRestriction.restriction_id == Restriction.id)) \
-        .join(RestrictionSeverity, on=(Restriction.severity_id == RestrictionSeverity.id))
+        .join(Camera, on=(NotificationSummary.camera == Camera.id)) \
+        .join(Restriction, on=(NotificationSummary.restriction == Restriction.id)) \
+        .join(Person, JOIN.LEFT_OUTER, on=(NotificationSummary.person == Person.id))
 
 
-def get_notification(notification_id):
-    return _join_metadata(Notification
-                          .select(Notification, BrokenRestriction, Face, Person, Restriction)) \
-        .where(Notification.id == notification_id) \
+def get_notification(user_id, camera_id, person_id, restriction_id, start_time):
+    return _join_metadata(NotificationSummary
+                          .select(NotificationSummary.user, NotificationSummary.camera,
+                                  NotificationSummary.person, NotificationSummary.is_unknown,
+                                  NotificationSummary.restriction, NotificationSummary.severity,
+                                  NotificationSummary.start_time, NotificationSummary.end_time,
+                                  NotificationSummary.read, NotificationSummary.notification_ids)) \
+        .where((NotificationSummary.user == user_id) &
+               (NotificationSummary.camera == camera_id) &
+               (NotificationSummary.person == person_id) &
+               (NotificationSummary.restriction == restriction_id) &
+               (NotificationSummary.start_time <= start_time) &
+               (NotificationSummary.end_time >= start_time)) \
         .get()
 
 
 def get_notifications(username, count):
-    return _join_metadata(Notification
-                          .select(Notification, User, BrokenRestriction, Face, Person, Restriction, RestrictionSeverity)
-                          .join(User)) \
+    return _join_metadata(NotificationSummary
+                          .select(NotificationSummary.user, NotificationSummary.camera,
+                                  NotificationSummary.person, NotificationSummary.is_unknown,
+                                  NotificationSummary.restriction, NotificationSummary.severity,
+                                  NotificationSummary.start_time, NotificationSummary.end_time,
+                                  NotificationSummary.read, NotificationSummary.notification_ids)
+                          .join(User, on=(NotificationSummary.user == User.id))) \
         .where(User.username == username) \
-        .order_by(Face.timestamp.desc()) \
+        .order_by(NotificationSummary.start_time.desc()) \
         .limit(count)
 
 
 def count_notifications(username):
-    return Notification.select() \
-        .join(User) \
-        .where((User.username == username) & (~Notification.read)) \
+    return NotificationSummary.select() \
+        .join(User, on=(NotificationSummary.user == User.id)) \
+        .where((User.username == username) & (~NotificationSummary.read)) \
         .count()
 
 
-def mark_notification_read(notification_id):
+def mark_notifications_read(user_id, camera_id, person_id, restriction_id, start_time):
+    notification_summary = get_notification(user_id, camera_id, person_id, restriction_id, start_time)
+
     Notification \
         .update(read=True) \
-        .where(Notification.id == notification_id) \
+        .where(Notification.id.in_(notification_summary.notification_ids)) \
         .execute()
+
+
+def get_notification_faces(user_id, camera_id, person_id, restriction_id, start_time):
+    notification_summary = get_notification(user_id, camera_id, person_id, restriction_id, start_time)
+
+    notifications = (Notification.select(Notification, BrokenRestriction, Face)
+                     .join(BrokenRestriction)
+                     .join(Face)
+                     .where(Notification.id.in_(notification_summary.notification_ids)))
+
+    return [n.broken_restriction.face for n in notifications]

@@ -1,19 +1,16 @@
-import { createNavigationBar } from '../components/navbar.js'
 import { createCameras } from './cameras/camera_list.js'
-import { createFooter } from '../components/footer.js'
-import { isSignedIn } from './session.js'
 import { Tab } from './tab.js'
-import { redirectToIndex } from './routing.js';
+import { loadPage, Page } from './page.js';
+import { fetchCameras } from './api/cameras.js';
+import { redirect } from './routing.js';
 
-window.addEventListener('load', async () => {
-    if (!isSignedIn())
-        redirectToIndex();
 
-    await createNavigationBar(Tab.LIVE_FEED);
+loadPage(Tab.LIVE_FEED, async () => {
+    const cameras = await fetchCameras();
 
-    await createCameras();
+    await createCameras(cameras);
 
-    await createFooter();
-
-    document.getElementById('cover').hidden = false;
+    document.getElementById('all-cameras').onclick = () => {
+      redirect(Page.VIDEO, {cameras: cameras.map(camera => camera.id)});
+    };
 });

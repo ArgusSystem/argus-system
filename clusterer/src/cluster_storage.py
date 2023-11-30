@@ -14,6 +14,6 @@ class ClusterStorage:
             return
 
         if label not in self.clusters:
-            self.clusters[label] = UnknownCluster(outliers=is_outlier).save()
+            self.clusters[label] = UnknownCluster.insert(outliers=is_outlier).execute()
 
         UnknownFace(cluster_id=self.clusters[label], face_id=face_id).save()

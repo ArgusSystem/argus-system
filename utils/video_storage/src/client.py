@@ -1,4 +1,5 @@
 from minio import Minio
+from minio.commonconfig import CopySource
 from minio.deleteobjects import DeleteObject
 
 
@@ -36,6 +37,11 @@ class Client:
 
         for error in errors:
             print(error)
+
+    # Costly operation, needs to copy and delete because there is no rename
+    def rename(self, bucket, old_name, new_name):
+        self._client.copy_object(bucket, new_name, CopySource(bucket, old_name))
+        self.remove(bucket, old_name)
 
     def list(self, bucket):
         return self._client.list_objects(bucket)

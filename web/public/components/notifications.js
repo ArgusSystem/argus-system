@@ -33,7 +33,7 @@ function createNotificationNode (notification) {
 
     const p = document.createElement('p');
     p.innerText = notification.text;
-    p.classList.add('d-inline', 'px-2')
+    p.classList.add('d-inline', 'px-2');
     li.appendChild(p);
 
     return li;
@@ -79,7 +79,11 @@ function createSeeAll() {
 
 function toNotificationInformation(notification) {
     return {
-        id: notification['id'],
+        user_id: notification.user_id,
+        person_id: notification.person_id,
+        camera_id: notification.camera_id,
+        restriction_id: notification.restriction_id,
+        start_time: notification.start_time,
         read: notification.read,
         severity: notification.restriction.severity,
         text: `Persona no autorizada en ${notification['place']} : ${notification['person']}`
@@ -87,10 +91,20 @@ function toNotificationInformation(notification) {
 }
 
 export async function createNotificationDropdown () {
-    const username = getUsername();
+    await populateNotificationDropdown();
 
+    const updateSecondsDelta = 10;
+    setInterval(async () => {
+        await populateNotificationDropdown();
+    }, updateSecondsDelta * 1000);
+}
+
+async function populateNotificationDropdown() {
     const list = document.getElementById('notificationDropdown');
+    // remember what will be deleted later
+    const prev_children = list.childElementCount;
 
+    const username = getUsername();
     const notificationsCount = await fetchNotificationsCount(username);
 
     if (notificationsCount > 0)
@@ -107,4 +121,9 @@ export async function createNotificationDropdown () {
 
     list.appendChild(createDivider());
     list.appendChild(createSeeAll());
+
+    // delete old info
+    for (let i = 0; i < prev_children; i++) {
+        list.removeChild(list.firstChild);
+    }
 }

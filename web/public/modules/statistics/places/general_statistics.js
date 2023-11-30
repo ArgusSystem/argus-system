@@ -43,6 +43,8 @@ export class GeneralStatistics {
             }
         });
 
+        this._map.focus(cameraId);
+
         return cameraId;
     }
 }

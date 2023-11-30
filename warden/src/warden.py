@@ -5,6 +5,9 @@ from utils.events.src.messages.matched_face_message import MatchedFaceMessage
 from utils.orm.src.models import BrokenRestriction
 from utils.tracing.src.tracer import get_context, get_trace_parent
 from .rule_manager import RuleManager
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class Warden:
@@ -22,10 +25,11 @@ class Warden:
             warden_trace = get_trace_parent()
 
             for restriction_id in self.rule_manager.execute(face_id):
-                broken_restriction = BrokenRestriction(face_id=face_id, restriction_id=restriction_id)
-                broken_restriction.save()
+                broken_restriction_id = BrokenRestriction.insert(face_id=face_id, restriction_id=restriction_id).execute()
 
-                self.publisher.publish(encode(BrokenRestrictionMessage(broken_restriction_id=broken_restriction.id,
+                self.publisher.publish(encode(BrokenRestrictionMessage(broken_restriction_id=broken_restriction_id,
                                                                        face_id=face_id,
                                                                        restriction_id=restriction_id,
                                                                        trace_id=warden_trace)))
+
+                logger.info('Found a broken restriction id %d for face %d', broken_restriction_id, face_id)

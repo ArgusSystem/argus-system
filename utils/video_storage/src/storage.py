@@ -26,5 +26,8 @@ class Storage:
     def list(self):
         return self.client.list(self.bucket)
 
+    def rename(self, old_name, new_name):
+        self.client.rename(self.bucket, old_name, new_name)
+
     def remove(self, name):
         self.client.remove(self.bucket, name)

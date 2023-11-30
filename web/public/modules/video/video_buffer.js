@@ -26,7 +26,7 @@ export class VideoBuffer {
 
             if (chunk !== null) {
                 that.sourceBuffer.appendBuffer(chunk.payload);
-                console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
+                // console.log('Total processing time of %s-%d: %d ms', chunk.cameraId, chunk.timestamp, Date.now() - chunk.timestamp);
             }
         }, INTERVAL);
     }

@@ -8,10 +8,12 @@ window.addEventListener('load', () => {
         event.preventDefault();
 
         const data = event.target;
+        const username = data.username.value;
+        const password = data.password.value;
 
-        authorizeUser(data.username.value, data.password.value)
-            .then(username => {
-                signIn(username);
+        authorizeUser(username, password)
+            .then(alias => {
+                signIn(username, alias);
                 redirectToTab(Tab.HOME);
             })
             .catch(console.log);

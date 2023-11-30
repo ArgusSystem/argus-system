@@ -1,4 +1,4 @@
-from time import time_ns
+from time import sleep, time_ns
 
 from camera.run import with_recorder
 from camera.src.processing_chunk import ProcessingChunk
@@ -19,7 +19,7 @@ class LocalVideoStreamer:
 
     def record(self, is_running):
         not_eof = True
-        timestamp = (time_ns() // 1_000_000_000) * 1_000  # Time in MS truncated
+        timestamp = (time_ns() // (60 * 1_000_000_000)) * 60 * 1_000  # Time in MS truncated from MIN
 
         while not_eof and is_running():
             camera_span = self.tracer.start_span('camera')
@@ -42,6 +42,9 @@ class LocalVideoStreamer:
                     self.output_queue.put(ProcessingChunk(video_writer.metadata, camera_span, camera_context))
 
                     timestamp += video_writer.written() * 1_000
+
+                # Throttle by sleeping
+                sleep(0.5)
 
         self.video_capture.close()
 

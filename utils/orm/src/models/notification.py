@@ -6,7 +6,7 @@ from ..database import db
 
 class Notification(Model):
     user = ForeignKeyField(User)
-    broken_restriction = ForeignKeyField(BrokenRestriction)
+    broken_restriction = ForeignKeyField(BrokenRestriction, on_delete='CASCADE', on_update='CASCADE')
     read = BooleanField(default=False)
 
     class Meta:

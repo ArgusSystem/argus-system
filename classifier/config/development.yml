@@ -20,7 +20,7 @@ face_classifier:
   # (currently downloaded from the 'people' bucket)
   minio: classifier.pkl
   #minio: ''
-  threshold: 0.6
+  threshold: 0.813
 
 publisher_web:
   host: argus

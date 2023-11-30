@@ -18,7 +18,7 @@ class User(Model):
 
 
 def create(username, password, alias):
-    return User(username=username, password=_encode(password), alias=alias).save()
+    return User.insert(username=username, password=_encode(password), alias=alias).execute()
 
 
 def _encode(string):

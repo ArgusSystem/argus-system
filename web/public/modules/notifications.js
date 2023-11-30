@@ -14,14 +14,15 @@ async function createNotificationRow(){
 }
 
 async function createNotificationHeader() {
-    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Time', 'Restriction');
+    return createTableHeader(await createNotificationRow(), 'Person', 'Place', 'Start Time', 'End Time', 'Restriction');
 }
 
 async function createNotificationItemRow(notification, ruleContext) {
     return mapChildrenToRow(await createNotificationRow(),
             createTextNode(notification.person),
             createTextNode(notification.place),
-            createTextNode(timestampToString(notification.timestamp)),
+            createTextNode(timestampToString(notification.start_time)),
+            createTextNode(timestampToString(notification.end_time)),
             createTextNode(ruleContext.formatToString(notification.restriction.rule))
         );
 }
@@ -34,6 +35,10 @@ loadPage(Tab.NOTIFICATIONS, async () => {
 
     for (const notification of (await fetchNotifications(getUsername(), NOTIFICATIONS_TO_LOAD))) {
         const row = await createNotificationItemRow(notification, ruleContext);
+
+        if (!notification.read)
+            row.classList.add('list-group-item-dark', 'fw-bold')
+
         row.onclick = async () => await redirectToNotification(notification);
         list.appendChild(row);
     }

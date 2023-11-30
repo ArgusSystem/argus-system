@@ -1,6 +1,8 @@
 import { fetchHTMLElement } from './utils.js';
-import { API_URL } from '../modules/api/url.js';
 import { timestampToISOString } from '../modules/format.js';
+import { getFaceImageUrl } from '../modules/api/faces.js';
+
+let lastSelectedCheckbox = null;
 
 function updateOffcanvas(faceId, imgUrl, camera, timestamp) {
     document.getElementById('face-image').src = imgUrl;
@@ -11,7 +13,7 @@ function updateOffcanvas(faceId, imgUrl, camera, timestamp) {
 
 async function createUnknownFace(face){
     const element = await fetchHTMLElement('components/table_rows/unknown_face.html');
-    const url = `${API_URL}/faces/${face.url}`
+    const url = getFaceImageUrl(face.url);
 
     element.querySelector('img').src = url;
 
@@ -21,7 +23,24 @@ async function createUnknownFace(face){
     checkbox.value = face.id;
     element.querySelector('label').setAttribute('for', checkboxId);
 
-    element.onclick = () => updateOffcanvas(face.id, url, face.camera, face.timestamp);
+    element.addEventListener('click', (event) => {
+        // If shift was held, toggle all faces from the last selected to this one
+        if (event.shiftKey && lastSelectedCheckbox) {
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            const currentIndex = Array.from(checkboxes).indexOf(checkbox);
+            const lastIndex = Array.from(checkboxes).indexOf(lastSelectedCheckbox);
+
+            const start = Math.min(currentIndex, lastIndex);
+            const end = Math.max(currentIndex, lastIndex);
+
+            for (let i = start; i <= end; i++) {
+                checkboxes[i].checked = checkbox.checked;
+            }
+        }
+
+        lastSelectedCheckbox = checkbox;
+        updateOffcanvas(face.id, url, face.camera, face.timestamp);
+    });
 
     return element;
 }

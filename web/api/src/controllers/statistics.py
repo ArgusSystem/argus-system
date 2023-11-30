@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from flask import request
 
-from utils.orm.src.views import Sighting
+from utils.orm.src.views import Sighting, UnknownSighting
 from utils.time.src.timestamp import ARGENTINA_TZ, from_timestamp_ms
 
 EPOCH_MAX_TIMESTAMP_MS = ((1 << 31) - 1) * 1000
@@ -26,6 +26,16 @@ def _get_sightings(start_time, end_time):
 
 def _get_sightings_in_camera(camera, start_time, end_time):
     return _get_sightings(start_time, end_time).where(Sighting.camera == camera)
+
+
+def _get_unknown_sighting(camera, start_time, end_time):
+    return (UnknownSighting.select(UnknownSighting.camera,
+                                   UnknownSighting.start_time,
+                                   UnknownSighting.end_time,
+                                   UnknownSighting.concurrent_detections)
+            .where((UnknownSighting.start_time >= start_time) &
+                   (UnknownSighting.end_time <= end_time) &
+                   (UnknownSighting.camera == camera)))
 
 
 def _get_visits():
@@ -74,7 +84,11 @@ def _get_avg_time_spent(camera):
 def _get_trespassers(camera):
     start_time, end_time = _get_range()
 
-    return str(_get_sightings_in_camera(camera, start_time, end_time).where(~Sighting.restriction.is_null()).count())
+    sightings_count = _get_sightings_in_camera(camera, start_time, end_time).where(Sighting.restriction > 0).count()
+    unknown_sightings_count = sum(map(lambda us: us.concurrent_detections,
+                                      _get_unknown_sighting(camera, start_time, end_time)
+                                      .where(UnknownSighting.restriction > 0)))
+    return str(sightings_count + unknown_sightings_count)
 
 
 def intersection(a, b):

@@ -88,6 +88,36 @@
     </div>
   </div>
 
+  <div class="modal fade" id="faces-modal" tabindex="-1" aria-labelledby="faces-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-dark border-0">
+          <div class="modal-body p-0 m-0">
+
+            <div class="container-fluid my-4">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <button id="select-all-faces" type="button" class="btn btn-secondary btn-lg mx-2">Select all</button>
+                  <button id="clear-faces" type="button" class="btn btn-danger btn-lg mx-2">Clear</button>
+                </div>
+
+                <div class="dropdown">
+                  <button class="btn btn-primary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Re-tag as
+                  </button>
+                  <ul id="tagging-options" class="dropdown-menu">
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="face-grid-parent" class="container-fluid py-2">
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div id="footer"></div>
 </div>
 </body>

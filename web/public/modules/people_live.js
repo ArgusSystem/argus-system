@@ -53,13 +53,27 @@ async function refreshMap(map) {
     list.replaceChildren();
 
     // Filter up to 5 minutes or set to 0 to avoid filtering
-    const timeLowerBound = Date.now() - 5 * 60 * 1000;
+    // Up to 1 hs for demo
+    const timeLowerBound = Date.now() - 60 * 60 * 1000;
+
+    const people_per_place = {};
 
     for (const person of people
         .filter(p => p.last_seen !== null && p.last_seen.time > timeLowerBound)
         .sort((a, b) => b.last_seen.time - a.last_seen.time)) {
-        map.addMarker(cameras[person.last_seen.place]);
         list.appendChild(createPersonItem(person));
+
+        if (!people_per_place[person.last_seen.place]) {
+            people_per_place[person.last_seen.place] = [];
+        }
+        people_per_place[person.last_seen.place].push(person.name);
+    }
+
+    for (const place in people_per_place) {
+        const names = people_per_place[place];
+        const camera = cameras[place];
+
+        map.addMarker(camera, names);
     }
 }
 
@@ -67,6 +81,6 @@ loadPage(Tab.PEOPLE, async () => {
     const map = new Map();
     await refreshMap(map);
 
-    // Refresh data every 30 seconds
-    setInterval(async () => refreshMap(map), 30_000);
+    const refreshTime = 5_000;
+    setInterval(async () => refreshMap(map), refreshTime);
 });

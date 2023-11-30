@@ -81,15 +81,15 @@ class FaceClassificationTask:
                                         .where((VideoChunk.camera_id == cam_query) &
                                                (VideoChunk.timestamp == timestamp)))
 
-                face_id = Face(video_chunk_id=video_chunk_id_query,
-                               offset=face_message.offset,
-                               timestamp=face_message.timestamp,
-                               face_num=face_message.face_num,
-                               embedding=list(embedding.astype(float)),
-                               person_id=person_id,
-                               bounding_box=face_message.bounding_box,
-                               probability=classification_probability,
-                               is_match=is_match).save()
+                face_id = Face.insert(video_chunk_id=video_chunk_id_query,
+                                      offset=face_message.offset,
+                                      timestamp=face_message.timestamp,
+                                      face_num=face_message.face_num,
+                                      embedding=list(embedding.astype(float)),
+                                      person_id=person_id,
+                                      bounding_box=face_message.bounding_box,
+                                      probability=classification_probability,
+                                      is_match=is_match).execute()
 
             with self.tracer.start_as_current_span('publish-detected-face'):
                 detected_face_message = DetectedFaceMessage(video_chunk_id=face_message.video_chunk_id,
@@ -97,7 +97,7 @@ class FaceClassificationTask:
                                                             timestamp=face_message.timestamp,
                                                             face_num=face_message.face_num,
                                                             name=name,
-                                                            person_id=face_id,
+                                                            person_id=person_id,
                                                             bounding_box=face_message.bounding_box,
                                                             probability=classification_probability,
                                                             is_match=is_match,
@@ -105,14 +105,7 @@ class FaceClassificationTask:
                 self.publisher_to_web.publish(encode(detected_face_message))
 
                 # Queue face data for warden rules processing
-                if is_match:
-                    matched_face_message = MatchedFaceMessage(face_id=str(face_id), trace=face_message.trace)
-                    self.publisher_to_warden.publish(encode(matched_face_message))
-
-                # Queue face data for unknown face clustering
-                else:
-                    unknown_face_message = UnknownFaceMessage(face_id=str(face_id), embedding=embedding,
-                                                              trace=face_message.trace)
-                    self.publisher_to_clusterer.publish(encode(unknown_face_message))
+                matched_face_message = MatchedFaceMessage(face_id=str(face_id), trace=face_message.trace)
+                self.publisher_to_warden.publish(encode(matched_face_message))
 
         logger.info("Finished - %s, found: %s with prob: %.2f", face_message, name, classification_probability)

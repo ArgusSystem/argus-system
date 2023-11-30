@@ -14,13 +14,16 @@ from .statistics import StatisticsController
 from .users import UsersController
 from .unknown_clusters import UnknownClustersController
 from .faces import FacesController
+from .known_faces import KnownFacesController
 
 
 class ControllersFactory:
 
-    def __init__(self, db_configuration, publisher_configuration, storage_configuration, tracer):
+    def __init__(self, db_configuration, publisher_to_warden_configuration, publisher_to_clusterer_configuration,
+                 storage_configuration, tracer):
         connect(**db_configuration)
-        self.publisher_configuration = publisher_configuration
+        self.publisher_to_warden_configuration = publisher_to_warden_configuration
+        self.publisher_to_clusterer_configuration = publisher_to_clusterer_configuration
         self.storage_factory = StorageFactory(**storage_configuration)
         self.tracer = tracer
 
@@ -37,7 +40,8 @@ class ControllersFactory:
             RestrictionsController,
             RestrictionSeveritiesController,
             UsersController,
-            UnknownClustersController(self.publisher_configuration, self.tracer),
+            UnknownClustersController(self.publisher_to_warden_configuration, self.tracer),
             FacesController(self.storage_factory.new(StorageType.FRAME_FACES)),
-            StatisticsController
+            StatisticsController,
+            KnownFacesController(self.publisher_to_warden_configuration, self.tracer)
         ]

@@ -14,7 +14,6 @@
   <!-- WebSocket client -->
   <script src="/socket.io/socket.io.js"></script>
 
-  <link rel="stylesheet" href="styles/video.css">
   <script type='module' src='modules/video.js'></script>
 </head>
 <body class="bg-dark">
@@ -27,8 +26,7 @@
       </div>
     </nav>
 
-    <video hidden muted id='auxiliary-video'></video>
-    <canvas id='video-canvas'></canvas>
+    <div id="videos-container" class="container mt-4"></div>
 
     <div id="footer"></div>
   </div>
