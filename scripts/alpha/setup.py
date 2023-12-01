@@ -2,7 +2,7 @@ from os import listdir, path
 from random import uniform
 
 from scripts.train_classifier_minio.train_classifier_minio import train_model
-from utils.orm.src.models import (Area, AreaType, Camera, Person, PersonRole,
+from utils.orm.src.models import (Area, AreaType, Camera, Person, PersonRole, PersonPhoto,
                                   Restriction, RestrictionSeverity, RestrictionWarden, UserPerson)
 from utils.orm.src.models.user import create as create_user
 from utils.orm.src.database import connect
@@ -18,6 +18,7 @@ user_id = create_user('argus', 'panoptes', 'gabriel')
 
 host_role_id = PersonRole.insert(name='host').execute()
 guest_role_id = PersonRole.insert(name='guest').execute()
+trespasser_role_id = PersonRole.insert(name='trespasser').execute()
 
 # Setup edu and gabo
 
@@ -26,14 +27,17 @@ people_storage = StorageFactory('argus', 9500, 'argus', 'panoptes').new(StorageT
 FACES_DIR = 'faces'
 
 
-def create_person(person_id, person_name, role_id):
-    photos = []
+def create_person(wanted_id, person_name, role_id):
+
+    person_id = Person.insert(id=wanted_id, name=person_name, role=role_id).execute()
+    person = Person.get(id=person_id)
 
     for photo in listdir(path.join(FACES_DIR, person_name)):
-        people_storage.store(name=photo, filepath=path.join(FACES_DIR, person_name, photo))
-        photos.append(photo)
+        photo_key = person.next_photo_key(photo)
+        PersonPhoto.insert(person=person_id, filename=photo_key, preprocessed=False).execute()
+        people_storage.store(name=photo_key, filepath=path.join(FACES_DIR, person_name, photo))
 
-    return Person.insert(id=person_id, name=person_name, photos=photos, role=role_id).execute()
+    return person
 
 
 gabo_id = create_person(0, 'gabo', host_role_id)
@@ -124,6 +128,7 @@ critical_severity = RestrictionSeverity.insert(name='critical', value=2).execute
 create_rule('role', [guest_role_id], [private_area_type_id], '00:00', '23:59', warning_severity)
 create_rule('unknown', None, [public_area_type_id], '00:00', '23:59', warning_severity)
 create_rule('unknown', None, [private_area_type_id], '00:00', '23:59', critical_severity)
+create_rule('role', [trespasser_role_id], [public_area_type_id, private_area_type_id], '00:00', '23:59', critical_severity)
 
 print("Training classifier model...")
 train_model()

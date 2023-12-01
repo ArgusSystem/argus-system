@@ -14,3 +14,4 @@ from .user_person import UserPerson
 from .restriction_warden import RestrictionWarden
 from .unknown_cluster import UnknownCluster
 from .unknown_face import UnknownFace
+from .person_photo import PersonPhoto

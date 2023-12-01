@@ -23,7 +23,7 @@ CLASSIFIER_TYPE_KEY = 'classifier_type'
 USER_INTERACTION = 'user_interaction_on_multiple_faces'
 
 
-def train_model(preprocessed=False):
+def train_model():
     with open(os.path.dirname(os.path.realpath(__file__)) + "/train_classifier_minio.yml") as config_file:
         configuration = yaml.safe_load(config_file)
 
@@ -47,18 +47,18 @@ def train_model(preprocessed=False):
     face_classifier_type = configuration[CLASSIFIER_TYPE_KEY]
 
     # Get people list from db
-    people = Person.select(Person.id, Person.name, Person.photos, Person.created_at).order_by(Person.id).execute()
+    people = Person.select(Person.id, Person.name, Person.created_at).order_by(Person.id).execute()
 
     embedding_lines = []
     for person in people:
-        for photo in person.photos:
+        for photo in person.photos():
             # Get photo
-            img_bytestring = people_storage.fetch(photo)
+            img_bytestring = people_storage.fetch(photo.filename)
             img = bytestring_to_image(img_bytestring)
             cropped_face = img
             add_face = True
 
-            if not preprocessed:
+            if not photo.preprocessed:
                 # Perform face detection on photo
                 bounding_boxes = face_detector.detect_face_image(img)
 
@@ -94,7 +94,7 @@ def train_model(preprocessed=False):
 
                 # Add embedding to list
                 emb_csv = ','.join(['%.8f' % num for num in embedding])
-                line = photo.replace(person.name, str(person.id)) + "," + emb_csv + "\n"
+                line = photo.filename.replace(person.name, str(person.id)) + "," + emb_csv + "\n"
                 embedding_lines.append(line)
 
                 # # Get embeddings file

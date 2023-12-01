@@ -1,7 +1,9 @@
 from flask import jsonify, request
 from peewee import Value
+from os import path
+from tempfile import gettempdir
 
-from utils.orm.src.models import Camera, Face, VideoChunk, BrokenRestriction
+from utils.orm.src.models import Camera, Face, VideoChunk, BrokenRestriction, Person, PersonPhoto
 from utils.events.src.message_clients.rabbitmq import Publisher
 from utils.orm.src.database import db
 from utils.tracing.src.tracer import get_trace_parent
@@ -11,6 +13,8 @@ from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
 
 TAG_AS_UNKNOWN = -1
 TAG_DELETE_FACE = -2
+
+LOCAL_DIR = gettempdir()
 
 
 def _get_faces(camera_id, person_id, start_time, end_time):
@@ -31,13 +35,16 @@ def _get_faces(camera_id, person_id, start_time, end_time):
 
 class KnownFacesController:
 
-    def __init__(self, publisher_to_warden_configuration, tracer):
+    def __init__(self, people_storage, faces_storage, publisher_to_warden_configuration, tracer):
         self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
+        self.people_storage = people_storage
+        self.faces_storage = faces_storage
         self.tracer = tracer
 
     def make_routes(self, app):
         app.route('/known_faces/<camera_id>/<person_id>/<start_time>/<end_time>')(_get_faces)
         app.route('/known_faces/re_tag', methods=['POST'])(self._known_re_tag)
+        app.route('/known_faces/add_to_train_data', methods=['POST'])(self._add_to_train_data)
 
     def _known_re_tag(self):
         data = request.json
@@ -67,5 +74,21 @@ class KnownFacesController:
         else:
             # Update database
             Face.delete().where(Face.id.in_(faces)).execute()
+
+        return jsonify(success=True)
+
+    def _add_to_train_data(self):
+        data = request.json
+        person_id = data['person']
+        faces = data['faces']
+
+        person = Person.get(Person.id == person_id)
+
+        for face in Face.select().where(Face.id.in_(faces)):
+            photo_key = person.next_photo_key()
+            filepath = path.join(LOCAL_DIR, str(face.image_key()))
+            self.faces_storage.fetch(face.image_key(), filepath)
+            self.people_storage.store(photo_key, None, filepath)
+            PersonPhoto.insert(person=person.id, filename=photo_key, preprocessed=True).execute()
 
         return jsonify(success=True)

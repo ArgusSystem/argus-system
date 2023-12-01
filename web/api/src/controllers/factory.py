@@ -43,5 +43,7 @@ class ControllersFactory:
             UnknownClustersController(self.publisher_to_warden_configuration, self.tracer),
             FacesController(self.storage_factory.new(StorageType.FRAME_FACES)),
             StatisticsController,
-            KnownFacesController(self.publisher_to_warden_configuration, self.tracer)
+            KnownFacesController(self.storage_factory.new(StorageType.PEOPLE),
+                                 self.storage_factory.new(StorageType.FRAME_FACES),
+                                 self.publisher_to_warden_configuration, self.tracer)
         ]

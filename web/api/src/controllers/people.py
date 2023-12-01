@@ -5,7 +5,7 @@ from flask import jsonify, request, send_file
 from peewee import IntegrityError
 
 from scripts.train_classifier_minio.train_classifier_minio import train_model
-from utils.orm.src import Camera, Face, Person, VideoChunk
+from utils.orm.src import Camera, Face, Person, VideoChunk, PersonPhoto
 
 LOCAL_DIR = gettempdir()
 
@@ -32,7 +32,7 @@ def _get_people():
     return [{
         'id': person.id,
         'name': person.name,
-        'photos': person.photos,
+        'photos': person.photo_keys(),
         'created_at': person.created_at,
         'last_seen': _last_seen(person.id),
         'role': person.role.name
@@ -41,7 +41,7 @@ def _get_people():
 
 def _update_person(person_id, name, role_id):
     if person_id == "-1":
-        person_id = Person.insert(name=name, role=role_id, photos=[]).execute()
+        person_id = Person.insert(name=name, role=role_id).execute()
     else:
         Person.update(name=name, role=role_id).where(Person.id == person_id).execute()
     # Return OK
@@ -100,17 +100,13 @@ class PeopleController:
             image = request.files[name]
 
             # Determine new photo id
-            new_photo_number = 1
-            if len(person.photos) > 0:
-                new_photo_number = max([int(''.join(c for c in name if c.isdigit())) for name in person.photos]) + 1
-            new_photo_id = person.name + "_" + str(new_photo_number).zfill(3) + "." + image.filename.split(".")[1]
-            person.photos.append(new_photo_id)
+            photo_key = person.next_photo_key(image.filename)
+
+            # Upload to db
+            PersonPhoto.insert(person=person.id, filename=photo_key, preprocessed=False).execute()
 
             # Upload photo to storage
-            self.people_storage.store(new_photo_id, image.read())
-
-        # Add all photos to person's list in db
-        person.save()
+            self.people_storage.store(photo_key, image.read())
 
         # Return OK
         resp = jsonify(success=True)
