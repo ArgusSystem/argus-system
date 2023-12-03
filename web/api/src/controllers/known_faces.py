@@ -22,15 +22,23 @@ def _get_faces(camera_id, person_id, start_time, end_time):
         'id': known_face.id,
         'url': known_face.image_key()
     } for known_face in Face
-        .select()
-        .join(VideoChunk)
-        .join(Camera)
-        .where((Camera.id == camera_id) &
-               (Face.person == person_id) &
-               (Face.timestamp >= start_time) &
-               (Face.timestamp <= end_time) &
-               Face.is_match)
+    .select()
+    .join(VideoChunk)
+    .join(Camera)
+    .where((Camera.id == camera_id) &
+           (Face.person == person_id) &
+           (Face.timestamp >= start_time) &
+           (Face.timestamp <= end_time) &
+           Face.is_match)
     ]
+
+
+def store_face_as_photo(person, face, faces_storage, people_storage):
+    photo_key = person.next_photo_key()
+    filepath = path.join(LOCAL_DIR, str(face.image_key()))
+    faces_storage.fetch(face.image_key(), filepath)
+    people_storage.store(photo_key, None, filepath)
+    PersonPhoto.insert(person=person.id, filename=photo_key, preprocessed=True).execute()
 
 
 class KnownFacesController:
@@ -55,7 +63,7 @@ class KnownFacesController:
             # Update database
             with db.atomic():
                 Face.update(person_id=Face.person if person_id == TAG_AS_UNKNOWN else person_id,
-                            is_match=person_id != TAG_AS_UNKNOWN)\
+                            is_match=person_id != TAG_AS_UNKNOWN) \
                     .where(Face.id.in_(faces)) \
                     .execute()
 
@@ -85,10 +93,6 @@ class KnownFacesController:
         person = Person.get(Person.id == person_id)
 
         for face in Face.select().where(Face.id.in_(faces)):
-            photo_key = person.next_photo_key()
-            filepath = path.join(LOCAL_DIR, str(face.image_key()))
-            self.faces_storage.fetch(face.image_key(), filepath)
-            self.people_storage.store(photo_key, None, filepath)
-            PersonPhoto.insert(person=person.id, filename=photo_key, preprocessed=True).execute()
+            store_face_as_photo(person, face, self.faces_storage, self.people_storage)
 
         return jsonify(success=True)

@@ -1,4 +1,5 @@
 import { API_URL } from './url.js';
+import { post } from './utils.js';
 
 const BASE_URL = `${API_URL}/people`;
 
@@ -14,5 +15,11 @@ export function getPersonPhotoURL(personId, photoId) {
 
 export function getLastSeenPhotoURL(photoId) {
 	return `${BASE_URL}/last_seen/${photoId}`;
+}
+
+export function addLivePhotos() {
+	return post(`${BASE_URL}/add_live_photos`)
+			.then((response) => response.json())
+			.catch((error) => console.error('Failed to add live photos of people!', error));
 }
 
