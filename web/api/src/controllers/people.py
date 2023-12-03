@@ -125,7 +125,7 @@ class PeopleController:
         best_face = None
         initial_timestamp = 0
 
-        for face in Face.select().where(Face.person_id == person.id).order_by(Face.timestamp.asc()):
+        for face in Face.select().where((Face.person_id == person.id) & Face.is_match).order_by(Face.timestamp.asc()):
             if best_face is None:
                 best_face = face
                 initial_timestamp = face.timestamp

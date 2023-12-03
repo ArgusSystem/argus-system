@@ -6,7 +6,7 @@ import { loadPage } from './page.js';
 import { addLivePhotos } from './api/people.js';
 import { reload } from './routing.js';
 
-export async function onUpdateModelClick() {
+async function onUpdateModelClick() {
     await (addLivePhotos().then(reload));
 }
 
@@ -14,5 +14,6 @@ loadPage(Tab.PEOPLE, async () => {
 	await createRolesList();
     await createPeopleList();
 
+    document.getElementById('update-model-button').onclick = onUpdateModelClick;
     document.getElementById('train-model-button').onclick = train_model_button;
 });

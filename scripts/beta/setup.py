@@ -1,6 +1,6 @@
 from scripts.alpha.setup import create_rule
 from utils.orm.src.database import connect
-from utils.orm.src.models import AreaType, PersonRole, RestrictionSeverity
+from utils.orm.src.models import AreaType, Person, PersonRole, RestrictionSeverity
 
 # Must had run Alpha setup previously
 if __name__ == "__main__":
@@ -20,3 +20,5 @@ if __name__ == "__main__":
                 [public_area_type_id, private_area_type_id],
                 '00:00', '23:59',
                 critical_severity, warden)
+
+    Person.insert(id=2, name='trespasser', role=trespasser_role_id).execute()

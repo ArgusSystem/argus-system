@@ -6,5 +6,8 @@
 
 ## Demo
 
-1. Re-tag and re-train classifiers
-2. Restart classifiers
+1. Run Beta setup
+2. Run clustering
+3. Tag Trespasser photos (Clusters ...)
+4. Update model for classifiers
+5. Restart classifiers
