@@ -21,6 +21,7 @@ face_classifier:
   minio: classifier.pkl
   #minio: ''
   threshold: 0.813
+  #threshold: 0.971
 
 publisher_web:
   host: argus

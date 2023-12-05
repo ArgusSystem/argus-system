@@ -121,7 +121,7 @@ class PeopleController:
         return resp
 
     def _add_person_live_photos(self, person):
-        sampling_rate_ms = 5000
+        sampling_rate_ms = 1
         best_face = None
         initial_timestamp = 0
 
