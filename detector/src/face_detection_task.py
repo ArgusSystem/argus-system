@@ -13,6 +13,9 @@ logger = getLogger(__name__)
 
 
 class FaceDetectionTask:
+
+    MIN_PIXELS_KEY = 'min_pixels'
+
     def __init__(self, debug_mode,
                  face_detector_configuration,
                  notifier_configuration,
@@ -26,6 +29,7 @@ class FaceDetectionTask:
         self.face_storage = storage_factory.new(StorageType.FRAME_FACES)
 
         self.face_detector = FaceDetectorFactory.build(face_detector_configuration)
+        self.face_min_pixels = face_detector_configuration[FaceDetectionTask.MIN_PIXELS_KEY] if FaceDetectionTask.MIN_PIXELS_KEY in face_detector_configuration else 0
         self.notifier = create_notifier(notifier_configuration)
 
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-detector')
@@ -59,6 +63,11 @@ class FaceDetectionTask:
                     for bounding_box in bounding_boxes:
                         # Store cropped face
                         x1, y1, x2, y2 = bounding_box
+                        w = x2 - x1
+                        h = y2 - y1
+                        pixels = w * h
+                        if pixels < self.face_min_pixels:
+                            continue
                         cropped_face = frame[y1:y2, x1:x2]
                         object_name = f'{frame_message.video_chunk}-{frame_message.offset}-{face_num}'
                         self.face_storage.store(name=object_name, data=image_to_bytestring(cropped_face))
