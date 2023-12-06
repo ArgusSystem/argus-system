@@ -62,6 +62,9 @@ def train_model():
                 # Perform face detection on photo
                 bounding_boxes = face_detector.detect_face_image(img)
 
+                if len(bounding_boxes) <= 0:
+                    continue
+
                 # Get the first face
                 x1, y1, x2, y2 = bounding_boxes[0]
                 cropped_face = img[y1:y2, x1:x2]
@@ -132,3 +135,7 @@ def train_model():
     # si hay solo 1 clase da error
     except ValueError as e:
         print("ERROR: " + str(e) + " - Can't train classifier with less than two classes")
+
+
+if __name__ == "__main__":
+    train_model()
