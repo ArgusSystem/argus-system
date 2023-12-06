@@ -8,7 +8,7 @@ people = {}
 
 def get_person(person_id):
     if person_id not in people:
-        people[person_id] = Person.get(person_id)
+        people[person_id] = Person.select().join(PersonRole).where(Person.id == person_id).get()
 
     return people[person_id]
 

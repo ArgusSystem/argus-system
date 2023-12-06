@@ -24,6 +24,10 @@
       "type": "string"
     },
     {
+      "name": "role",
+      "type": "string"
+    },
+    {
       "name": "person_id",
       "type": "int"
     },

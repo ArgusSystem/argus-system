@@ -9,6 +9,8 @@ import { createRuleContext } from './rule.js';
 
 const NOTIFICATIONS_TO_LOAD = 18;
 
+const NOTIFICATION_COLOR = ['list-group-item-dark', 'list-group-item-warning', 'list-group-item-danger'];
+
 async function createNotificationRow(){
     return await fetchHTMLElement('components/table_rows/notification.html');
 }
@@ -37,7 +39,7 @@ loadPage(Tab.NOTIFICATIONS, async () => {
         const row = await createNotificationItemRow(notification, ruleContext);
 
         if (!notification.read)
-            row.classList.add('list-group-item-dark', 'fw-bold')
+            row.classList.add(NOTIFICATION_COLOR[notification.restriction.severity], 'fw-bold');
 
         row.onclick = async () => await redirectToNotification(notification);
         list.appendChild(row);
