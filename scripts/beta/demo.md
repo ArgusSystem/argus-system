@@ -19,4 +19,4 @@
 8. Clean beta script
 9. Start Argus
 10. Run streams-2 (124 unknowns with 0.901 TRH and 219 unknowns with 0.971 TRH)
-    1. Optional -> If retrained, use 0.980 TRH
+    1. Optional -> If retrained, use 0.981 TRH
