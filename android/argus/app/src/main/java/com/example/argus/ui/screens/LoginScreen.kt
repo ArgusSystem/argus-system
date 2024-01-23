@@ -1,4 +1,4 @@
-package com.example.argus.ui
+package com.example.argus.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
