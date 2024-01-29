@@ -35,7 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.argus.R
+import com.example.argus.data.AuthenticationClient
 import java.util.Locale
+
+val authenticationClient = AuthenticationClient()
 
 @Composable
 fun LoginScreen() {
@@ -105,7 +108,7 @@ fun LoginScreen() {
 
         // Login Button
         Button(
-            onClick = { /* Handle login logic here */ },
+            onClick = { authenticationClient.logIn(username, password) {} },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)

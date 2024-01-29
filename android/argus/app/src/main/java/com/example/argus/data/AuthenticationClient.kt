@@ -1,5 +1,8 @@
 package com.example.argus.data
 
+import android.util.Log
+import androidx.compose.ui.res.stringResource
+import com.example.argus.R
 import com.example.argus.network.AuthenticationService
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,7 +13,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class AuthenticationClient {
 
-    private val BASE_URL = "http://argus:5000/"
+    private val BASE_URL = "http://10.0.2.2:5000/"
+    private val TAG = "AuthenticationClient"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(ScalarsConverterFactory.create())
@@ -21,15 +25,21 @@ class AuthenticationClient {
         retrofit.create(AuthenticationService::class.java)
     }
 
-    fun logIn(username : String, password : String) : String? {
+    fun logIn(username : String, password : String, onSuccess : (String?) -> Unit) {
         val call = service.logIn(username, password)
 
-        val response = call.execute()
+        call.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val alias = response.body()
+                    onSuccess(alias)
+                    Log.i(TAG, "Log in successful: $alias")
+                }
+            }
 
-        if (response.isSuccessful) {
-            return response.body()
-        }
-
-        return null
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.e(TAG, "Failed to log in!", t)
+            }
+        })
     }
 }
