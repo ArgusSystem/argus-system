@@ -13,7 +13,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class AuthenticationClient {
 
-    private val BASE_URL = "http://10.0.2.2:5000/"
+    private val BASE_URL = "http://192.168.0.17:5000/"
     private val TAG = "AuthenticationClient"
 
     private val retrofit: Retrofit = Retrofit.Builder()

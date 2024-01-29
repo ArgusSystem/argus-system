@@ -41,7 +41,7 @@ import java.util.Locale
 val authenticationClient = AuthenticationClient()
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLogin: (String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -61,7 +61,7 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Username TextField
+        // Username
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -76,7 +76,7 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password TextField
+        // Password
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -108,7 +108,9 @@ fun LoginScreen() {
 
         // Login Button
         Button(
-            onClick = { authenticationClient.logIn(username, password) {} },
+            onClick = { authenticationClient.logIn(username, password) { user ->
+                onLogin(user!!)
+            }},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
@@ -121,5 +123,5 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreen()
+    LoginScreen {}
 }
