@@ -109,7 +109,7 @@ fun LoginScreen(onLogin: (String) -> Unit) {
         // Login Button
         Button(
             onClick = { authenticationClient.logIn(username, password) { user ->
-                onLogin(user!!)
+                onLogin(user)
             }},
             modifier = Modifier
                 .fillMaxWidth()

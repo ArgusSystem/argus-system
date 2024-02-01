@@ -25,14 +25,14 @@ class AuthenticationClient {
         retrofit.create(AuthenticationService::class.java)
     }
 
-    fun logIn(username : String, password : String, onSuccess : (String?) -> Unit) {
+    fun logIn(username : String, password : String, onSuccess : (String) -> Unit) {
         val call = service.logIn(username, password)
 
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
                     val alias = response.body()
-                    onSuccess(alias)
+                    onSuccess(alias!!)
                     Log.i(TAG, "Log in successful: $alias")
                 }
             }
