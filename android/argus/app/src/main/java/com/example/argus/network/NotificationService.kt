@@ -13,4 +13,8 @@ interface NotificationService {
         @Path("username") username : String,
         @Query("count") count : Int) : Call<List<Notification>>
 
+    @GET("notifications/user/{username}/count")
+    fun countNotifications(
+        @Path("username") username : String) : Call<Int>
+
 }

@@ -36,4 +36,20 @@ class NotificationClient(host: String, port: Int) {
         })
     }
 
+    fun count(user: String, onNotificationsCount: (Int) -> Unit) {
+        val call = service.countNotifications(user)
+
+        call.enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                if (response.isSuccessful) {
+                    onNotificationsCount(response.body()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<Int>, t: Throwable) {
+                Log.e(javaClass.simpleName, "Failed to fetch new notifications count!", t)
+            }
+        })
+    }
+
 }

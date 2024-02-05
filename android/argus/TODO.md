@@ -6,3 +6,4 @@
 - Notify on login error
 - Add Loading screen
 - Format notifiations prettier
+  - Make UNREAD notifications in BOLD
