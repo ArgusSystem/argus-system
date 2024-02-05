@@ -1,5 +1,6 @@
 package com.example.argus
 
+import android.app.Notification
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,18 +20,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.argus.data.NotificationClient
+import com.example.argus.model.NotificationViewModel
+import com.example.argus.ui.screens.LoadingScreen
 import com.example.argus.ui.screens.LoginScreen
 import com.example.argus.ui.screens.NotificationsScreen
 
 enum class ArgusScreen(@StringRes val title: Int) {
     Login(title=R.string.login),
-    Notifications(title=R.string.notifications),
-    Notification(title=R.string.notification)
+    Notifications(title=R.string.notifications)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +68,7 @@ fun ArgusAppBar(
 }
 
 @Composable
-fun ArgusApp(navController: NavHostController = rememberNavController()) {
+fun ArgusApp(navController: NavHostController = rememberNavController(), notificationClient: NotificationClient) {
     // Get current back stack entry
     val backStackEntry by navController.currentBackStackEntryAsState()
 
@@ -70,7 +77,8 @@ fun ArgusApp(navController: NavHostController = rememberNavController()) {
         backStackEntry?.destination?.route ?: ArgusScreen.Login.name
     )
 
-    var user by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var alias by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -87,16 +95,26 @@ fun ArgusApp(navController: NavHostController = rememberNavController()) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = ArgusScreen.Login.name) {
-                LoginScreen {
-                    user = it
+                LoginScreen { un, a ->
+                    username = un
+                    alias = a
                     navController.navigate(ArgusScreen.Notifications.name)
                 }
             }
             composable(route = ArgusScreen.Notifications.name) {
-                NotificationsScreen()
+                val factory: ViewModelProvider.Factory = viewModelFactory {
+                    initializer {
+                        NotificationViewModel(username, notificationClient)
+                    }
+                }
+
+                val notificationViewModel: NotificationViewModel = viewModel(factory=factory)
+
+                NotificationsScreen(notificationViewModel)
             }
         }
     }
 
 
 }
+

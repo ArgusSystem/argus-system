@@ -9,7 +9,8 @@ import retrofit2.http.Query
 interface NotificationService {
 
     @GET("notifications/user/{username}")
-    fun fetchNotifications(@Path("username") username : String,
-              @Query("count") count : Int) : Call<List<Notification>>
+    fun fetchNotifications(
+        @Path("username") username : String,
+        @Query("count") count : Int) : Call<List<Notification>>
 
 }

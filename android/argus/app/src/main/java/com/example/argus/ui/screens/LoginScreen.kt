@@ -41,7 +41,7 @@ import java.util.Locale
 val authenticationClient = AuthenticationClient()
 
 @Composable
-fun LoginScreen(onLogin: (String) -> Unit) {
+fun LoginScreen(onLogin: (String, String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
@@ -108,8 +108,8 @@ fun LoginScreen(onLogin: (String) -> Unit) {
 
         // Login Button
         Button(
-            onClick = { authenticationClient.logIn(username, password) { user ->
-                onLogin(user)
+            onClick = { authenticationClient.logIn(username, password) { alias ->
+                onLogin(username, alias)
             }},
             modifier = Modifier
                 .fillMaxWidth()
@@ -118,10 +118,4 @@ fun LoginScreen(onLogin: (String) -> Unit) {
             Text(text = stringResource(id = R.string.login), fontSize = 16.sp)
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLoginScreen() {
-    LoginScreen {}
 }
