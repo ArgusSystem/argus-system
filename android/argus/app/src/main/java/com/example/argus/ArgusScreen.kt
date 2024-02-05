@@ -40,81 +40,33 @@ enum class ArgusScreen(@StringRes val title: Int) {
     Notifications(title=R.string.notifications)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ArgusAppBar(
-    currentScreen: ArgusScreen,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = { Text(stringResource(currentScreen.title)) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = modifier,
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button)
-                    )
-                }
-            }
-        }
-    )
-}
-
 @Composable
 fun ArgusApp(navController: NavHostController = rememberNavController(), notificationClient: NotificationClient) {
-    // Get current back stack entry
-    val backStackEntry by navController.currentBackStackEntryAsState()
-
-    // Get the name of the current screen
-    val currentScreen = ArgusScreen.valueOf(
-        backStackEntry?.destination?.route ?: ArgusScreen.Login.name
-    )
-
     var username by remember { mutableStateOf("") }
     var alias by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = {
-            ArgusAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
-            )
+    NavHost(
+        navController = navController,
+        startDestination = ArgusScreen.Login.name,
+    ) {
+        composable(route = ArgusScreen.Login.name) {
+            LoginScreen { un, a ->
+                username = un
+                alias = a
+                navController.navigate(ArgusScreen.Notifications.name)
+            }
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = ArgusScreen.Login.name,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(route = ArgusScreen.Login.name) {
-                LoginScreen { un, a ->
-                    username = un
-                    alias = a
-                    navController.navigate(ArgusScreen.Notifications.name)
+        composable(route = ArgusScreen.Notifications.name) {
+            val factory: ViewModelProvider.Factory = viewModelFactory {
+                initializer {
+                    NotificationViewModel(username, notificationClient)
                 }
             }
-            composable(route = ArgusScreen.Notifications.name) {
-                val factory: ViewModelProvider.Factory = viewModelFactory {
-                    initializer {
-                        NotificationViewModel(username, notificationClient)
-                    }
-                }
 
-                val notificationViewModel: NotificationViewModel = viewModel(factory=factory)
+            val notificationViewModel: NotificationViewModel = viewModel(factory=factory)
 
-                NotificationsScreen(notificationViewModel)
-            }
+            NotificationsScreen(notificationViewModel, { navController.navigateUp() })
         }
     }
-
-
 }
 

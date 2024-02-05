@@ -22,7 +22,7 @@ class NotificationViewModel(private val user : String, private val notificationC
         fetchNotifications()
     }
 
-    private fun fetchNotifications() {
+    fun fetchNotifications() {
         notificationsState = NotificationsState.Loading
 
         notificationClient.fetch(user, notificationsFetchCount) { notifications ->
