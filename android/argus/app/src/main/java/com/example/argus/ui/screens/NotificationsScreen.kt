@@ -1,5 +1,6 @@
 package com.example.argus.ui.screens
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -81,7 +82,7 @@ fun NotificationsScreen(notificationViewModel: NotificationViewModel, navigateUp
         }
     ) { innerPadding ->
         when (val notificationsState = notificationViewModel.notificationsState) {
-            is NotificationsState.Loading -> LoadingScreen(modifier.padding(innerPadding))
+            is NotificationsState.Loading -> LoadingScreen(modifier.fillMaxSize())
             is NotificationsState.Success -> NotificationList(
                 notificationsState.notifications,
                 modifier.padding(innerPadding)
