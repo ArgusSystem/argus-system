@@ -1,6 +1,7 @@
 package com.example.argus.network
 
 import com.example.argus.model.Notification
+import com.example.argus.model.NotificationStatus
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -17,4 +18,7 @@ interface NotificationService {
     fun countNotifications(
         @Path("username") username : String) : Call<Int>
 
+    @GET("notifications/user/{username}/status")
+    fun fetchNotificationStatus(
+        @Path("username") username : String) : Call<NotificationStatus>
 }

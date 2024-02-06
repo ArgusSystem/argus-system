@@ -73,3 +73,10 @@ data class Notification(
     @SerializedName("user_id")
     val userId: Int
 )
+
+data class NotificationStatus(
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("latest")
+    val latest: Long,
+)

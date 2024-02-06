@@ -2,6 +2,7 @@ package com.example.argus.data
 
 import android.util.Log
 import com.example.argus.model.Notification
+import com.example.argus.model.NotificationStatus
 import com.example.argus.network.NotificationService
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,4 +53,21 @@ class NotificationClient(host: String, port: Int) {
         })
     }
 
+    fun status(user: String, onStatus: (NotificationStatus) -> Unit) {
+        service.fetchNotificationStatus(user).enqueue(object : Callback<NotificationStatus> {
+            override fun onResponse(
+                call: Call<NotificationStatus>,
+                response: Response<NotificationStatus>
+            ) {
+                if (response.isSuccessful) {
+                    onStatus(response.body()!!)
+                }
+            }
+
+            override fun onFailure(call: Call<NotificationStatus>, t: Throwable) {
+                Log.e(javaClass.simpleName, "Failed to fetch notification status!", t)
+            }
+
+        })
+    }
 }

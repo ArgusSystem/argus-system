@@ -55,12 +55,23 @@ def _get_notification_faces(username, camera_id, person_id, restriction_id, star
     } for face in faces]
 
 
+def _get_notifications_status(username):
+    return {
+        'count': count_notifications(username),
+        'latest': get_notifications(username, 1)[0].start_time
+    }
+
+
 class NotificationsController:
 
     @staticmethod
     def make_routes(app):
-        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>')(_get_notification)
-        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>/read', methods=['POST'])(_mark_notification_read)
-        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>/faces')(_get_notification_faces)
+        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>')(
+            _get_notification)
+        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>/read',
+                  methods=['POST'])(_mark_notification_read)
+        app.route('/notifications/id/<username>/<camera_id>/<person_id>/<restriction_id>/<start_time>/faces')(
+            _get_notification_faces)
         app.route('/notifications/user/<username>')(_get_notifications)
         app.route('/notifications/user/<username>/count')(_count_notifications)
+        app.route('/notifications/user/<username>/status')(_get_notifications_status)

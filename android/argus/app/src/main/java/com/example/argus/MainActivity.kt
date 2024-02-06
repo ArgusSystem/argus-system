@@ -7,6 +7,7 @@ import com.example.argus.data.NotificationClient
 import com.example.argus.ui.theme.ArgusTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
