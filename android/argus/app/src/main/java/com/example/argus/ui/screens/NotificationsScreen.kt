@@ -118,14 +118,3 @@ fun NotificationCard(notification: Notification, modifier: Modifier = Modifier) 
         )
     }
 }
-
-@Preview
-@Composable
-fun TopBarPreview() {
-    TopBar(
-        notificationViewModel = NotificationViewModel(
-            user = "argus",
-            notificationClient = NotificationClient("localhost", 5000)),
-        navigateUp = {}
-    )
-}

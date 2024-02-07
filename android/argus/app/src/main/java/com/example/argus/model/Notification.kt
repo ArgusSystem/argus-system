@@ -76,7 +76,7 @@ data class Notification(
 
 data class NotificationStatus(
     @SerializedName("count")
-    val count: Int,
+    val count: Int = 0,
     @SerializedName("latest")
-    val latest: Long,
+    val latest: Long = 0,
 )

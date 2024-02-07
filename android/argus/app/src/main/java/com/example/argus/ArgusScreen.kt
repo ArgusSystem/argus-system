@@ -17,6 +17,7 @@ import com.example.argus.data.NotificationClient
 import com.example.argus.model.NotificationViewModel
 import com.example.argus.model.UserState
 import com.example.argus.model.UserViewModel
+import com.example.argus.notifications.Manager
 import com.example.argus.ui.screens.LoginScreen
 import com.example.argus.ui.screens.NotificationsScreen
 
@@ -36,7 +37,7 @@ fun Redirect(navController: NavHostController, currentScreen : ArgusScreen, dest
 }
 
 @Composable
-fun ArgusApp(navController: NavHostController = rememberNavController(), notificationClient: NotificationClient) {
+fun ArgusApp(navController: NavHostController = rememberNavController(), notificationClient: NotificationClient, notificationManager: Manager) {
     val context = LocalContext.current
 
     val userFactory: ViewModelProvider.Factory = viewModelFactory {
@@ -74,7 +75,7 @@ fun ArgusApp(navController: NavHostController = rememberNavController(), notific
                 is UserState.LoggedIn -> {
                     val factory: ViewModelProvider.Factory = viewModelFactory {
                         initializer {
-                            NotificationViewModel(userState.username, notificationClient)
+                            NotificationViewModel(userState.username, notificationClient, notificationManager)
                         }
                     }
 

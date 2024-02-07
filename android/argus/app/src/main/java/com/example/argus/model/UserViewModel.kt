@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user")
 
-
 private object StorageKey {
     val username = stringPreferencesKey("username")
     val alias = stringPreferencesKey("alias")
