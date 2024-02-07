@@ -25,7 +25,7 @@ class AuthenticationClient {
         retrofit.create(AuthenticationService::class.java)
     }
 
-    fun logIn(username : String, password : String, onSuccess : (String) -> Unit) {
+    fun logIn(username : String, password : String, onSuccess : (String) -> Unit, onFailure : (String) -> Unit) {
         val call = service.logIn(username, password)
 
         call.enqueue(object : Callback<String> {
@@ -33,12 +33,13 @@ class AuthenticationClient {
                 if (response.isSuccessful) {
                     val alias = response.body()
                     onSuccess(alias!!)
-                    Log.i(TAG, "Log in successful: $alias")
+                } else {
+                    onFailure("Invalid username or password")
                 }
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e(TAG, "Failed to log in!", t)
+                onFailure("Internal server error")
             }
         })
     }

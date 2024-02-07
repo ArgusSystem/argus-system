@@ -85,6 +85,11 @@ class NotificationViewModel(private val user : String, private val notificationC
         }, 60, 60, TimeUnit.SECONDS)
     }
 
+    fun cancel() {
+        refreshFuture.cancel(false)
+        notifyFuture.cancel(false)
+    }
+
     fun forceRefresh() {
         if (!refreshFuture.cancel(false)) {
             refresh()

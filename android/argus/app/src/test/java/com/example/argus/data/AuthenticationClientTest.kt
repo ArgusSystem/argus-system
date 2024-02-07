@@ -12,17 +12,17 @@ class AuthenticationClientTest {
     fun successfulLogIn() {
         val client = AuthenticationClient()
 
-        client.logIn("argus", "panoptes") { alias ->
+        client.logIn("argus", "panoptes", { alias ->
             assertNotNull(alias)
             assertEquals("gabriel", alias)
-        }
+        }, {})
     }
 
     @Test
     fun failedToLogIn() {
         val client = AuthenticationClient()
-        client.logIn("fake", "client") {
+        client.logIn("fake", "client", {
             fail()
-        }
+        }, {})
     }
 }

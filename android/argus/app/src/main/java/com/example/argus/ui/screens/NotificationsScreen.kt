@@ -63,7 +63,10 @@ fun TopBar(
             }
         },
         navigationIcon = {
-            IconButton(onClick = navigateUp) {
+            IconButton(onClick = {
+                notificationViewModel.cancel()
+                navigateUp()
+            }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.back_button)
