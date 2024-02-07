@@ -91,9 +91,8 @@ class NotificationViewModel(private val user : String, private val notificationC
     }
 
     fun forceRefresh() {
-        if (!refreshFuture.cancel(false)) {
-            refresh()
-            refreshFuture = scheduleRefresh()
-        }
+        refreshFuture.cancel(true)
+        refresh()
+        refreshFuture = scheduleRefresh()
     }
 }

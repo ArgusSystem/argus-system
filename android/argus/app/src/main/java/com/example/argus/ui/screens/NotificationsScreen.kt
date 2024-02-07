@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,13 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.argus.ArgusScreen
 import com.example.argus.R
-import com.example.argus.data.NotificationClient
 import com.example.argus.model.Notification
 import com.example.argus.model.NotificationViewModel
 import com.example.argus.model.NotificationsState
@@ -109,7 +109,18 @@ fun NotificationList(notifications: List<Notification>, modifier: Modifier = Mod
 
 @Composable
 fun NotificationCard(notification: Notification, modifier: Modifier = Modifier) {
-    Card(modifier = modifier) {
+    val fontWeight = if (notification.read) FontWeight.Normal else FontWeight.Bold
+
+    val containerColor = when (notification.restriction.severity) {
+        0 -> Color.LightGray
+        1 -> Color(255, 246, 0)
+        2 -> Color(225, 90, 70)
+        else -> Color.White
+    }
+
+    Card(colors = CardDefaults.cardColors(
+        containerColor = containerColor
+    ), modifier = modifier) {
         Text(
             text = stringResource(
                 R.string.unauthorized_person,
@@ -117,7 +128,8 @@ fun NotificationCard(notification: Notification, modifier: Modifier = Modifier) 
                 notification.person
             ),
             modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = fontWeight
         )
     }
 }
