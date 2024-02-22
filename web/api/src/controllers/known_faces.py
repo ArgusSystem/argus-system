@@ -1,13 +1,11 @@
 from flask import jsonify, request
-from peewee import Value
 
-from utils.orm.src.models import Camera, Face, VideoChunk, BrokenRestriction
 from utils.events.src.message_clients.rabbitmq import Publisher
-from utils.orm.src.database import db
-from utils.tracing.src.tracer import get_trace_parent
 from utils.events.src.messages.marshalling import encode
 from utils.events.src.messages.matched_face_message import MatchedFaceMessage
-from utils.events.src.messages.unknown_face_message import UnknownFaceMessage
+from utils.orm.src.database import db
+from utils.orm.src.models import BrokenRestriction, Camera, Face, VideoChunk
+from utils.tracing.src.tracer import get_trace_parent
 
 TAG_AS_UNKNOWN = -1
 TAG_DELETE_FACE = -2
