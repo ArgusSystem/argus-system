@@ -32,7 +32,8 @@ class ControllersFactory:
             CameraController(self.storage_factory.new(StorageType.VIDEO_FRAMES)),
             HistoryController,
             PeopleController(self.storage_factory.new(StorageType.PEOPLE),
-                             self.storage_factory.new(StorageType.VIDEO_FRAMES)),
+                             self.storage_factory.new(StorageType.VIDEO_FRAMES),
+                             self.storage_factory.new(StorageType.FRAME_FACES)),
             RolesController,
             AreaTypesController(),
             AreasController(),
@@ -43,5 +44,7 @@ class ControllersFactory:
             UnknownClustersController(self.publisher_to_warden_configuration, self.tracer),
             FacesController(self.storage_factory.new(StorageType.FRAME_FACES)),
             StatisticsController,
-            KnownFacesController(self.publisher_to_warden_configuration, self.tracer)
+            KnownFacesController(self.storage_factory.new(StorageType.PEOPLE),
+                                 self.storage_factory.new(StorageType.FRAME_FACES),
+                                 self.publisher_to_warden_configuration, self.tracer)
         ]

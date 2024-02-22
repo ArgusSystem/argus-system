@@ -10,8 +10,8 @@ from utils.events.src.messages.video_chunk_message import VideoChunkMessage
 from utils.metadata.src.naming.face import to_object_storage_key as face_object_key
 from utils.metadata.src.naming.frame import to_object_storage_key as frame_object_key
 from utils.metadata.src.naming.video_chunk import to_object_storage_key as video_chunk_object_key
-from utils.orm.src.models import BrokenRestriction, Camera, Face, Notification, Person, VideoChunk, UnknownCluster, \
-    UnknownFace
+from utils.orm.src.models import (BrokenRestriction, Camera, Face, Notification, Person, PersonRole, VideoChunk,
+                                  UnknownCluster, UnknownFace)
 from utils.orm.src.database import connect
 from utils.tracing.src.tracer import get_trace_parent, get_tracer
 from utils.video_storage import StorageFactory, StorageType
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         exit(0)
 
     chunks_query = VideoChunk.select(VideoChunk, Camera).join(Camera).order_by(VideoChunk.timestamp)
-    faces_query = Face.select(Face, Person).join(Person)
+    faces_query = Face.select(Face, Person).join(Person).join(PersonRole)
 
     chunks_with_faces = prefetch(chunks_query, faces_query)
 
@@ -106,18 +106,21 @@ if __name__ == "__main__":
 
             # Generalize face classification task
             for face in chunk.faces:
-                name = 'Unknown'
+                name = 'UNKNOWN'
+                role = 'UNKNOWN'
                 person_id = -1
 
                 if face.person:
                     name = face.person.name
                     person_id = face.person.id
+                    role = face.person.role.name
 
                 face_publisher.publish(encode(DetectedFaceMessage(video_chunk_id=video_chunk_id,
                                                                   offset=face.offset,
                                                                   timestamp=face.timestamp,
                                                                   face_num=face.face_num,
                                                                   name=name,
+                                                                  role=role,
                                                                   person_id=person_id,
                                                                   bounding_box=face.bounding_box,
                                                                   probability=face.probability,

@@ -5,7 +5,8 @@ from flask import jsonify, request, send_file
 from peewee import IntegrityError
 
 from scripts.train_classifier_minio.train_classifier_minio import train_model
-from utils.orm.src import Camera, Face, Person, VideoChunk
+from utils.orm.src import Camera, Face, Person, VideoChunk, PersonPhoto
+from web.api.src.controllers.known_faces import store_face_as_photo
 
 LOCAL_DIR = gettempdir()
 
@@ -32,7 +33,7 @@ def _get_people():
     return [{
         'id': person.id,
         'name': person.name,
-        'photos': person.photos,
+        'photos': person.photo_keys(),
         'created_at': person.created_at,
         'last_seen': _last_seen(person.id),
         'role': person.role.name
@@ -41,7 +42,7 @@ def _get_people():
 
 def _update_person(person_id, name, role_id):
     if person_id == "-1":
-        person_id = Person.insert(name=name, role=role_id, photos=[]).execute()
+        person_id = Person.insert(name=name, role=role_id).execute()
     else:
         Person.update(name=name, role=role_id).where(Person.id == person_id).execute()
     # Return OK
@@ -60,11 +61,17 @@ def _delete_person(person_id):
         return jsonify(success=False), 400
 
 
+# [width * height] should measure information of a photo good enough
+def _face_information_estimate(face):
+    return face.bounding_box[2] * face.bounding_box[3]
+
+
 class PeopleController:
 
-    def __init__(self, people_storage, frames_storage):
+    def __init__(self, people_storage, frames_storage, faces_storage):
         self.people_storage = people_storage
         self.frames_storage = frames_storage
+        self.faces_storage = faces_storage
 
     def make_routes(self, app):
         app.route('/people')(_get_people)
@@ -73,6 +80,7 @@ class PeopleController:
         app.route('/people/<person_id>/<name>/<role_id>', methods=["POST"])(_update_person)
         app.route('/people/<person_id>/photos', methods=["POST"])(self._add_person_photo)
         app.route('/people/<person_id>', methods=["DELETE"])(_delete_person)
+        app.route('/people/add_live_photos', methods=["POST"])(self._add_live_photos)
         app.route('/people/train', methods=["POST"])(self._train_model)
 
     def _get_photo(self, person_id, photo):
@@ -100,25 +108,45 @@ class PeopleController:
             image = request.files[name]
 
             # Determine new photo id
-            new_photo_number = 1
-            if len(person.photos) > 0:
-                new_photo_number = max([int(''.join(c for c in name if c.isdigit())) for name in person.photos]) + 1
-            new_photo_id = person.name + "_" + str(new_photo_number).zfill(3) + "." + image.filename.split(".")[1]
-            person.photos.append(new_photo_id)
+            photo_key = person.next_photo_key(image.filename)
+
+            # Upload to db
+            PersonPhoto.insert(person=person.id, filename=photo_key, preprocessed=False).execute()
 
             # Upload photo to storage
-            self.people_storage.store(new_photo_id, image.read())
-
-        # Add all photos to person's list in db
-        person.save()
+            self.people_storage.store(photo_key, image.read())
 
         # Return OK
         resp = jsonify(success=True)
         return resp
+
+    def _add_person_live_photos(self, person):
+        sampling_rate_ms = 1
+        best_face = None
+        initial_timestamp = 0
+
+        for face in Face.select().where((Face.person_id == person.id) & Face.is_match).order_by(Face.timestamp.asc()):
+            if best_face is None:
+                best_face = face
+                initial_timestamp = face.timestamp
+
+            if face.timestamp - initial_timestamp > sampling_rate_ms:
+                store_face_as_photo(person, best_face, self.faces_storage, self.people_storage)
+                best_face = None
+            else:
+                if _face_information_estimate(face) > _face_information_estimate(best_face):
+                    best_face = face
+
+        if best_face is not None:
+            store_face_as_photo(person, best_face, self.faces_storage, self.people_storage)
+
+    def _add_live_photos(self):
+        for person in Person.select():
+            self._add_person_live_photos(person)
+
+        return jsonify(success=True)
 
     def _train_model(self):
         train_model()
 
-        # Return OK
-        resp = jsonify(success=True)
-        return resp
+        return jsonify(success=True)

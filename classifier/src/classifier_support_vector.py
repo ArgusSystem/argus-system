@@ -1,16 +1,12 @@
-import sys
 import pickle
 import numpy as np
-import os
 from sklearn.svm import SVC
-#from sklearn.ensemble import RandomForestClassifier
 
 
 class SVClassifier:
 
     def __init__(self):
         self.model = SVC(kernel='linear', probability=True)
-        #self.model = RandomForestClassifier(n_estimators=100)
         self.class_names = None
 
     def train(self, embeddings_file_path):
@@ -27,8 +23,6 @@ class SVClassifier:
         best_class_index = np.argmax(predictions, axis=1)[0]
         best_class_probability = predictions[np.arange(1), best_class_index][0]
 
-        # print(self.class_names)
-        # print(best_class_index, best_class_probability)
         return best_class_index, best_class_probability
     
     def contains(self, name):

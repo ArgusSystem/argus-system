@@ -1,0 +1,22 @@
+id: bedroom
+publisher:
+  host: argus
+  username: argus
+  password: panoptes
+  exchange: argus
+  routing_key: new_video_chunks
+video_recorder:
+    filepath: beta/videos/4/bedroom.mp4
+    resolution: 1280x720
+    recording_split: 1
+    framerate: 30
+storage:
+  host: argus
+  port: 9500
+  access_key: argus
+  secret_key: panoptes
+logging:
+  level: INFO
+tracer:
+  host: argus
+  port: 6831

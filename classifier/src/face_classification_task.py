@@ -67,10 +67,13 @@ class FaceClassificationTask:
 
                 if classification_index is not None:
                     person_id = int(self.face_classifier.get_name(classification_index))
-                    name = get_person(person_id).name
+                    person = get_person(person_id)
+                    name = person.name
+                    role = person.role.name
                 else:
                     person_id = None
                     name = UNKNOWN
+                    role = UNKNOWN
 
             with self.tracer.start_as_current_span('insert-db-detected-face'):
                 camera_name, timestamp = unwrap_video_chunk_id(face_message.video_chunk_id)
@@ -97,6 +100,7 @@ class FaceClassificationTask:
                                                             timestamp=face_message.timestamp,
                                                             face_num=face_message.face_num,
                                                             name=name,
+                                                            role=role,
                                                             person_id=person_id,
                                                             bounding_box=face_message.bounding_box,
                                                             probability=classification_probability,
