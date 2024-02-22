@@ -31,6 +31,17 @@ export function reTagFaces(person, faces) {
 			.catch((error) => console.error('Failed to re tag faces!', error));
 }
 
+async function addToTrainData(person_id) {
+    const selectedFaces = getSelectedFaces();
+    await addToTrainDataFaces(person_id, selectedFaces);
+    $('#faces-modal').modal('hide');
+}
+
+export function addToTrainDataFaces(person, faces) {
+	return post(`${API_URL}/known_faces/add_to_train_data`, {person, faces})
+			.catch((error) => console.error('Failed to add faces to train data!', error));
+}
+
 function createDropdownOption(element, option_text, option_value) {
     const li = document.createElement('li');
     li.classList.add('dropdown-item');
@@ -47,9 +58,11 @@ function getFaceGridCheckboxes() {
     return document.getElementById('face-grid').querySelectorAll('input[type=checkbox]');
 }
 
-export async function loadReTaggingOptions() {
+export async function loadReTaggingOptions(sighting_person_id) {
     document.getElementById('select-all-faces').onclick = () => getFaceGridCheckboxes()
          .forEach(e => e.checked = true);
+
+    document.getElementById('add-to-train').onclick = () => addToTrainData(sighting_person_id);
 
     document.getElementById('clear-faces').onclick = () => getFaceGridCheckboxes()
          .forEach(e => e.checked = false);

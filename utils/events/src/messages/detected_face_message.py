@@ -1,12 +1,13 @@
 
 class DetectedFaceMessage:
 
-    def __init__(self, video_chunk_id, offset, timestamp, face_num, name, person_id, bounding_box, probability, is_match, trace):
+    def __init__(self, video_chunk_id, offset, timestamp, face_num, name, role, person_id, bounding_box, probability, is_match, trace):
         self.video_chunk_id = video_chunk_id
         self.offset = offset
         self.timestamp = timestamp
         self.face_num = face_num
         self.name = name
+        self.role = role
         self.person_id = person_id
         self.bounding_box = bounding_box
         self.probability = probability
@@ -20,6 +21,7 @@ class DetectedFaceMessage:
             'timestamp': self.timestamp,
             'face_num': self.face_num,
             'name': self.name,
+            'role': self.role,
             'person_id': self.person_id,
             'bounding_box': self.bounding_box,
             'probability': self.probability,

@@ -1,5 +1,7 @@
 from .classifier_support_vector import SVClassifier
 from .classifier_distance import DistanceClassifier
+from .classifier_oneclass_svms import OneClassSVMClassifier
+from .classifier_support_vector_with_oneclass import SVClassifierWithOneClass
 import pickle
 import os
 
@@ -8,6 +10,8 @@ class FaceClassifierFactory:
 
     SV_CLASSIFIER = 'sv_classifier'
     DISTANCE_CLASSIFIER = 'distance_classifier'
+    ONECLASS_SVMS_CLASSIFIER = 'oneclass_svms_classifier'
+    SV_CLASSIFIER_WITH_ONECLASS = 'sv_classifier_with_oneclass'
 
     @staticmethod
     def build(configuration):
@@ -35,5 +39,7 @@ class FaceClassifierFactory:
 
 classifier_classes = {
     FaceClassifierFactory.SV_CLASSIFIER: SVClassifier,
-    FaceClassifierFactory.DISTANCE_CLASSIFIER: DistanceClassifier
+    FaceClassifierFactory.DISTANCE_CLASSIFIER: DistanceClassifier,
+    FaceClassifierFactory.ONECLASS_SVMS_CLASSIFIER: OneClassSVMClassifier,
+    FaceClassifierFactory.SV_CLASSIFIER_WITH_ONECLASS: SVClassifierWithOneClass
 }

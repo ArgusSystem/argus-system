@@ -7,6 +7,17 @@ import {loadReTaggingOptions} from "../history/re_tagging.js";
 
 let lastSelectedCheckbox = null;
 
+function severity_to_color(severity){
+    switch (severity) {
+        case "":
+            return 'light';
+        case "critical":
+            return "danger";
+        default:
+            return severity;
+    }
+}
+
 class SightingsList {
     constructor () {
         this.parent = document.getElementById('sightings-list');
@@ -34,7 +45,7 @@ class SightingsList {
         const item = document.createElement('button');
         item.setAttribute('type', 'button');
 
-        const color = sighting.severity !== ""? sighting.severity: 'light';
+        const color = severity_to_color(sighting.severity);
         item.setAttribute('class', `list-group-item-action list-group-item-${color}`);
 
         item.onclick =() => {
@@ -108,7 +119,7 @@ async function create_album_callback(sighting) {
             sighting.end_time
         ));
 
-    await loadReTaggingOptions();
+    await loadReTaggingOptions(sighting.person_id);
 }
 
 const list = new SightingsList();

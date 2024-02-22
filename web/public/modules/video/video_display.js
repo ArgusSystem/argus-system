@@ -14,10 +14,11 @@ export function setUpDisplay(video, canvas, scalingFactor, videoInterpolator) {
 
         // Get faces for the time
         for (const face_data of videoInterpolator.getFaces(metadata.mediaTime)) {
-            let color = 'green';
+            let color = face_data.role === 'trespasser' ? 'red' : 'green';
             let name = face_data.name;
+
             if (!face_data.is_match) {
-                color = 'red';
+                color = 'yellow';
                 name = '';
             }
 
