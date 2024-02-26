@@ -41,7 +41,7 @@ def boxesCSVLines(img_path, boxes):
         y1 = box[1]
         x2 = box[2]
         y2 = box[3]
-        lines += str(int(x1)) + "," + str(int(y1)) + "," + str(int(x2) - int(x1)) + "," + str(int(y2) - int(y1)) + "\n"
+        lines += str(int(x1)) + " " + str(int(y1)) + " " + str(int(x2) - int(x1)) + " " + str(int(y2) - int(y1)) + " 0 0 0 0 0 0\n"
     return lines
 
 
@@ -103,7 +103,10 @@ if __name__ == "__main__":
         #    break
 
         # Save bounding boxes to csv file in output folder
-        filename = os.path.basename(image_path)
+        #filename = os.path.basename(image_path)
+        filename = image_path.replace(image_paths_dir, "")[1:]
+        filename = filename.replace("\\", "/")
+        #print(filename)
         line = boxesCSVLines(filename, boundingboxes)
         output_csv.write(line)
     output_csv.close()
