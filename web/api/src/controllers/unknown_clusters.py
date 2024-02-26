@@ -37,9 +37,10 @@ def _get_cluster_faces(cluster_id):
         'id': unknown_face.face.id,
         'camera': unknown_face.face.video_chunk.camera.alias,
         'timestamp': unknown_face.face.video_chunk.timestamp,
-        'url': unknown_face.face.image_key()
+        'url': unknown_face.face.image_key(),
+        'probability': unknown_face.face.probability
     } for unknown_face in UnknownFace
-        .select(Face.id, Face.offset, Face.face_num, VideoChunk.timestamp, Camera.alias)
+        .select(Face.id, Face.offset, Face.probability, Face.face_num, VideoChunk.timestamp, Camera.alias)
         .join(UnknownCluster)
         .switch(UnknownFace)
         .join(Face)
