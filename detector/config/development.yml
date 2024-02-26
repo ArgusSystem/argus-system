@@ -6,6 +6,7 @@ consumer:
 
 face_detector:
   type: 'tensorflow_faceboxes'
+  min_pixels: 0
 
 debug: False
 
