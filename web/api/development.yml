@@ -21,3 +21,6 @@ db:
 tracer:
   host: argus
   port: 6831
+ssl:
+  certfile: ../../ssl/argus-cert.pem      # set to null to disable ssl
+  keyfile: ../../ssl/argus-key.pem   # set to null to disable ssl
