@@ -7,7 +7,7 @@ class FaceDetectorFactory:
     TENSORFLOW_MTCNN = 'tensorflow_mtcnn'
     TENSORFLOW_FACEBOXES = 'tensorflow_faceboxes'
     PADDLE_MTCNN = 'paddle_mtcnn'
-    DLIB = 'dlib'
+    DLIB = 'dlib_mmod'
 
     @staticmethod
     def build(configuration):

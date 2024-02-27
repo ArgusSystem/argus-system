@@ -5,6 +5,7 @@ publisher:
   password: panoptes
   exchange: argus
   routing_key: new_video_chunks
+  ssl_ca: ssl/rootCA.pem
 video_recorder:
     resolution: 1280x720
     recording_split: 5

@@ -17,7 +17,7 @@ class FaceClassifierFactory:
     def build(configuration):
         model_path = configuration['model']
 
-        if configuration['minio'] == '':
+        if 'minio' not in configuration.keys() or configuration['minio'] == '':
             dir_path = os.path.dirname(os.path.realpath(__file__))
             model_path = dir_path + "/../../" + model_path
 

@@ -4,11 +4,12 @@ import { getFaceImageUrl } from '../modules/api/faces.js';
 
 let lastSelectedCheckbox = null;
 
-function updateOffcanvas(faceId, imgUrl, camera, timestamp) {
+function updateOffcanvas(faceId, imgUrl, camera, timestamp, probability) {
     document.getElementById('face-image').src = imgUrl;
     document.getElementById('offcanvas-label').innerText = `Faces >> ${faceId}`;
     document.getElementById('face-location').innerText = camera;
     document.getElementById('face-time').innerText = timestampToISOString(timestamp);
+    document.getElementById('face-probability').innerText = `${probability}`;
 }
 
 async function createUnknownFace(face){
@@ -39,7 +40,7 @@ async function createUnknownFace(face){
         }
 
         lastSelectedCheckbox = checkbox;
-        updateOffcanvas(face.id, url, face.camera, face.timestamp);
+        updateOffcanvas(face.id, url, face.camera, face.timestamp, face.probability);
     });
 
     return element;

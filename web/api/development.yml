@@ -12,6 +12,7 @@ publisher_to_warden:
   password: panoptes
   exchange: argus
   routing_key: face_rule_check
+  ssl_ca: ../../ssl/rootCA.pem
 db:
   database: argus
   host: argus
@@ -21,3 +22,6 @@ db:
 tracer:
   host: argus
   port: 6831
+ssl:
+  certfile: ../../ssl/argus-cert.pem      # set to null to disable ssl
+  keyfile: ../../ssl/argus-key.pem   # set to null to disable ssl

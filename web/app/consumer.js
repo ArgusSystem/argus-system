@@ -5,6 +5,7 @@ const schemas = require('./schemas');
 const buildVideoChunkMessage = require('./build_video_chunk_message');
 const { tracer, get_context } = require('./tracer');
 const buildDetectedFaceMessage = require('./build_detected_face_message');
+const fs = require('fs');
 
 const consumerConfiguration = configuration['consumer'];
 
@@ -70,9 +71,13 @@ class Consumer {
 
     start() {
         const socketServer = this.socketServer;
-        amqp.connect(`${consumerConfiguration['url']}`, function (err, connection) {
-            onConnection(err, connection, socketServer);
-        });
+        amqp.connect(
+            `${consumerConfiguration['url']}`,
+            { ca: fs.readFileSync(consumerConfiguration['ssl_ca_path']) },
+            function (err, connection) {
+                onConnection(err, connection, socketServer);
+            }
+        );
     }
 }
 

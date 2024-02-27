@@ -23,11 +23,13 @@ services:
         env_file:
             - configuration/rabbitmq/rabbitmq.env
         volumes:
-            - rabbitmq-config:/etc/rabbitmq/
+            - ../ssl/:/etc/rabbitmq/ssl/
+            - ./configuration/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
             - rabbitmq-data:/var/lib/rabbitmq/
             - rabbitmq-log:/var/log/rabbitmq/
         ports:
             - 1883:1883
+            - 5671:5671
             - 5672:5672
             - 15672:15672
     jaeger:
@@ -39,6 +41,5 @@ services:
 volumes:
     postgres-data:
     minio-data:
-    rabbitmq-config:
     rabbitmq-data:
     rabbitmq-log:
