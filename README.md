@@ -10,10 +10,10 @@ include:
   - Add roles to the people registered in the system.
   - Notify when someone is in a particular set of spots.
   - Create spots only available for certain people on a certain time of the day.
-  - Count people on a certain location.
 - Send notification alerts for privileged users.
 - View the history of a registered person.
 - Add and remove people from the tracking system.
+- View statistics of sightings
 
 The rules' subsystem is described in a general and broad way in order to prioritize flexibility.
 Some real use cases for the rules' system might be:
@@ -23,7 +23,6 @@ Some real use cases for the rules' system might be:
   - Allow only authorized people on an area. The area may be available for everyone during working
   hours but only available for security during the night.
   - Keep track of someone we care, for example children or elderly people.
-  - Restrict the number of people on a certain area, for example due to COVID-19.
 
 <sup>_[1] A video is processed in realtime if all the processing is bounded by a threshold P. To
 reproduce the video as a continuous stream, we need a fix delay equal to the video length plus the
@@ -42,15 +41,9 @@ reason for the notification.
 ## Mobile application
 
 The android application works as a secondary interface for the users to interact with the system.
-It allows the user to:
-- View a map of the area, with all the people in the system. The filters can limit the data shown by:
-  - Person, to check the tracking history.
-  - Time, to limit to particular time frame.
-  - Access rules, to check areas with a particular rule.
-- Alert dashboard, to view all the alerts triggered in the system. Can be filtered and sorted by 
+It allows the users to:
+- Access alert dashboard, to view all the alerts triggered in the system, sorted by 
 time and priority.
-- For some users, the possibility to allow a certain person in the system to an area they own for
-a limited period of time.
 
 ### Use case: Private Residential Area
 
