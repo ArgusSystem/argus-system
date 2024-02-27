@@ -3,6 +3,7 @@ consumer:
   username: argus
   password: panoptes
   queue: frames
+  ssl_ca: ssl/rootCA.pem
 
 face_detector:
   type: 'tensorflow_faceboxes'
@@ -20,6 +21,7 @@ notifier:
       password: panoptes
       exchange: argus
       routing_key: faces
+      ssl_ca: ssl/rootCA.pem
 
   # Avoid classification and send message to web with detection information
   web:
@@ -29,6 +31,7 @@ notifier:
       password: panoptes
       exchange: argus
       routing_key: published_detected_faces
+      ssl_ca: ssl/rootCA.pem
 
     db:
       database: argus

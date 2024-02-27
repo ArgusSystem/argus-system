@@ -3,6 +3,7 @@ consumer:
   username: argus
   password: panoptes
   queue: broken_rules
+  ssl_ca: ssl/rootCA.pem
 db:
   database: argus
   host: argus

@@ -19,7 +19,7 @@ def clean():
 
 if __name__ == "__main__":
     database = connect('argus', 'argus', 5432, 'argus', 'panoptes')
-    face_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'faces')
+    face_publisher = Publisher.new('argus', 'argus', 'panoptes', 'argus', 'faces', None)
     tracer = get_tracer('argus', 6831, 'reclassify_faces')
 
     faces_query = Face.select(Face, Person).join(Person)

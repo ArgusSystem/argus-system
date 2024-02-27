@@ -3,6 +3,7 @@ consumer:
   username: argus
   password: panoptes
   queue: face_rule_check
+  ssl_ca: ssl/rootCA.pem
 
 logging:
   level: INFO
@@ -24,3 +25,4 @@ publisher:
   password: panoptes
   exchange: argus
   routing_key: broken_rules
+  ssl_ca: ssl/rootCA.pem

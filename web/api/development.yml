@@ -12,6 +12,7 @@ publisher_to_warden:
   password: panoptes
   exchange: argus
   routing_key: face_rule_check
+  ssl_ca: ../../ssl/rootCA.pem
 db:
   database: argus
   host: argus
