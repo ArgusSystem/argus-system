@@ -5,9 +5,9 @@ from werkzeug.serving import make_server
 
 class ServerThread(Thread):
 
-    def __init__(self, host, port, app):
+    def __init__(self, host, port, app, ssl_context=None):
         super().__init__()
-        self.server = make_server(host, port, app)
+        self.server = make_server(host, port, app, ssl_context=ssl_context)
         self.ctx = app.app_context()
         self.ctx.push()
 

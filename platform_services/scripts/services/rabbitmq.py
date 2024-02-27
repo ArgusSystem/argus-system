@@ -30,8 +30,8 @@ class RabbitMQService:
                     queue_bind(channel, queue, exchange, queue)
 
     def clean(self):
-        with self.client.channel() as channel:
-            for exchange, queues in self.queues_by_exchange.items():
-                for queue in queues:
+        for exchange, queues in self.queues_by_exchange.items():
+            for queue in queues:
+                with self.client.channel() as channel:
                     if queue_exists(channel, queue):
                         queue_purge(channel, queue)

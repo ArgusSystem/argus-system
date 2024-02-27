@@ -12,8 +12,7 @@ from classifier import SVClassifier
 FACE_CLASSIFIER_KEY = 'face_classifier'
 FACE_EMBEDDER_KEY = 'face_embedder'
 PUBLISHER_WEB_KEY = 'publisher_web'
-PUBLISHER_SUMMARIZER_KEY = 'publisher_summarizer'
-PUBLISHER_CLUSTERER_KEY = 'publisher_clusterer'
+PUBLISHER_WARDEN_KEY = 'publisher_warden'
 STORAGE_KEY = 'storage'
 TRACER_KEY = 'tracer'
 CONSUMER_KEY = 'consumer'
@@ -31,8 +30,7 @@ if __name__ == "__main__":
             face_classifier_configuration=configuration[FACE_CLASSIFIER_KEY],
             face_embedder_configuration=configuration[FACE_EMBEDDER_KEY],
             publisher_to_web_configuration=configuration[PUBLISHER_WEB_KEY],
-            publisher_to_warden_configuration=configuration[PUBLISHER_SUMMARIZER_KEY],
-            publisher_to_clusterer_configuration=configuration[PUBLISHER_CLUSTERER_KEY],
+            publisher_to_warden_configuration=configuration[PUBLISHER_WARDEN_KEY],
             storage_configuration=configuration[STORAGE_KEY],
             tracer_configuration=configuration[TRACER_KEY])
 

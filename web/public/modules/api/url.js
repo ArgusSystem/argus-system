@@ -1,3 +1,4 @@
+// NOTE: this forces that both the page and REST API use the same protocol (http or https)
 const {protocol} = window.location;
 
 const HOST = 'argus-web';

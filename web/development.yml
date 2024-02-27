@@ -1,13 +1,17 @@
 server:
   port: 8080
+  ssl_cert_path: '../ssl/argus-cert.pem'      #set to null to disable ssl
+  ssl_key_path: '../ssl/argus-key.pem'        #set to null to disable ssl
 logger:
   level: 'info'
 tracing:
     endpoint: 'http://argus:14268/api/traces'
 consumer:
-  url: 'amqp://argus:panoptes@argus:5672'
+  #url: 'amqp://argus:panoptes@argus:5672'    # for tcp
+  url: 'amqps://argus:panoptes@argus:5671'    # for ssl
   video_queue: 'published_video_chunks'
   faces_queue: 'published_detected_faces'
+  ssl_ca_path: '../ssl/rootCA.pem'
 database:
   url: 'postgres://argus:panoptes@argus:5432/argus'
 schemas: '../utils/events/resources'

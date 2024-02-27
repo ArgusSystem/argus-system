@@ -1,7 +1,8 @@
 
 # ---- Face Detector Type
-face_detector: tensorflow_faceboxes
-#face_detector: tensorflow_mtcnn
+#face_detector: tensorflow_faceboxes
+face_detector: tensorflow_mtcnn
+#face_detector: dlib_mmod
 #face_detector: paddle_mtcnn
 
 #images_dir: datasets/fiuba/raw
@@ -10,5 +11,6 @@ face_detector: tensorflow_faceboxes
 #images_dir: datasets/friends/raw
 #images_dir: datasets/friends-recognition/raw
 #images_dir: datasets/friends-recognition/raw-test
-images_dir: datasets/chokepoint/faces/raw
+#images_dir: datasets/chokepoint/faces/raw
 #images_dir: datasets/lfw/raw
+images_dir: datasets/WIDER/raw

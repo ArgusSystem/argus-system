@@ -28,7 +28,6 @@ class FaceClassificationTask:
                  face_embedder_configuration,
                  publisher_to_web_configuration,
                  publisher_to_warden_configuration,
-                 publisher_to_clusterer_configuration,
                  storage_configuration,
                  tracer_configuration):
 
@@ -43,7 +42,6 @@ class FaceClassificationTask:
 
         self.publisher_to_web = Publisher.new(**publisher_to_web_configuration)
         self.publisher_to_warden = Publisher.new(**publisher_to_warden_configuration)
-        self.publisher_to_clusterer = Publisher.new(**publisher_to_clusterer_configuration)
         self.face_storage = StorageFactory(**storage_configuration).new(StorageType.FRAME_FACES)
         self.tracer = get_tracer(**tracer_configuration, service_name='argus-classifier')
 

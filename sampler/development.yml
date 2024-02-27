@@ -3,18 +3,21 @@ consumer:
   username: argus
   password: panoptes
   queue: new_video_chunks
+  ssl_ca: ssl/rootCA.pem
 frame_publisher:
   host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: frames
+  ssl_ca: ssl/rootCA.pem
 video_chunk_publisher:
   host: argus
   username: argus
   password: panoptes
   exchange: argus
   routing_key: published_video_chunks
+  ssl_ca: ssl/rootCA.pem
 storage:
   host: argus
   port: 9500
