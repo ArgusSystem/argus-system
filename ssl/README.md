@@ -26,25 +26,12 @@ To configure a local trusted certificate authority and certificates for localhos
 ```
 mkcert -install
 mkcert -cert-file argus-cert.pem -key-file argus-key.pem localhost argus-web argus
-cp ($mkcert -CAROOT)/* .
+cp $(mkcert -CAROOT)/* .
 chmod 664 ./*
 ```
 
-# Configure for argus-web
-
-Make sure the configure file at web/development.yml includes at root level:
-
-```
-server:
-  ssl_cert_path: '../ssl/argus-cert.pem'      #set to null to disable ssl
-  ssl_key_path: '../ssl/argus-key.pem'   #set to null to disable ssl
-```
-
-
-Make sure the configure file at web/api/development.yml includes at root level:
-
-```
-ssl:
-  certfile: '../../ssl/argus-cert.pem'      # set to null to disable ssl
-  keyfile: '../../ssl/argus-key.pem'   # set to null to disable ssl
-```
+By the end this folder should contain:
+argus-cert.pem
+argus-key.pem
+rootCA.pem
+rootCA-key.pem
