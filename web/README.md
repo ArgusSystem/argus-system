@@ -1,19 +1,25 @@
-# Argus web application
+# Argus web
 
-Argus web server application and client.
+## API server
 
-# Install
+Refer to [README.md](api/README.md)
 
-```
+## Streaming server
+
+### Install
+
+```shell
+sudo snap install node --classic
+
+npm install --global yarn
+
 yarn install
 ```
 
-# Run
+### Run
 
-To run the web server:
-
-```
+```bash
 yarn watch
 ```
-
-The web client needs to run in Chrome. Connect to `localhost:8080`.
+ 
+Connect to `localhost:8080` using a Chrome browser.

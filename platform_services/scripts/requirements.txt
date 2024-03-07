@@ -1,0 +1,3 @@
+-r ../../utils/events/requirements.txt
+-r ../../utils/orm/requirements.txt
+-r ../../utils/video_storage/requirements.txt
