@@ -16,6 +16,7 @@ SSL_CONFIG = 'ssl'
 SSL_CERT = 'certfile'
 SSL_KEY = 'keyfile'
 
+
 if __name__ == "__main__":
     with run('argus-web-api') as application:
         tracer = get_tracer(**application.configuration[TRACER_KEY], service_name=application.name)
@@ -27,9 +28,9 @@ if __name__ == "__main__":
                                                  publisher_to_clusterer_configuration=application.configuration[PUBLISHER_TO_CLUSTERER_KEY],
                                                  tracer=tracer)
 
-        # Configure SSL context
         ssl_context = None
-        if application.configuration[SSL_CONFIG][SSL_CERT] and application.configuration[SSL_CONFIG][SSL_KEY]:
+        # Configure SSL context
+        if SSL_CONFIG in application.configuration and application.configuration[SSL_CONFIG][SSL_CERT] and application.configuration[SSL_CONFIG][SSL_KEY]:
             ssl_context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
             ssl_context.load_cert_chain(**application.configuration[SSL_CONFIG])
 

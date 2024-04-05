@@ -44,8 +44,6 @@ import com.example.argus.data.AuthenticationClient
 import kotlinx.coroutines.delay
 import java.util.Locale
 
-val authenticationClient = AuthenticationClient()
-
 @Composable
 fun ErrorDialog(
     showDialog: Boolean,
@@ -76,7 +74,7 @@ fun ErrorDialog(
 }
 
 @Composable
-fun LoginScreen(onLogin: (String, String) -> Unit) {
+fun LoginScreen(authenticationClient: AuthenticationClient, onLogin: (String, String) -> Unit) {
     var username by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }

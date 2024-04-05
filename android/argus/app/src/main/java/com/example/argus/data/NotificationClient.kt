@@ -67,7 +67,24 @@ class NotificationClient(host: String, port: Int) {
             override fun onFailure(call: Call<NotificationStatus>, t: Throwable) {
                 Log.e(javaClass.simpleName, "Failed to fetch notification status!", t)
             }
-
         })
+    }
+
+    fun markRead(notification: Notification) {
+        service.markNotificationRead(
+            userId = notification.userId,
+            personId = notification.personId,
+            cameraId = notification.cameraId,
+            restrictionId =  notification.restrictionId,
+            startTime = notification.startTime).enqueue(object : Callback<Boolean> {
+                override fun onResponse(
+                    call: Call<Boolean>,
+                    response: Response<Boolean>
+                ) {}
+
+                override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                    Log.e(javaClass.simpleName, "Failed to mark notification as read!", t)
+                }
+            })
     }
 }

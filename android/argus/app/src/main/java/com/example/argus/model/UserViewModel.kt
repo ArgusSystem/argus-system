@@ -30,6 +30,7 @@ sealed interface UserState {
 
 class UserViewModel(private val context: Context) : ViewModel() {
     var userState: UserState by mutableStateOf(UserState.LoggedOut)
+    var notification: Notification by mutableStateOf(Notification())
 
     init {
         restore()
