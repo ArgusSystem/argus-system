@@ -34,5 +34,5 @@ data class NotificationStatus(
     @SerializedName("count")
     val count: Int = 0,
     @SerializedName("latest")
-    val latest: Long = 0,
+    val latest: Long = 0
 )

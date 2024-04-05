@@ -1,6 +1,7 @@
 package com.example.argus.network
 
 import com.example.argus.model.Notification
+import com.example.argus.model.NotificationFace
 import com.example.argus.model.NotificationStatus
 import retrofit2.Call
 import retrofit2.http.GET
@@ -30,4 +31,12 @@ interface NotificationService {
         @Path("personId") personId : Int,
         @Path("restrictionId") restrictionId : Int,
         @Path("startTime") startTime: Long) : Call<Boolean>
+
+    @GET("notifications/id/{userId}/{cameraId}/{personId}/{restrictionId}/{startTime}/faces")
+    fun fetchNotificationFaces(
+        @Path("userId") userId : Int,
+        @Path("cameraId") cameraId : Int,
+        @Path("personId") personId : Int,
+        @Path("restrictionId") restrictionId : Int,
+        @Path("startTime") startTime: Long) : Call<List<NotificationFace>>
 }

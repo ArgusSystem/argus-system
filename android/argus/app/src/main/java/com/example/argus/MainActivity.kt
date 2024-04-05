@@ -15,12 +15,12 @@ class MainActivity : ComponentActivity() {
 
         val notificationClient = NotificationClient(
             host = resources.getString(R.string.api_host),
-            port = resources.getInteger(R.integer.api_post)
+            port = resources.getInteger(R.integer.api_port)
         )
 
         val authenticationClient = AuthenticationClient(
             host = resources.getString(R.string.api_host),
-            port = resources.getInteger(R.integer.api_post)
+            port = resources.getInteger(R.integer.api_port)
         )
 
         val notificationManager = Manager(this)

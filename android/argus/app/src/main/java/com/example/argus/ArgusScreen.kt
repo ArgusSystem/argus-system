@@ -105,7 +105,7 @@ fun ArgusApp(navController: NavHostController = rememberNavController(),
 
             userViewModel.notification.read = true
 
-            NotificationScreen(userViewModel.notification, navigateUp = {
+            NotificationScreen(userViewModel.notification, notificationClient, navigateUp = {
                 navController.navigateUp()
             })
         }
