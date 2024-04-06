@@ -2,81 +2,37 @@ package com.example.argus.model
 
 import com.google.gson.annotations.SerializedName
 
-
-data class WhenValue(
-    @SerializedName("days")
-    val days: List<String>,
-    @SerializedName("end_time")
-    val endTime: Int,
-    @SerializedName("start_time")
-    val startTime: Int,
-    @SerializedName("time_zone")
-    val timeZone: String
-)
-
-data class WhenCondition(
-    @SerializedName("type")
-    val type: String,
-    @SerializedName("value")
-    val value: WhenValue
-)
-
-data class WhereCondition(
-    @SerializedName("type")
-    val type: String,
-    @SerializedName("value")
-    val value: List<Int>
-)
-
-data class WhoCondition(
-    @SerializedName("type")
-    val type: String,
-    @SerializedName("value")
-    val value: List<Int>
-)
-
-data class Rule(
-    @SerializedName("when")
-    val whenConditions: List<WhenCondition>,
-    @SerializedName("where")
-    val whereConditions: List<WhereCondition>,
-    @SerializedName("who")
-    val whoConditions: List<WhoCondition>
-)
-
 data class Restriction(
-    @SerializedName("rule")
-    val rule: Rule,
     @SerializedName("severity")
-    val severity: Int
+    val severity: Int = 0
 )
 
 data class Notification(
     @SerializedName("camera_id")
-    val cameraId: Int,
+    val cameraId: Int = 0,
     @SerializedName("end_time")
-    val endTime: Long,
+    val endTime: Long = 0,
     @SerializedName("person")
-    val person: String,
+    val person: String = "",
     @SerializedName("person_id")
-    val personId: Int,
+    val personId: Int = 0,
     @SerializedName("place")
-    val place: String,
+    val place: String = "",
     @SerializedName("read")
-    val read: Boolean,
+    var read: Boolean = false,
     @SerializedName("restriction")
-    val restriction: Restriction,
+    val restriction: Restriction = Restriction(),
     @SerializedName("restriction_id")
-    val restrictionId: Int,
+    val restrictionId: Int = 0,
     @SerializedName("start_time")
-    val startTime: Long,
+    val startTime: Long = 0,
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int = 0
 )
 
 data class NotificationStatus(
     @SerializedName("count")
     val count: Int = 0,
     @SerializedName("latest")
-    val latest: Long = 0,
+    val latest: Long = 0
 )

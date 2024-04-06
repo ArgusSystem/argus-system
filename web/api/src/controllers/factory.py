@@ -2,6 +2,7 @@ from utils.orm.src.database import connect
 from utils.video_storage import StorageFactory, StorageType
 
 from .camera import CameraController
+from .frames import FramesController
 from .history import HistoryController
 from .notifications import NotificationsController
 from .people import PeopleController
@@ -46,5 +47,6 @@ class ControllersFactory:
             StatisticsController,
             KnownFacesController(self.storage_factory.new(StorageType.PEOPLE),
                                  self.storage_factory.new(StorageType.FRAME_FACES),
-                                 self.publisher_to_warden_configuration, self.tracer)
+                                 self.publisher_to_warden_configuration, self.tracer),
+            FramesController(self.storage_factory.new(StorageType.VIDEO_FRAMES))
         ]

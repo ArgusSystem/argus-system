@@ -13,17 +13,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.argus.data.AuthenticationClient
 import com.example.argus.data.NotificationClient
 import com.example.argus.model.NotificationViewModel
 import com.example.argus.model.UserState
 import com.example.argus.model.UserViewModel
 import com.example.argus.notifications.Manager
 import com.example.argus.ui.screens.LoginScreen
+import com.example.argus.ui.screens.NotificationScreen
 import com.example.argus.ui.screens.NotificationsScreen
 
 enum class ArgusScreen(@StringRes val title: Int) {
     Login(title=R.string.login),
-    Notifications(title=R.string.notifications)
+    Notifications(title=R.string.notifications),
+    Notification(title= R.string.notification_details)
 }
 
 @Composable
@@ -37,7 +40,10 @@ fun Redirect(navController: NavHostController, currentScreen : ArgusScreen, dest
 }
 
 @Composable
-fun ArgusApp(navController: NavHostController = rememberNavController(), notificationClient: NotificationClient, notificationManager: Manager) {
+fun ArgusApp(navController: NavHostController = rememberNavController(),
+             authenticationClient: AuthenticationClient,
+             notificationClient: NotificationClient,
+             notificationManager: Manager) {
     val context = LocalContext.current
 
     val userFactory: ViewModelProvider.Factory = viewModelFactory {
@@ -48,8 +54,6 @@ fun ArgusApp(navController: NavHostController = rememberNavController(), notific
 
     val userViewModel : UserViewModel = viewModel(factory = userFactory)
     val userState = userViewModel.userState
-
-
 
     NavHost(
         navController = navController,
@@ -64,7 +68,7 @@ fun ArgusApp(navController: NavHostController = rememberNavController(), notific
                         destinationScreen = ArgusScreen.Notifications
                     )
                 }
-                is UserState.LoggedOut -> LoginScreen { username, alias ->
+                is UserState.LoggedOut -> LoginScreen(authenticationClient) { username, alias ->
                     userViewModel.logIn(username, alias)
                 }
             }
@@ -79,8 +83,11 @@ fun ArgusApp(navController: NavHostController = rememberNavController(), notific
                         }
                     }
 
-                    NotificationsScreen(factory, {
+                    NotificationsScreen(factory, navigateUp = {
                         userViewModel.logOut()
+                    }, onNotificationClick =  { notification ->
+                        userViewModel.notification = notification
+                        navController.navigate(ArgusScreen.Notification.name)
                     })
                 }
                 is UserState.LoggedOut -> {
@@ -91,6 +98,16 @@ fun ArgusApp(navController: NavHostController = rememberNavController(), notific
                     )
                 }
             }
+        }
+        composable(route = ArgusScreen.Notification.name) {
+            if (!userViewModel.notification.read)
+                notificationClient.markRead(userViewModel.notification)
+
+            userViewModel.notification.read = true
+
+            NotificationScreen(userViewModel.notification, notificationClient, navigateUp = {
+                navController.navigateUp()
+            })
         }
     }
 }

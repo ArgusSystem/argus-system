@@ -3,6 +3,7 @@ package com.example.argus
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.argus.data.AuthenticationClient
 import com.example.argus.data.NotificationClient
 import com.example.argus.notifications.Manager
 import com.example.argus.ui.theme.ArgusTheme
@@ -14,7 +15,12 @@ class MainActivity : ComponentActivity() {
 
         val notificationClient = NotificationClient(
             host = resources.getString(R.string.api_host),
-            port = resources.getInteger(R.integer.api_post)
+            port = resources.getInteger(R.integer.api_port)
+        )
+
+        val authenticationClient = AuthenticationClient(
+            host = resources.getString(R.string.api_host),
+            port = resources.getInteger(R.integer.api_port)
         )
 
         val notificationManager = Manager(this)
@@ -22,8 +28,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArgusTheme {
                 ArgusApp(
+                    authenticationClient = authenticationClient,
                     notificationClient = notificationClient,
-                    notificationManager = notificationManager
+                    notificationManager = notificationManager,
                 )
             }
         }

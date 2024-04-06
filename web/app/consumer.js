@@ -71,9 +71,14 @@ class Consumer {
 
     start() {
         const socketServer = this.socketServer;
+        const options = {};
+
+        if (consumerConfiguration['ssl_ca_path'])
+            options['ca'] = fs.readFileSync(consumerConfiguration['ssl_ca_path'])
+
         amqp.connect(
             `${consumerConfiguration['url']}`,
-            { ca: fs.readFileSync(consumerConfiguration['ssl_ca_path']) },
+            options,
             function (err, connection) {
                 onConnection(err, connection, socketServer);
             }

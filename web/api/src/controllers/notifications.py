@@ -51,7 +51,8 @@ def _get_notification_faces(username, camera_id, person_id, restriction_id, star
     return [{
         'id': face.id,
         'timestamp': face.timestamp,
-        'image_key': face.image_key()
+        'image_key': face.image_key(),
+        'frame_key': face.frame_key()
     } for face in faces]
 
 

@@ -11,14 +11,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-class AuthenticationClient {
-
-    private val BASE_URL = "http://192.168.0.17:5000/"
-    private val TAG = "AuthenticationClient"
+class AuthenticationClient(host: String, port: Int) {
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(ScalarsConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl("http://$host:$port/")
         .build()
 
     private val service: AuthenticationService by lazy {

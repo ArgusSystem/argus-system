@@ -1,5 +1,6 @@
 package com.example.argus.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -77,7 +78,7 @@ fun TopBar(
 }
 
 @Composable
-fun NotificationsScreen(factory: ViewModelProvider.Factory, navigateUp: () -> Unit, modifier: Modifier = Modifier) {
+fun NotificationsScreen(factory: ViewModelProvider.Factory, navigateUp: () -> Unit, onNotificationClick: (Notification) -> Unit, modifier: Modifier = Modifier) {
     val notificationViewModel: NotificationViewModel = viewModel(factory=factory)
 
     Scaffold(
@@ -92,6 +93,7 @@ fun NotificationsScreen(factory: ViewModelProvider.Factory, navigateUp: () -> Un
             is NotificationsState.Loading -> LoadingScreen(modifier.fillMaxSize())
             is NotificationsState.Success -> NotificationList(
                 notificationsState.notifications,
+                onNotificationClick = onNotificationClick,
                 modifier.padding(innerPadding)
             )
         }
@@ -99,16 +101,16 @@ fun NotificationsScreen(factory: ViewModelProvider.Factory, navigateUp: () -> Un
 }
 
 @Composable
-fun NotificationList(notifications: List<Notification>, modifier: Modifier = Modifier) {
+fun NotificationList(notifications: List<Notification>, onNotificationClick: (Notification) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
         items(notifications) { notification ->
-            NotificationCard(notification = notification, modifier = Modifier.padding(8.dp))
+            NotificationCard(notification = notification, onClick = onNotificationClick, modifier = Modifier.padding(8.dp))
         }
     }
 }
 
 @Composable
-fun NotificationCard(notification: Notification, modifier: Modifier = Modifier) {
+fun NotificationCard(notification: Notification, onClick: (Notification) -> Unit, modifier: Modifier = Modifier) {
     val fontWeight = if (notification.read) FontWeight.Normal else FontWeight.Bold
 
     val containerColor = when (notification.restriction.severity) {
@@ -120,7 +122,9 @@ fun NotificationCard(notification: Notification, modifier: Modifier = Modifier) 
 
     Card(colors = CardDefaults.cardColors(
         containerColor = containerColor
-    ), modifier = modifier) {
+    ), modifier = modifier.clickable {
+        onClick(notification)
+    }) {
         Text(
             text = stringResource(
                 R.string.unauthorized_person,
