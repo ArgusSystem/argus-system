@@ -8,5 +8,7 @@ data class NotificationFace(
     @SerializedName("timestamp")
     val timestamp: Long = 0,
     @SerializedName("image_key")
-    val imageKey: String = ""
+    val imageKey: String = "",
+    @SerializedName("frame_key")
+    val frameKey: String = ""
 )

@@ -22,7 +22,10 @@ class Face(Model):
         database = db
 
     def image_key(self):
+        return '-'.join([self.frame_key(), str(self.face_num)])
+
+    def frame_key(self):
         return '-'.join([self.video_chunk.camera.alias,
                          str(self.video_chunk.timestamp),
-                         str(self.offset),
-                         str(self.face_num)])
+                         str(self.offset)])
+

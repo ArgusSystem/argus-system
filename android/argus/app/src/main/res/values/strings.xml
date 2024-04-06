@@ -17,4 +17,5 @@
     <string name="notification_place_detail">Place</string>
     <string name="notification_start_time_detail">Start time</string>
     <string name="notification_end_time_detail">End time</string>
+    <string name="frame_detail">Frame</string>
 </resources>
